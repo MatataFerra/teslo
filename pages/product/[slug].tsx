@@ -1,12 +1,23 @@
+import { GetStaticProps, NextPage } from "next";
 import { ShopLayout } from "../../components/layouts";
 import { initialData } from "../../database/products";
 import { Grid, Box, Typography, Button, Chip } from "@mui/material";
 import { ProductSlideShow, SizeSelector } from "../../components/products";
 import { ItemCounter } from "../../components/ui";
+import { api } from "../../database";
+import { useEffect } from "react";
 
 const product = initialData.products[0];
 
-const ProductPage = () => {
+interface Props {
+  data: any;
+}
+
+const ProductPage: NextPage<Props> = ({ data }) => {
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   return (
     <ShopLayout title={product.title} pageDescription={product.description}>
       <Grid container spacing={3}>
@@ -42,6 +53,17 @@ const ProductPage = () => {
       </Grid>
     </ShopLayout>
   );
+};
+
+export const getStaticProps: GetStaticProps = async (ctx) => {
+  const params = ctx.params as { slug: string };
+  const { data } = await api.getProducts(`/${params.slug}`);
+
+  return {
+    props: {
+      data,
+    },
+  };
 };
 
 export default ProductPage;
