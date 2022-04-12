@@ -9,15 +9,7 @@ import { useEffect } from "react";
 
 const product = initialData.products[0];
 
-interface Props {
-  data: any;
-}
-
-const ProductPage: NextPage<Props> = ({ data }) => {
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
+const ProductPage: NextPage = () => {
   return (
     <ShopLayout title={product.title} pageDescription={product.description}>
       <Grid container spacing={3}>
@@ -53,17 +45,6 @@ const ProductPage: NextPage<Props> = ({ data }) => {
       </Grid>
     </ShopLayout>
   );
-};
-
-export const getStaticProps: GetStaticProps = async (ctx) => {
-  const params = ctx.params as { slug: string };
-  const { data } = await api.getProducts(`/${params.slug}`);
-
-  return {
-    props: {
-      data,
-    },
-  };
 };
 
 export default ProductPage;

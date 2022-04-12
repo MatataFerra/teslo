@@ -6,8 +6,9 @@ import {
   Box,
   Typography,
   Link,
+  Skeleton,
 } from "@mui/material";
-import { FC, useMemo, useState } from "react";
+import { FC, useMemo, useState, useEffect, useContext } from "react";
 import NextLink from "next/link";
 import { IProduct } from "../../interfaces";
 
@@ -17,6 +18,13 @@ interface Props {
 
 export const ProductCard: FC<Props> = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [skeleton, setSkeleton] = useState(false);
+
+  useEffect(() => {
+    product && setIsImageLoaded(true);
+  }, [product]);
+
   const productImage = useMemo(() => {
     return isHovered
       ? `products/${product.images[1]}`
@@ -35,20 +43,34 @@ export const ProductCard: FC<Props> = ({ product }) => {
         <NextLink href="/product/slug" passHref prefetch={false}>
           <Link>
             <CardActionArea>
-              <CardMedia
-                component={"img"}
-                image={productImage}
-                alt={product.title}
-                className="fadeIn"
-              />
+              {isImageLoaded ? (
+                <CardMedia
+                  component={"img"}
+                  image={productImage}
+                  alt={product.title}
+                  className="fadeIn"
+                  onLoad={() => setSkeleton(true)}
+                />
+              ) : (
+                <Skeleton variant="rectangular" width="100%" height="400px" />
+              )}
             </CardActionArea>
           </Link>
         </NextLink>
       </Card>
 
       <Box sx={{ mt: 1 }} className="fadeIn">
-        <Typography fontWeight={700}> {product.title} </Typography>
-        <Typography fontWeight={500}> {` $${product.price} `} </Typography>
+        {skeleton ? (
+          <>
+            <Typography fontWeight={700}> {product.title} </Typography>
+            <Typography fontWeight={500}> {` $${product.price} `} </Typography>
+          </>
+        ) : (
+          <>
+            <Skeleton variant="text" width="70%" height="20px" />
+            <Skeleton variant="text" width="10%" height="20px" />
+          </>
+        )}
       </Box>
     </Grid>
   );
