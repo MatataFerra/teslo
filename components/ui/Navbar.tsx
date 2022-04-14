@@ -1,3 +1,5 @@
+import { FC, useState, useEffect, useContext } from "react";
+import { useRouter } from "next/router";
 import { SearchOutlined, ShoppingCartOutlined } from "@mui/icons-material";
 import {
   AppBar,
@@ -10,9 +12,21 @@ import {
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
-import { FC } from "react";
+import { UiContext } from "../../context/";
 
 export const Navbar: FC = () => {
+  const [option, setOption] = useState("");
+  const { toogleSideMenu } = useContext(UiContext);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const { pathname } = router;
+    const option = pathname.split("/")[2];
+
+    setOption(option);
+  }, [router, router.pathname]);
+
   return (
     <AppBar>
       <Toolbar>
@@ -28,17 +42,23 @@ export const Navbar: FC = () => {
         <Box sx={{ display: { xs: "none", sm: "block" } }}>
           <NextLink href="/category/men" passHref>
             <Link>
-              <Button>Hombres</Button>
+              <Button color={option === "men" ? "primary" : "info"}>
+                Hombres
+              </Button>
             </Link>
           </NextLink>
           <NextLink href="/category/women" passHref>
             <Link>
-              <Button>Mujeres</Button>
+              <Button color={option === "women" ? "primary" : "info"}>
+                Mujeres
+              </Button>
             </Link>
           </NextLink>
           <NextLink href="/category/kid" passHref>
             <Link>
-              <Button>Niños</Button>
+              <Button color={option === "kid" ? "primary" : "info"}>
+                Niños
+              </Button>
             </Link>
           </NextLink>
         </Box>
@@ -58,7 +78,7 @@ export const Navbar: FC = () => {
           </Link>
         </NextLink>
 
-        <Button>Menú</Button>
+        <Button onClick={toogleSideMenu}>Menú</Button>
       </Toolbar>
     </AppBar>
   );
