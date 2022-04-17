@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useRouter } from "next/router";
 import { UiContext } from "../../context/";
 import {
@@ -30,9 +30,16 @@ import {
 export const SideMenu = () => {
   const router = useRouter();
   const { isMenuOpen, toogleSideMenu } = useContext(UiContext);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearchTerm = () => {
+    if (searchTerm.trim().length === 0) return;
+
+    navigateTo(`/search/${searchTerm}`);
+  };
 
   const navigateTo = (route: string) => {
-    router.push(`category/${route}`);
+    router.push(`${route}`);
     toogleSideMenu();
   };
 
@@ -47,11 +54,19 @@ export const SideMenu = () => {
         <List>
           <ListItem>
             <Input
+              autoFocus
+              value={searchTerm}
+              name="search"
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && handleSearchTerm()}
               type="text"
               placeholder="Buscar..."
               endAdornment={
                 <InputAdornment position="end">
-                  <IconButton aria-label="toggle password visibility">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleSearchTerm}
+                  >
                     <SearchOutlined />
                   </IconButton>
                 </InputAdornment>
@@ -76,7 +91,7 @@ export const SideMenu = () => {
           <ListItem
             button
             sx={{ display: { xs: "", sm: "none" } }}
-            onClick={() => navigateTo("men")}
+            onClick={() => navigateTo("category/men")}
           >
             <ListItemIcon>
               <MaleOutlined />
@@ -87,7 +102,7 @@ export const SideMenu = () => {
           <ListItem
             button
             sx={{ display: { xs: "", sm: "none" } }}
-            onClick={() => navigateTo("women")}
+            onClick={() => navigateTo("category/women")}
           >
             <ListItemIcon>
               <FemaleOutlined />
@@ -98,7 +113,7 @@ export const SideMenu = () => {
           <ListItem
             button
             sx={{ display: { xs: "", sm: "none" } }}
-            onClick={() => navigateTo("kid")}
+            onClick={() => navigateTo("category/kid")}
           >
             <ListItemIcon>
               <EscalatorWarningOutlined />

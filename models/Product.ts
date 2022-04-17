@@ -41,6 +41,16 @@ const productSchema = new Schema(
 );
 
 productSchema.index({ title: "text", tags: "text" });
+productSchema.statics = {
+  searchPartial: function (q, callback) {
+    return this.find(
+      {
+        $or: [{ title: new RegExp(q, "gi") }, { tags: new RegExp(q, "gi") }],
+      },
+      callback
+    );
+  },
+};
 
 const Product: Model<IProduct> =
   mongoose.models.Product || model("Product", productSchema);

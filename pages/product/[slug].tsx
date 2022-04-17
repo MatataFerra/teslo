@@ -1,21 +1,81 @@
-import { GetStaticPaths, GetStaticProps } from "next";
+import { useState, useContext, useEffect, useMemo } from "react";
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { useRouter } from "next/router";
 import { dbProducts } from "../../database";
-import { NextPage } from "next";
 import { ShopLayout } from "../../components/layouts";
-import { Grid, Box, Typography, Button } from "@mui/material";
+import { Grid, Box, Typography, Button, Chip } from "@mui/material";
 import { ProductSlideShow, SizeSelector } from "../../components/products";
 import { ItemCounter } from "../../components/ui";
-import { IProduct } from "../../interfaces";
+import { ICartProduct, IProduct } from "../../interfaces";
+import { ISize } from "../../interfaces/products";
+import { CartContext } from "../../context/";
 
 interface Props {
   product: IProduct;
 }
 
 const ProductPage: NextPage<Props> = ({ product }) => {
-  // const router =  useRouter();
-  // const { products: product, isLoading } = useProducts(`/products/${router.query.slug}`);
+  const router = useRouter();
+  const { addProductsToCart, cart } = useContext(CartContext);
+  const [sizeSoldedOut, setSizeSoldedOut] = useState<(ISize | undefined)[]>([]);
+  const [stockControl, setStockControl] = useState({
+    stock: product.inStock - 1,
+    productQuantity: 1,
+  });
+  const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
+    _id: product._id,
+    images: product.images[0],
+    price: product.price,
+    size: undefined,
+    slug: product.slug,
+    title: product.title,
+    gender: product.gender,
+    quantity: 1,
+    productStock: product.inStock,
+    restStock: product.inStock,
+  });
+  const findProduct = useMemo(
+    () => cart.find((p) => product._id === p._id),
+    [cart, product]
+  );
 
-  // if(isLoading) return <p>Loading...</p>;
+  useEffect(() => {
+    // map the cart and find products with the same id
+    const productsWithSizeSoldedOut = cart.map((p) => {
+      if (p._id !== product._id) return p;
+      if (p.size === undefined) return p;
+      const sizeSoldedOut = product.sizes.find((s) => s === p.size);
+      if (p.restStock === 0 && p.size === sizeSoldedOut) {
+        setSizeSoldedOut((currentSizes) => [...currentSizes, p.size]);
+      }
+
+      return p;
+    });
+  }, [cart, product]);
+
+  useEffect(() => {
+    console.log(sizeSoldedOut);
+  }, [sizeSoldedOut]);
+
+  const handleSizeSelected = (size: ISize) => {
+    setTempCartProduct({ ...tempCartProduct, size });
+  };
+
+  const handleStock = (stock: number, productQuantity: number) => {
+    setStockControl({ stock, productQuantity });
+    if (stockControl.stock === 0) return;
+    setTempCartProduct({
+      ...tempCartProduct,
+      quantity: stockControl.productQuantity,
+      restStock: stockControl.stock,
+    });
+  };
+
+  const handleAddProductToCart = () => {
+    if (!tempCartProduct.size) return;
+    addProductsToCart(tempCartProduct);
+    // router.push("/cart");
+  };
 
   return (
     <ShopLayout title={product.title} pageDescription={product.description}>
@@ -34,15 +94,39 @@ const ProductPage: NextPage<Props> = ({ product }) => {
 
             <Box sx={{ my: 2 }}>
               <Typography variant="subtitle2">Cantidad</Typography>
-              <ItemCounter />
-              <SizeSelector sizes={product.sizes} />
+              <ItemCounter
+                quantity={stockControl.productQuantity}
+                inStock={tempCartProduct.productStock}
+                restStock={stockControl.stock}
+                onStock={handleStock}
+              />
+              <SizeSelector
+                sizes={product.sizes}
+                selectedSize={tempCartProduct.size}
+                setSizeSelected={handleSizeSelected}
+                sizeSoldOut={sizeSoldedOut}
+              />
             </Box>
+            {findProduct?.restStock === 0 &&
+            findProduct.size === tempCartProduct.size ? (
+              <Chip
+                label="No hay stock de este artículo"
+                color="error"
+                variant="outlined"
+              />
+            ) : (
+              <Button
+                color="secondary"
+                className="circular-btn"
+                disabled={!!!tempCartProduct.size}
+                onClick={handleAddProductToCart}
+              >
+                {tempCartProduct.size
+                  ? "Agregar al carrito"
+                  : "Seleccione un tamaño"}
+              </Button>
+            )}
 
-            <Button color="secondary" className="circular-btn">
-              Agregar al carrito
-            </Button>
-
-            {/* <Chip label="No hay disponibles" color="error" variant="outlined" /> */}
             <Box sx={{ mt: 3 }}>
               <Typography variant="subtitle2">Descripción</Typography>
               <Typography variant="body2"> {product.description} </Typography>
@@ -53,30 +137,6 @@ const ProductPage: NextPage<Props> = ({ product }) => {
     </ShopLayout>
   );
 };
-
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
-// export const getServerSideProps: GetServerSideProps = async (ctx) => {
-//   const { slug } = ctx.query as { slug: string };
-
-//   const product = await dbProducts.getProductsBySlug(slug);
-
-//   if (!product) {
-//     return {
-//       redirect: {
-//         statusCode: 404,
-//         destination: "/",
-//         permanent: false,
-//       },
-//     };
-//   }
-
-//   return {
-//     props: {
-//       product,
-//     },
-//   };
-// };
 
 // You should use getStaticPaths if you’re statically pre-rendering pages that use dynamic routes
 

@@ -7,6 +7,7 @@ import {
   Typography,
   Link,
   Skeleton,
+  Chip,
 } from "@mui/material";
 import { FC, useMemo, useState, useEffect, useContext } from "react";
 import NextLink from "next/link";
@@ -43,6 +44,13 @@ export const ProductCard: FC<Props> = ({ product }) => {
         <NextLink href={`/product/${product.slug}`} passHref prefetch={false}>
           <Link>
             <CardActionArea>
+              {product.inStock === 0 && (
+                <Chip
+                  color="primary"
+                  label="No hay en stock"
+                  sx={{ position: "absolute", zIndex: 99, top: 10, left: 10 }}
+                />
+              )}
               {isImageLoaded ? (
                 <CardMedia
                   component={"img"}
