@@ -1,3 +1,4 @@
+import { FC, useContext } from "react";
 import NextLink from "next/link";
 import {
   Grid,
@@ -7,32 +8,42 @@ import {
   Box,
   Typography,
 } from "@mui/material";
-import { FC } from "react";
-import { initialData } from "../../database/products";
 import { ItemCounter } from "../ui";
 import { Button } from "@mui/material";
-
-const productsInCart = [
-  initialData.products[0],
-  initialData.products[1],
-  initialData.products[2],
-];
+import { CartContext } from "../../context";
 
 interface Props {
   editable?: boolean;
 }
 
 export const CartList: FC<Props> = ({ editable = false }) => {
+  const { cart, updateCartQuantity } = useContext(CartContext);
+
+  const handleUpdateCartQuantity = (
+    product: any,
+    quantity: number,
+    stock: number
+  ) => {
+    product.quantity = quantity;
+    product.restStock = stock;
+    updateCartQuantity(product);
+  };
+
   return (
     <>
-      {productsInCart.map((product) => (
-        <Grid container spacing={2} sx={{ mb: 1 }} key={product.slug}>
+      {cart.map((product) => (
+        <Grid
+          container
+          spacing={2}
+          sx={{ mb: 1 }}
+          key={product.slug + product.size}
+        >
           <Grid item xs={3}>
-            <NextLink href="/product/slug" passHref>
+            <NextLink href={`/product/${product.slug}`} passHref>
               <Link>
                 <CardActionArea>
                   <CardMedia
-                    image={`/products/${product.images[0]}`}
+                    image={`/products/${product.images}`}
                     component="img"
                     sx={{ borderRadius: "5px" }}
                   />
@@ -44,13 +55,24 @@ export const CartList: FC<Props> = ({ editable = false }) => {
             <Box display="flex" flexDirection="column">
               <Typography variant="body1"> {product.title} </Typography>
               <Typography variant="body2">
-                Talla: <strong> M </strong>
+                Talla: <strong> {product.size} </strong>
               </Typography>
               {editable ? (
-                <ItemCounter />
+                <ItemCounter
+                  quantity={product.quantity}
+                  inStock={product.productStock}
+                  restStock={product.restStock}
+                  onStock={(stock, productQuantity) =>
+                    handleUpdateCartQuantity(product, productQuantity, stock)
+                  }
+                />
               ) : (
                 <Typography variant="body2">
-                  Cantidad: <strong> 1 </strong>
+                  Cantidad:
+                  <strong>
+                    {product.quantity}
+                    {product.quantity > 1 ? "productos" : "producto"}
+                  </strong>
                 </Typography>
               )}
             </Box>

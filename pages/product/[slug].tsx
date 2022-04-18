@@ -18,10 +18,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
   const router = useRouter();
   const { addProductsToCart, cart } = useContext(CartContext);
   const [sizeSoldedOut, setSizeSoldedOut] = useState<(ISize | undefined)[]>([]);
-  const [stockControl, setStockControl] = useState({
-    stock: product.inStock - 1,
-    productQuantity: 1,
-  });
+
   const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
     _id: product._id,
     images: product.images[0],
@@ -34,47 +31,40 @@ const ProductPage: NextPage<Props> = ({ product }) => {
     productStock: product.inStock,
     restStock: product.inStock,
   });
-  const findProduct = useMemo(
-    () => cart.find((p) => product._id === p._id),
-    [cart, product]
-  );
 
   useEffect(() => {
-    // map the cart and find products with the same id
-    const productsWithSizeSoldedOut = cart.map((p) => {
+    cart.map((p) => {
       if (p._id !== product._id) return p;
       if (p.size === undefined) return p;
       const sizeSoldedOut = product.sizes.find((s) => s === p.size);
       if (p.restStock === 0 && p.size === sizeSoldedOut) {
-        setSizeSoldedOut((currentSizes) => [...currentSizes, p.size]);
+        setSizeSoldedOut((currentSizes) => {
+          if (currentSizes.find((s) => s === sizeSoldedOut))
+            return currentSizes;
+          return [...currentSizes, p.size];
+        });
       }
 
       return p;
     });
   }, [cart, product]);
 
-  useEffect(() => {
-    console.log(sizeSoldedOut);
-  }, [sizeSoldedOut]);
-
   const handleSizeSelected = (size: ISize) => {
     setTempCartProduct({ ...tempCartProduct, size });
   };
 
   const handleStock = (stock: number, productQuantity: number) => {
-    setStockControl({ stock, productQuantity });
-    if (stockControl.stock === 0) return;
     setTempCartProduct({
       ...tempCartProduct,
-      quantity: stockControl.productQuantity,
-      restStock: stockControl.stock,
+      quantity: productQuantity,
+      restStock: stock,
     });
   };
 
   const handleAddProductToCart = () => {
     if (!tempCartProduct.size) return;
     addProductsToCart(tempCartProduct);
-    // router.push("/cart");
+    router.push("/cart");
   };
 
   return (
@@ -95,9 +85,9 @@ const ProductPage: NextPage<Props> = ({ product }) => {
             <Box sx={{ my: 2 }}>
               <Typography variant="subtitle2">Cantidad</Typography>
               <ItemCounter
-                quantity={stockControl.productQuantity}
+                quantity={tempCartProduct.quantity}
                 inStock={tempCartProduct.productStock}
-                restStock={stockControl.stock}
+                restStock={tempCartProduct.restStock}
                 onStock={handleStock}
               />
               <SizeSelector
@@ -107,8 +97,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
                 sizeSoldOut={sizeSoldedOut}
               />
             </Box>
-            {findProduct?.restStock === 0 &&
-            findProduct.size === tempCartProduct.size ? (
+            {product.inStock === 0 ? (
               <Chip
                 label="No hay stock de este artículo"
                 color="error"

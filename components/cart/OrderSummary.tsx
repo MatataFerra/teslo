@@ -23,7 +23,7 @@ export const OrderSummary: FC = () => {
       <Grid item xs={6} display="flex" justifyContent="end">
         <Typography> $133.55 </Typography>
       </Grid>
-      <Grid xs={12} my={2}>
+      <Grid item xs={12} my={2}>
         <Divider />
       </Grid>
       <Grid item xs={6}>

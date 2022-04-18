@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { FC } from "react";
 import { ISize } from "../../interfaces";
 
@@ -21,6 +21,7 @@ export const SizeSelector: FC<Props> = ({
 
   return (
     <Box>
+      <Typography> Talles disponibles </Typography>
       {sizes
         .filter((size) => !sizeSoldOut?.includes(size))
         .map((size) => {
