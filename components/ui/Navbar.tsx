@@ -18,13 +18,14 @@ import {
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
-import { UiContext } from "../../context/";
+import { UiContext, CartContext } from "../../context/";
 
 export const Navbar: FC = () => {
   const router = useRouter();
   const [option, setOption] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const { toogleSideMenu } = useContext(UiContext);
+  const { numberOfItems } = useContext(CartContext);
 
   useEffect(() => {
     const { pathname } = router;
@@ -83,7 +84,7 @@ export const Navbar: FC = () => {
 
         <Box flex={1} />
 
-        {/* Panrallas grandes */}
+        {/* Pantallas grandes */}
 
         {isSearchVisible ? (
           <Input
@@ -131,7 +132,10 @@ export const Navbar: FC = () => {
         <NextLink href="/cart" passHref>
           <Link>
             <IconButton>
-              <Badge badgeContent={2} color="secondary">
+              <Badge
+                badgeContent={numberOfItems > 15 ? "+15" : numberOfItems}
+                color="secondary"
+              >
                 <ShoppingCartOutlined />
               </Badge>
             </IconButton>
