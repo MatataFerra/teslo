@@ -1,3 +1,5 @@
+import { jwt } from "./";
+
 export const isValidEmail = (email: string): boolean => {
   const match = String(email)
     .toLowerCase()
@@ -10,4 +12,26 @@ export const isValidEmail = (email: string): boolean => {
 
 export const isEmail = (email: string): string | undefined => {
   return isValidEmail(email) ? undefined : "El correo no parece ser válido";
+};
+
+export const isValidTokenForSSR = async (token: string, destination: string) => {
+  let isValidToken = false;
+
+  try {
+    (await jwt.isValidToken(token)) ?? "";
+    isValidToken = true;
+  } catch (error) {
+    isValidToken = false;
+  }
+
+  if (!isValidToken) {
+    return {
+      redirect: {
+        destination: "/auth/login?p=/" + destination,
+        permanent: false,
+      },
+    };
+  }
+
+  return {};
 };

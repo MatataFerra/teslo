@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect, useMemo } from "react";
+import { useState, useContext, useEffect } from "react";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import { dbProducts } from "../../database";
@@ -6,8 +6,7 @@ import { ShopLayout } from "../../components/layouts";
 import { Grid, Box, Typography, Button, Chip } from "@mui/material";
 import { ProductSlideShow, SizeSelector } from "../../components/products";
 import { ItemCounter } from "../../components/ui";
-import { ICartProduct, IProduct } from "../../interfaces";
-import { ISize } from "../../interfaces/products";
+import { ICartProduct, IProduct, ISize } from "../../interfaces";
 import { CartContext } from "../../context/";
 
 interface Props {
@@ -21,7 +20,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
 
   const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
     _id: product._id,
-    images: product.images[0],
+    image: product.images[0],
     price: product.price,
     size: undefined,
     slug: product.slug,
@@ -39,8 +38,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
       const sizeSoldedOut = product.sizes.find((s) => s === p.size);
       if (p.restStock === 0 && p.size === sizeSoldedOut) {
         setSizeSoldedOut((currentSizes) => {
-          if (currentSizes.find((s) => s === sizeSoldedOut))
-            return currentSizes;
+          if (currentSizes.find((s) => s === sizeSoldedOut)) return currentSizes;
           return [...currentSizes, p.size];
         });
       }
@@ -74,16 +72,16 @@ const ProductPage: NextPage<Props> = ({ product }) => {
           <ProductSlideShow images={product.images} />
         </Grid>
         <Grid item xs={12} sm={5}>
-          <Box display="flex" flexDirection="column">
-            <Typography variant="h1" component="h1">
+          <Box display='flex' flexDirection='column'>
+            <Typography variant='h1' component='h1'>
               {product.title}
             </Typography>
-            <Typography variant="subtitle1" component="h2">
+            <Typography variant='subtitle1' component='h2'>
               {`$${product.price}`}
             </Typography>
 
             <Box sx={{ my: 2 }}>
-              <Typography variant="subtitle2">Cantidad</Typography>
+              <Typography variant='subtitle2'>Cantidad</Typography>
               <ItemCounter
                 quantity={tempCartProduct.quantity}
                 inStock={tempCartProduct.productStock}
@@ -98,27 +96,20 @@ const ProductPage: NextPage<Props> = ({ product }) => {
               />
             </Box>
             {product.inStock === 0 ? (
-              <Chip
-                label="No hay stock de este artículo"
-                color="error"
-                variant="outlined"
-              />
+              <Chip label='No hay stock de este artículo' color='error' variant='outlined' />
             ) : (
               <Button
-                color="secondary"
-                className="circular-btn"
+                color='secondary'
+                className='circular-btn'
                 disabled={!!!tempCartProduct.size}
-                onClick={handleAddProductToCart}
-              >
-                {tempCartProduct.size
-                  ? "Agregar al carrito"
-                  : "Seleccione un tamaño"}
+                onClick={handleAddProductToCart}>
+                {tempCartProduct.size ? "Agregar al carrito" : "Seleccione un tamaño"}
               </Button>
             )}
 
             <Box sx={{ mt: 3 }}>
-              <Typography variant="subtitle2">Descripción</Typography>
-              <Typography variant="body2"> {product.description} </Typography>
+              <Typography variant='subtitle2'>Descripción</Typography>
+              <Typography variant='body2'> {product.description} </Typography>
             </Box>
           </Box>
         </Grid>

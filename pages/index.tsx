@@ -1,7 +1,6 @@
 import type { NextPage } from "next";
 import { Typography } from "@mui/material";
 import { ShopLayout } from "../components/layouts";
-import { initialData } from "../database/seed-data";
 import { ProductList } from "../components/products";
 import { useProducts } from "../hooks";
 import { FullScreenLoading } from "../components/ui";
@@ -10,14 +9,11 @@ const Home: NextPage = () => {
   const { products, isLoading } = useProducts("/products");
 
   return (
-    <ShopLayout
-      title="Teslo - shop"
-      pageDescription="Encontrar los mejores productos"
-    >
-      <Typography variant="h1" component="h1">
+    <ShopLayout title='Teslo - shop' pageDescription='Encontrar los mejores productos'>
+      <Typography variant='h1' component='h1'>
         Tienda
       </Typography>
-      <Typography variant="h2">Todos los productos</Typography>
+      <Typography variant='h2'>Todos los productos</Typography>
       {isLoading ? <FullScreenLoading /> : <ProductList products={products} />}
     </ShopLayout>
   );

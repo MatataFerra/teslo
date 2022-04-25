@@ -1,7 +1,6 @@
 import { FC } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 import { AddCircleOutline, RemoveCircleOutline } from "@mui/icons-material";
-import { ICartProduct } from "../../interfaces";
 
 interface Props {
   quantity: number;
@@ -10,12 +9,7 @@ interface Props {
   onStock: (stock: number, productQuantity: number) => void;
 }
 
-export const ItemCounter: FC<Props> = ({
-  quantity,
-  inStock,
-  restStock,
-  onStock,
-}) => {
+export const ItemCounter: FC<Props> = ({ quantity, inStock, restStock, onStock }) => {
   const handleAdd = () => {
     if (quantity >= inStock) return;
     onStock(restStock - 1, quantity + 1);
@@ -27,11 +21,11 @@ export const ItemCounter: FC<Props> = ({
   };
 
   return (
-    <Box display="flex" alignItems="center">
+    <Box display='flex' alignItems='center'>
       <IconButton onClick={handleRemove}>
         <RemoveCircleOutline />
       </IconButton>
-      <Typography variant="body2" sx={{ width: 40, textAlign: "center" }}>
+      <Typography variant='body2' sx={{ width: 40, textAlign: "center" }}>
         {quantity}
       </Typography>
 

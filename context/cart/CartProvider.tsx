@@ -1,22 +1,29 @@
 import { FC, useReducer, useEffect } from "react";
-import { Children, ICartProduct } from "../../interfaces";
+import { Children, ICartProduct, ShippingAddress, IOrder } from "../../interfaces";
 import { CartContext, cartReducer } from "./";
 import Cookie from "js-cookie";
+import { tesloApi } from "../../api";
 
 export interface CartState {
+  isLoaded: boolean;
   cart: ICartProduct[];
   total: number;
   subTotal: number;
   tax: number;
   numberOfItems: number;
+
+  shippingAddress?: ShippingAddress;
 }
 
 const CART_INITIAL_STATE: CartState = {
+  isLoaded: false,
   cart: [],
   total: 0,
   subTotal: 0,
   tax: 0,
   numberOfItems: 0,
+
+  shippingAddress: undefined,
 };
 
 export const CartProvider: FC<Children> = ({ children }) => {
@@ -33,6 +40,26 @@ export const CartProvider: FC<Children> = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    if (state.shippingAddress?.address === undefined) return;
+
+    const shippingAddress: ShippingAddress = {
+      firstName: Cookie.get("firstName") ?? "",
+      lastName: Cookie.get("lastName") ?? "",
+      address: Cookie.get("address") ?? "",
+      address2: Cookie.get("address2") ?? "",
+      zip: Cookie.get("zip") ?? "",
+      city: Cookie.get("city") ?? "",
+      country: Cookie.get("country") ?? "",
+      phone: Cookie.get("phone") ?? "",
+    };
+
+    dispatch({
+      type: "[Cart] - Load address from cookie",
+      payload: shippingAddress,
+    });
+  }, [state.shippingAddress]);
+
+  useEffect(() => {
     if (state.cart.length > 0) {
       Cookie.set("cart", JSON.stringify(state.cart));
     } else {
@@ -41,14 +68,8 @@ export const CartProvider: FC<Children> = ({ children }) => {
   }, [state.cart]);
 
   useEffect(() => {
-    const numberOfItems = state.cart.reduce(
-      (prev, current) => current.quantity + prev,
-      0
-    );
-    const subTotal = state.cart.reduce(
-      (prev, current) => current.quantity * current.price + prev,
-      0
-    );
+    const numberOfItems = state.cart.reduce((prev, current) => current.quantity + prev, 0);
+    const subTotal = state.cart.reduce((prev, current) => current.quantity * current.price + prev, 0);
     const taxRate = Number(process.env.NEXT_PUBLIC_TAX_RATE || 0.21);
 
     const orderSummary = {
@@ -73,9 +94,7 @@ export const CartProvider: FC<Children> = ({ children }) => {
       });
     }
 
-    const productWithDifferentSize = state.cart.some(
-      (p) => p._id === product._id && p.size === product.size
-    );
+    const productWithDifferentSize = state.cart.some((p) => p._id === product._id && p.size === product.size);
     if (!productWithDifferentSize) {
       return dispatch({
         type: "[Cart] - Add product to cart",
@@ -130,13 +149,50 @@ export const CartProvider: FC<Children> = ({ children }) => {
   };
 
   const removeItemFromCart = (product: ICartProduct) => {
-    const updatedProducts = state.cart.filter(
-      (p) => p._id !== product._id && p.size !== product.size
-    );
+    const updatedProducts = state.cart.filter((p) => p._id !== product._id && p.size !== product.size);
     dispatch({
       type: "[Cart] - Remove item from cart",
       payload: updatedProducts,
     });
+  };
+
+  const updateAddress = (data: ShippingAddress) => {
+    const { firstName, lastName, address, address2, zip, city, country, phone } = data;
+
+    Cookie.set("firstName", firstName);
+    Cookie.set("lastName", lastName);
+    Cookie.set("address", address);
+    Cookie.set("address2", address2 ?? "");
+    Cookie.set("zip", zip);
+    Cookie.set("city", city);
+    Cookie.set("country", country);
+    Cookie.set("phone", phone);
+    dispatch({ type: "[Cart] - Update shippingAddress", payload: data });
+  };
+
+  const createOrder = async () => {
+    if (!state.shippingAddress) {
+      throw new Error("Please provide shipping address");
+    }
+
+    const body: IOrder = {
+      orderItems: state.cart.map((p) => ({
+        ...p,
+        size: p.size!,
+      })),
+      shippingAddress: state.shippingAddress,
+      numberOfItems: state.numberOfItems,
+      subTotal: state.subTotal,
+      tax: state.tax,
+      total: state.total,
+      isPaid: false,
+    };
+
+    try {
+      const { data } = await tesloApi.post("/orders", body);
+
+      console.log(data);
+    } catch (error) {}
   };
 
   return (
@@ -146,8 +202,9 @@ export const CartProvider: FC<Children> = ({ children }) => {
         addProductsToCart,
         updateCartQuantity,
         removeItemFromCart,
-      }}
-    >
+        updateAddress,
+        createOrder,
+      }}>
       {children}
     </CartContext.Provider>
   );

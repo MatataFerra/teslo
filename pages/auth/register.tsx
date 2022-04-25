@@ -1,15 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import NextLink from "next/link";
-import { NextPage } from "next";
-import {
-  Box,
-  Grid,
-  Typography,
-  TextField,
-  Button,
-  Link,
-  Chip,
-} from "@mui/material";
+import { NextPage, GetServerSideProps } from "next";
+import { Box, Grid, Typography, TextField, Button, Link, Chip } from "@mui/material";
 
 import { tesloApi } from "../../api";
 import { AuthLayout } from "../../components/layouts";
@@ -20,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { validations } from "../../utils";
 import { useRouter } from "next/router";
 import { AuthContext } from "../../context";
+import { signIn, getSession } from "next-auth/react";
 
 type FormData = { email: string; password: string; name: string };
 
@@ -41,11 +34,7 @@ const RegisterPage: NextPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const onRegisterForm = async (formData: FormData) => {
     setShowError(false);
-    const { hasError, message } = await registerUser(
-      formData.name,
-      formData.email,
-      formData.password
-    );
+    const { hasError, message } = await registerUser(formData.name, formData.email, formData.password);
 
     if (hasError) {
       setShowError(true);
@@ -53,7 +42,10 @@ const RegisterPage: NextPage = () => {
       return;
     }
 
-    router.replace("/");
+    // const destination = router.query.p?.toString() ?? "/";
+    // router.replace(destination);
+
+    await signIn("credentials", { email: formData.email, password: formData.password });
   };
 
   useEffect(() => {
@@ -124,12 +116,7 @@ const RegisterPage: NextPage = () => {
             </Grid>
 
             <Grid item xs={12}>
-              <Button
-                type='submit'
-                color='secondary'
-                className='circular-btn'
-                size='large'
-                fullWidth>
+              <Button type='submit' color='secondary' className='circular-btn' size='large' fullWidth>
                 Crear
               </Button>
             </Grid>
@@ -143,7 +130,7 @@ const RegisterPage: NextPage = () => {
               />
             </Grid>
             <Grid item xs={12} display='flex' justifyContent='center'>
-              <NextLink href='/auth/login' passHref>
+              <NextLink href={router.query.p ? `/auth/login?p=${router.query.p}` : "/auth/login"} passHref>
                 <Link underline='always'>¿Ya tienes cuenta?</Link>
               </NextLink>
             </Grid>
@@ -152,6 +139,24 @@ const RegisterPage: NextPage = () => {
       </form>
     </AuthLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+  const session = await getSession({ req });
+  const { p = "/" } = query;
+
+  if (session) {
+    return {
+      redirect: {
+        destination: p.toString(),
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };
 
 export default RegisterPage;
