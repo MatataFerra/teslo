@@ -1,5 +1,4 @@
-import { ICartProduct } from "../../interfaces";
-import { ShippingAddress } from "./";
+import { ICartProduct, ShippingAddress } from "../../interfaces";
 
 export type CartActionType =
   | {
@@ -19,4 +18,5 @@ export type CartActionType =
         tax: number;
         numberOfItems: number;
       };
-    };
+    }
+  | { type: "[Cart] - Order complete" };

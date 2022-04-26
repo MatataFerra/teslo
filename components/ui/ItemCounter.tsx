@@ -6,6 +6,7 @@ interface Props {
   quantity: number;
   inStock: number;
   restStock: number;
+
   onStock: (stock: number, productQuantity: number) => void;
 }
 
@@ -25,10 +26,10 @@ export const ItemCounter: FC<Props> = ({ quantity, inStock, restStock, onStock }
       <IconButton onClick={handleRemove}>
         <RemoveCircleOutline />
       </IconButton>
+
       <Typography variant='body2' sx={{ width: 40, textAlign: "center" }}>
         {quantity}
       </Typography>
-
       <IconButton onClick={handleAdd}>
         <AddCircleOutline />
       </IconButton>

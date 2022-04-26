@@ -8,16 +8,15 @@ import { Product, Order } from "../../../models";
 
 type Data = { message: string } | IOrder;
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   if (req.method !== "POST") {
     res.status(405).json({ message: "Method not allowed" });
     return;
   }
 
   try {
-    createOrder(req, res);
-
-    return res.status(200).json({ message: "Order created" });
+    const order = (await createOrder(req, res)) as IOrder;
+    return res.status(201).json(order);
   } catch (error: any) {
     console.log(error);
     return res.status(500).json({ message: error.message || "Revise la consola" });
@@ -56,6 +55,8 @@ async function createOrder(req: NextApiRequest, res: NextApiResponse) {
     const newOrder = new Order({ ...req.body, isPaid: false, user: userId });
     await newOrder.save();
     await db.disconnect();
+
+    return newOrder;
   } catch (error: any) {
     await db.disconnect();
     console.log(error);

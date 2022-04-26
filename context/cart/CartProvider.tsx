@@ -3,6 +3,7 @@ import { Children, ICartProduct, ShippingAddress, IOrder } from "../../interface
 import { CartContext, cartReducer } from "./";
 import Cookie from "js-cookie";
 import { tesloApi } from "../../api";
+import axios from "axios";
 
 export interface CartState {
   isLoaded: boolean;
@@ -170,7 +171,7 @@ export const CartProvider: FC<Children> = ({ children }) => {
     dispatch({ type: "[Cart] - Update shippingAddress", payload: data });
   };
 
-  const createOrder = async () => {
+  const createOrder = async (): Promise<{ hasError: boolean; message: string }> => {
     if (!state.shippingAddress) {
       throw new Error("Please provide shipping address");
     }
@@ -189,10 +190,27 @@ export const CartProvider: FC<Children> = ({ children }) => {
     };
 
     try {
-      const { data } = await tesloApi.post("/orders", body);
+      const { data } = await tesloApi.post<IOrder>("/orders", body);
 
-      console.log(data);
-    } catch (error) {}
+      dispatch({ type: "[Cart] - Order complete" });
+
+      return {
+        hasError: false,
+        message: data._id!,
+      };
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        return {
+          hasError: true,
+          message: error.response?.data?.message ?? "",
+        };
+      }
+
+      return {
+        hasError: true,
+        message: "Something went wrong",
+      };
+    }
   };
 
   return (

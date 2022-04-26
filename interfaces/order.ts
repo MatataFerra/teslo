@@ -16,13 +16,15 @@ export interface IOrder {
 
 export interface IOrderItems {
   _id: string;
-  title: string;
-  size?: ISize;
-  quantity: number;
-  slug: string;
+  gender: IGender;
   image: string;
   price: number;
-  gender: IGender;
+  productStock: number;
+  quantity: number;
+  restStock: number;
+  size?: ISize;
+  slug: string;
+  title: string;
 }
 
 export interface ShippingAddress {

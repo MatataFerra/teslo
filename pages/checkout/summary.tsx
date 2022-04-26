@@ -1,9 +1,9 @@
 import NextLink from "next/link";
-import { Typography, Grid, Card, CardContent, Divider, Box, Button, Link } from "@mui/material";
+import { Typography, Grid, Card, CardContent, Divider, Box, Button, Link, Chip } from "@mui/material";
 import { NextPage } from "next";
 import { CartList, OrderSummary } from "../../components/cart";
 import { ShopLayout } from "../../components/layouts";
-import { useContext, useMemo, useEffect } from "react";
+import { useContext, useMemo, useEffect, useState } from "react";
 import { CartContext } from "../../context";
 import { countries } from "../../utils";
 import Cookie from "js-cookie";
@@ -11,6 +11,8 @@ import { useRouter } from "next/router";
 
 const SummaryPage: NextPage = () => {
   const router = useRouter();
+  const [isPosting, setIsPosting] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const { shippingAddress, numberOfItems, createOrder } = useContext(CartContext);
   const memorizeCountry = useMemo(
     () => countries.find((c) => c.code === shippingAddress?.country),
@@ -23,8 +25,16 @@ const SummaryPage: NextPage = () => {
     }
   }, [router]);
 
-  const onCreateOrder = () => {
-    createOrder();
+  const onCreateOrder = async () => {
+    setIsPosting(true);
+    const { hasError, message } = await createOrder();
+
+    if (hasError) {
+      setIsPosting(false);
+      setErrorMessage(message);
+    }
+
+    router.replace(`/orders/${message}`);
   };
 
   if (!shippingAddress) {
@@ -58,17 +68,14 @@ const SummaryPage: NextPage = () => {
               </Box>
 
               <Typography>
-                {" "}
-                {firstName} {lastName}{" "}
+                {firstName} {lastName}
               </Typography>
               <Typography>
-                {" "}
                 {address}
-                {address2 ? `,${address2}` : ""}{" "}
+                {address2 ? `,${address2}` : ""}
               </Typography>
               <Typography>
-                {" "}
-                {city}, {zip}{" "}
+                {city}, {zip}
               </Typography>
               <Typography> {memorizeCountry?.name ?? "País no encontrado"} </Typography>
               <Typography> {phone} </Typography>
@@ -83,10 +90,21 @@ const SummaryPage: NextPage = () => {
 
               <OrderSummary />
 
-              <Box sx={{ mt: 3 }}>
-                <Button onClick={onCreateOrder} color='secondary' fullWidth className='circular-btn'>
+              <Box sx={{ mt: 3 }} display='flex' flexDirection='column'>
+                <Button
+                  disabled={isPosting}
+                  onClick={onCreateOrder}
+                  color='secondary'
+                  fullWidth
+                  className='circular-btn'>
                   Confirmar orden
                 </Button>
+                <Chip
+                  className='fadeIn'
+                  color='error'
+                  label={errorMessage}
+                  sx={{ display: errorMessage ? "flex" : "none", mt: 4 }}
+                />
               </Box>
             </CardContent>
           </Card>
