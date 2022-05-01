@@ -49,12 +49,12 @@ export const CartList: FC<Props> = ({ editable = false, products }) => {
                   onStock={(stock, productQuantity) => handleUpdateCartQuantity(product, productQuantity, stock)}
                 />
               ) : (
-                <>
+                <Box display='flex' gap={1} alignItems='center'>
                   <Typography variant='body2'>Cantidad:</Typography>
                   <Typography sx={{ fontSize: "12px", fontWeight: "bold" }}>
                     {product.quantity} {product.quantity > 1 ? "productos" : "producto"}
                   </Typography>
-                </>
+                </Box>
               )}
             </Box>
           </Grid>

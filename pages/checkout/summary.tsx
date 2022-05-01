@@ -13,7 +13,7 @@ const SummaryPage: NextPage = () => {
   const router = useRouter();
   const [isPosting, setIsPosting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const { shippingAddress, numberOfItems, createOrder } = useContext(CartContext);
+  const { shippingAddress, numberOfItems, createOrder, subTotal, tax, total } = useContext(CartContext);
   const memorizeCountry = useMemo(
     () => countries.find((c) => c.code === shippingAddress?.country),
     [shippingAddress?.country]
@@ -23,6 +23,10 @@ const SummaryPage: NextPage = () => {
     if (!Cookie.get("firstName")) {
       return router.back();
     }
+
+    // if (!shippingAddress) {
+    //   return loadShippingAddress();
+    // }
   }, [router]);
 
   const onCreateOrder = async () => {
@@ -32,6 +36,7 @@ const SummaryPage: NextPage = () => {
     if (hasError) {
       setIsPosting(false);
       setErrorMessage(message);
+      return router.replace("/auth/login?p=/checkout/summary");
     }
 
     router.replace(`/orders/${message}`);
@@ -88,7 +93,7 @@ const SummaryPage: NextPage = () => {
                 </NextLink>
               </Box>
 
-              <OrderSummary />
+              <OrderSummary numberOfItems={numberOfItems} subTotal={subTotal} tax={tax} total={total} />
 
               <Box sx={{ mt: 3 }} display='flex' flexDirection='column'>
                 <Button

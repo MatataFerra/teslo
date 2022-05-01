@@ -41,7 +41,7 @@ export const CartProvider: FC<Children> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (state.shippingAddress?.address === undefined) return;
+    if (state.shippingAddress) return;
 
     const shippingAddress: ShippingAddress = {
       firstName: Cookie.get("firstName") ?? "",

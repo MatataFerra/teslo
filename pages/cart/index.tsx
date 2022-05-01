@@ -8,7 +8,7 @@ import { Typography, Grid, Card, CardContent, Divider, Box, Button } from "@mui/
 import { FullScreenLoading } from "../../components/ui";
 
 const CartPage: NextPage = () => {
-  const { numberOfItems, isLoaded, cart } = useContext(CartContext);
+  const { numberOfItems, isLoaded, cart, subTotal, tax, total } = useContext(CartContext);
 
   const router = useRouter();
   const productText = numberOfItems === 1 ? "producto" : "productos";
@@ -38,7 +38,7 @@ const CartPage: NextPage = () => {
             <CardContent>
               <Typography variant='h2'>Orden</Typography>
               <Divider />
-              <OrderSummary />
+              <OrderSummary numberOfItems={numberOfItems} subTotal={subTotal} tax={tax} total={total} />
 
               <Box sx={{ mt: 3 }}>
                 <Button href='/checkout/address' color='secondary' fullWidth className='circular-btn'>

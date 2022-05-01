@@ -1,9 +1,10 @@
 import { NextPage, GetServerSideProps } from "next";
-import NextLink from "next/link";
+
+import { PayPalButtons } from "@paypal/react-paypal-js";
 import { Typography, Grid, Card, CardContent, Divider, Box, Button, Link, Chip } from "@mui/material";
 import { CartList, OrderSummary } from "../../components/cart";
 import { ShopLayout } from "../../components/layouts";
-import { CreditCardOffOutlined, CreditCardOutlined, CreditScoreOutlined } from "@mui/icons-material";
+import { CreditCardOffOutlined, CreditScoreOutlined } from "@mui/icons-material";
 import { getSession } from "next-auth/react";
 import { dbOrders } from "../../database";
 import { IOrder } from "../../interfaces";
@@ -39,7 +40,7 @@ const OrderPage: NextPage<Props> = ({ order }) => {
         />
       )}
 
-      <Grid container mt={2}>
+      <Grid container mt={2} className='fadeIn'>
         <Grid item xs={12} sm={7}>
           <CartList products={order.orderItems} />
         </Grid>
@@ -65,17 +66,43 @@ const OrderPage: NextPage<Props> = ({ order }) => {
 
               <Divider sx={{ my: 1 }} />
 
-              <OrderSummary />
+              <OrderSummary
+                numberOfItems={order.numberOfItems}
+                subTotal={order.subTotal}
+                tax={order.tax}
+                total={order.total}
+              />
 
               <Box sx={{ mt: 3 }}>
-                <h1>Pagar</h1>
-                <Chip
-                  sx={{ my: 2 }}
-                  label='Orden ya fue pagada'
-                  color='success'
-                  variant='outlined'
-                  icon={<CreditScoreOutlined />}
-                />
+                {order.isPaid ? (
+                  <Chip
+                    sx={{ my: 2 }}
+                    label='Orden ya fue pagada'
+                    color='success'
+                    variant='outlined'
+                    icon={<CreditScoreOutlined />}
+                  />
+                ) : (
+                  <PayPalButtons
+                    createOrder={(data, actions) => {
+                      return actions.order.create({
+                        purchase_units: [
+                          {
+                            amount: {
+                              value: "1.99",
+                            },
+                          },
+                        ],
+                      });
+                    }}
+                    onApprove={(data, actions) => {
+                      return actions.order!.capture().then((details) => {
+                        const name = details.payer.name?.given_name;
+                        alert(`Transaction completed by ${name}`);
+                      });
+                    }}
+                  />
+                )}
               </Box>
             </CardContent>
           </Card>

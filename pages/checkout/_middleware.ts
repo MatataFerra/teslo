@@ -9,6 +9,8 @@ export async function middleware(req: NextRequest | any, ev: NextFetchEvent) {
 
   if (!session) {
     const requestedPage = req.page.name;
+    console.log(`[middleware] ${requestedPage}`);
+
     return NextResponse.redirect(`/auth/login?p=${requestedPage}`);
   }
 
