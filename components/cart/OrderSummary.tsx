@@ -1,6 +1,5 @@
-import { FC, useContext } from "react";
+import { FC } from "react";
 import { Grid, Typography, Divider } from "@mui/material";
-import { CartContext } from "../../context";
 import { currency } from "../../utils";
 
 interface Props {

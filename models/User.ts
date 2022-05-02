@@ -9,7 +9,7 @@ const userSchema = new Schema(
     role: {
       type: String,
       enum: {
-        values: ["client", "admin"],
+        values: ["client", "admin", "super-admin", "SEO"],
         message: "enum validator failed for path `{PATH}` with value `{VALUE}`",
       },
       default: "client",

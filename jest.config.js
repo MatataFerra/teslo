@@ -16,6 +16,7 @@ const customJestConfig = {
   testEnvironment: "jest-environment-jsdom",
   testPathIgnorePatterns: ["/node_modules/", "/mongo/"],
   watchPathIgnorePatterns: ["/node_modules/", "/mongo/"],
+  preset: "@shelf/jest-mongodb",
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

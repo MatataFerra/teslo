@@ -1,9 +1,9 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { server } from "../mocks/server";
 import mockRouter from "next-router-mock";
 
-import Home from "@/pages/index";
-import { ProductList } from "@/components/products";
+import Home from "../pages/index";
+import { ProductList } from "../components/products";
 import { productsMock } from "../mocks/productMock";
 
 let loading = false;
@@ -43,5 +43,22 @@ describe("Test render home", () => {
     render(<ProductList products={productsMock} />);
     const img = screen.getByRole("img");
     expect(img).toBeInTheDocument();
+  });
+
+  test("click on product should navigate to product detail", () => {
+    const { getByRole } = render(<ProductList products={productsMock} />);
+    const product = getByRole("link");
+    const button = getByRole("button");
+    expect(product).toBeInTheDocument();
+    expect(product).toHaveAttribute("href", "/product/slug");
+    expect(button).toBeInTheDocument();
+  });
+
+  test("click on product should navigate to product detail", async () => {
+    const { getByRole } = render(<ProductList products={productsMock} />);
+    const product = getByRole("link");
+    const button = getByRole("button");
+    fireEvent.click(product);
+    await screen.findByText(productsMock[0].title);
   });
 });
