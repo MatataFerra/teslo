@@ -1,5 +1,6 @@
+import { NextPage } from "next";
 import { PeopleOutline } from "@mui/icons-material";
-import { FC, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { AdminLayout } from "../../components/layouts/AdminLayout";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import { Grid, MenuItem, Select } from "@mui/material";
@@ -7,8 +8,8 @@ import useSWR from "swr";
 import { IUser } from "../../interfaces";
 import { tesloApi } from "../../api";
 
-export const UsersPage: FC = () => {
-  const { data, error } = useSWR<IUser[]>("/api/admin/users");
+const UsersPage: NextPage = () => {
+  const { data, error } = useSWR<IUser[]>("/api/admin/user");
   const [users, setUsers] = useState<IUser[]>([]);
 
   useEffect(() => {
@@ -44,14 +45,15 @@ export const UsersPage: FC = () => {
     {
       field: "role",
       headerName: "Tipo de usuario",
-      width: 250,
+      width: 300,
+
       renderCell: ({ row }: GridValueGetterParams) => {
         return (
           <Select
             value={row.role}
             onChange={(e) => onRoleUpdate(row.id, e.target.value)}
             label='Tipo de usuario'
-            sx={{ width: "300px" }}>
+            sx={{ width: "100%", border: "none" }}>
             <MenuItem value='admin'>Administrador</MenuItem>
             <MenuItem value='client'>Cliente</MenuItem>
             <MenuItem value='super-user'>Super usuario</MenuItem>
@@ -79,3 +81,5 @@ export const UsersPage: FC = () => {
     </AdminLayout>
   );
 };
+
+export default UsersPage;

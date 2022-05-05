@@ -6,11 +6,11 @@ import { IOrder } from "../../../interfaces";
 type Data = { message: string } | IOrder[];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  if (req.method === "GET") {
-    getOrders(req, res);
+  if (req.method !== "GET") {
+    res.status(400).json({ message: "Method not allowed" });
   }
 
-  res.status(400).json({ message: "Method not allowed" });
+  return getOrders(req, res);
 }
 
 const getOrders = async (req: NextApiRequest, res: NextApiResponse<Data>) => {

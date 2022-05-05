@@ -1,4 +1,5 @@
-import { FC } from "react";
+import { NextPage } from "next";
+
 import { AdminLayout } from "../../components/layouts";
 import { ConfirmationNumberOutlined } from "@mui/icons-material";
 import { Grid, Chip } from "@mui/material";
@@ -10,7 +11,7 @@ const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 100 },
   { field: "email", headerName: "Email", width: 250 },
   { field: "name", headerName: "Nombre completo", width: 300 },
-  { field: "total", headerName: "Monto Total", width: 300 },
+  { field: "total", headerName: "Monto Total", width: 150 },
   {
     field: "isPaid",
     headerName: "Pagado",
@@ -21,6 +22,8 @@ const columns: GridColDef[] = [
         <Chip variant='outlined' label='Pendiente' color='warning' />
       );
     },
+
+    width: 120,
   },
   { field: "numberOfItems", headerName: "Número de productos", align: "center" },
 
@@ -39,7 +42,7 @@ const columns: GridColDef[] = [
   { field: "createdAt", headerName: "Órden creada el", align: "center", width: 300 },
 ];
 
-export const OrdersPage: FC = () => {
+const OrdersPage: NextPage = () => {
   const { data, error } = useSWR<IOrder[]>("/api/admin/orders");
 
   if (!data && !error) return <div>Loading...</div>;
@@ -67,3 +70,5 @@ export const OrdersPage: FC = () => {
     </AdminLayout>
   );
 };
+
+export default OrdersPage;

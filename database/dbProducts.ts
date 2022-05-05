@@ -2,9 +2,7 @@ import { db } from "./";
 import { Product } from "../models";
 import { IProduct } from "../interfaces";
 
-export const getProductsBySlug = async (
-  slug: string
-): Promise<IProduct | null> => {
+export const getProductsBySlug = async (slug: string): Promise<IProduct | null> => {
   await db.connect();
   const product = await Product.findOne({ slug }).lean();
   await db.disconnect();
@@ -12,6 +10,8 @@ export const getProductsBySlug = async (
   if (!product) {
     throw null;
   }
+
+  // procesamiento de las imagenes cuando la subamos al server
 
   return JSON.parse(JSON.stringify(product));
 };

@@ -14,6 +14,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
   if (req.method === "PUT") {
     return updateUsers(req, res);
   }
+
+  return res.status(400).json({ message: "Method not allowed" });
 }
 
 const getUsers = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
