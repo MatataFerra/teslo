@@ -2,8 +2,8 @@ import { NextPage } from "next";
 import NextLink from "next/link";
 
 import { AdminLayout } from "../../components/layouts";
-import { CategoryOutlined } from "@mui/icons-material";
-import { Grid, CardMedia, Link } from "@mui/material";
+import { AddOutlined, CategoryOutlined } from "@mui/icons-material";
+import { Grid, CardMedia, Link, Box, Button, Tooltip } from "@mui/material";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import { IProduct } from "../../interfaces";
 import useSWR from "swr";
@@ -14,8 +14,10 @@ const columns: GridColDef[] = [
     headerName: "Foto",
     renderCell: ({ row }: GridValueGetterParams) => {
       return (
-        <a href={`/products/${row.slug}`} target='_blank' rel='noopener noreferrer'>
-          <CardMedia component='img' className='fadeIn' image={`/products/${row.img}`}></CardMedia>
+        <a href={`/product/${row.slug}`} target='_blank' rel='noopener noreferrer'>
+          <Tooltip title='Ver producto' arrow placement='right'>
+            <CardMedia component='img' className='fadeIn' image={row.img} />
+          </Tooltip>
         </a>
       );
     },
@@ -27,7 +29,9 @@ const columns: GridColDef[] = [
     renderCell: ({ row }: GridValueGetterParams) => {
       return (
         <NextLink href={`/admin/products/${row.slug}`} passHref>
-          <Link underline='always'>{row.title}</Link>
+          <Tooltip title='Editar producto' arrow placement='right'>
+            <Link underline='always'>{row.title}</Link>
+          </Tooltip>
         </NextLink>
       );
     },
@@ -63,7 +67,14 @@ const ProductsPage: NextPage = () => {
     <AdminLayout
       title={`Productos (${data?.length ?? 0})`}
       subtitle={"Mantenimiento de órdenes"}
-      icon={<CategoryOutlined />}>
+      icon={<CategoryOutlined />}
+      back>
+      <Box display='flex' justifyContent='end' sx={{ mb: 2 }}>
+        <Button startIcon={<AddOutlined />} variant='contained' color='primary' href='/admin/products/new'>
+          Nuevo producto
+        </Button>
+      </Box>
+
       <Grid container className='fadeIn'>
         <Grid item xs={12} sx={{ height: 650, width: "100%" }}>
           <DataGrid rows={rows} columns={columns} pageSize={10} rowsPerPageOptions={[10]} />

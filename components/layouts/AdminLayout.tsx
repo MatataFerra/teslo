@@ -9,13 +9,14 @@ interface Props extends Children {
   title: string;
   subtitle: string;
   icon?: JSX.Element;
+  back?: boolean;
 }
 
-export const AdminLayout: FC<Props> = ({ title, subtitle, icon, children }) => {
+export const AdminLayout: FC<Props> = ({ title, subtitle, icon, children, back = false }) => {
   return (
     <>
       <nav>
-        <AdminNavbar />
+        <AdminNavbar back={back} />
       </nav>
 
       <SideMenu />

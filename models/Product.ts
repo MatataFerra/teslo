@@ -3,7 +3,7 @@ import { IProduct } from "../interfaces";
 
 const productSchema = new Schema(
   {
-    description: { type: String, required: true },
+    description: { type: String, required: true, default: "Create an amazing description" },
     images: [{ type: String }],
     inStock: { type: Number, required: true, default: 0 },
     price: { type: Number, required: true, default: 0 },
@@ -12,20 +12,21 @@ const productSchema = new Schema(
         type: String,
         enum: {
           values: ["XS", "S", "M", "L", "XL", "XXL", "XXXL"],
-          message:
-            "enum validator failed for path `{PATH}` with value `{VALUE}`",
+          message: "enum validator failed for path `{PATH}` with value `{VALUE}`",
         },
       },
     ],
-    slug: { type: String, required: true, unique: true },
+    slug: { type: String, required: true, unique: true, default: "think-in-a-slug" },
     tags: [{ type: String }],
-    title: { type: String, required: true },
+    title: { type: String, required: true, default: "Think in a title" },
     type: {
       type: String,
       enum: {
         values: ["shirts", "pants", "hoodies", "hats"],
         message: "enum validator failed for path `{PATH}` with value `{VALUE}`",
       },
+
+      default: "shirts",
     },
     gender: {
       type: String,
@@ -33,6 +34,8 @@ const productSchema = new Schema(
         values: ["men", "women", "kid", "unisex"],
         message: "{VALUE} is not a valid gender",
       },
+
+      default: "kid",
     },
   },
   {
@@ -52,7 +55,6 @@ productSchema.statics = {
   },
 };
 
-const Product: Model<IProduct> =
-  mongoose.models.Product || model("Product", productSchema);
+const Product: Model<IProduct> = mongoose.models.Product || model("Product", productSchema);
 
 export default Product;

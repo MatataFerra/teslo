@@ -17,14 +17,14 @@ export const ProductCard: FC<Props> = ({ product }) => {
   }, [product]);
 
   const productImage = useMemo(() => {
-    return isHovered ? `/products/${product.images[1]}` : `/products/${product.images[0]}`;
+    return isHovered ? `${product.images[1]}` : `${product.images[0]}`;
   }, [isHovered, product.images]);
 
   return (
     <Grid item xs={6} sm={4} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
       <Card>
         <NextLink href={`/product/${product.slug}`} passHref prefetch={false}>
-          <Link role='link'>
+          <Link role='link' data-testid='link-slug-product-card'>
             <CardActionArea>
               {product.inStock === 0 && (
                 <Chip

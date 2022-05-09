@@ -13,6 +13,7 @@ exports[`ProductList should render correctly 1`] = `
       >
         <a
           class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-6xddht-MuiTypography-root-MuiLink-root"
+          data-testid="link-slug-product-card"
           href="/product/slug"
           role="link"
         >
@@ -24,7 +25,7 @@ exports[`ProductList should render correctly 1`] = `
             <img
               alt="title"
               class="MuiCardMedia-root MuiCardMedia-media MuiCardMedia-img fadeIn css-o69gx8-MuiCardMedia-root"
-              src="/products/https://via.placeholder.com/300"
+              src="https://via.placeholder.com/300"
             />
             <span
               class="MuiCardActionArea-focusHighlight css-1v2exvi-MuiCardActionArea-focusHighlight"
@@ -53,6 +54,14 @@ exports[`ProductList should render correctly 1`] = `
 `;
 
 exports[`ProductList should render correctly with no products 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-4 css-480o17-MuiGrid-root"
+  />
+</DocumentFragment>
+`;
+
+exports[`ProductList should render correctly with no products 2`] = `
 <DocumentFragment>
   <div
     class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-4 css-480o17-MuiGrid-root"

@@ -1,5 +1,7 @@
-import React, { FC } from "react";
+import { useRouter } from "next/router";
+import React, { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
+import { useForm } from "react-hook-form";
 import { AdminLayout } from "../../../components/layouts";
 import { IProduct } from "../../../interfaces";
 import { DriveFileRenameOutline, SaveOutlined, UploadOutlined } from "@mui/icons-material";
@@ -19,29 +21,162 @@ import {
   FormGroup,
   FormLabel,
   Grid,
-  ListItem,
-  Paper,
   Radio,
   RadioGroup,
   TextField,
 } from "@mui/material";
+import { tesloApi } from "../../../api";
+import { Product } from "../../../models";
 
 const validTypes = ["shirts", "pants", "hoodies", "hats"];
 const validGender = ["men", "women", "kid", "unisex"];
 const validSizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+
+interface FormData {
+  _id?: string;
+  description: string;
+  images: string[];
+  inStock: number;
+  price: number;
+  sizes: string[];
+  slug: string;
+  tags: string[];
+  title: string;
+  type: string;
+  gender: string;
+}
 
 interface Props {
   product: IProduct;
 }
 
 const ProductAdminPage: FC<Props> = ({ product }) => {
-  const onDeleteTag = (tag: string) => {};
+  const router = useRouter();
+  const [newTagValue, setNewTagValue] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+    setValue,
+    watch,
+  } = useForm<FormData>({
+    defaultValues: product,
+  });
+
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (name === "title") {
+        const newSlug =
+          value.title
+            ?.trim()
+            .toLowerCase()
+            .replaceAll("'", "")
+            .replace(/\s/g, "-")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "") ?? "default-slug";
+
+        setValue("slug", newSlug);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, setValue]);
+
+  const onFileSelected = async ({ target }: ChangeEvent<HTMLInputElement>) => {
+    if (!target.files || target.files.length === 0) return;
+
+    // iterate over the files
+    for (let i = 0; i < target.files.length; i++) {
+      const formData = new FormData();
+      formData.append("file", target.files[i]);
+      const { data } = await tesloApi.post<{ message: string }>("/admin/upload", formData);
+
+      setValue("images", [...getValues("images"), data.message], { shouldValidate: true });
+    }
+  };
+
+  const onNewTag = () => {
+    if (newTagValue.trim() !== "") {
+      setNewTagValue("");
+
+      const currentTag = getValues("tags");
+
+      if (currentTag.includes(newTagValue.trim().toLowerCase())) {
+        return;
+      }
+      const newTags = [...getValues("tags"), newTagValue.trim().toLowerCase()];
+
+      setValue("tags", newTags);
+    }
+  };
+
+  const onDeleteTag = (tag: string) => {
+    const newTags = getValues("tags").filter((t) => t !== tag);
+
+    setValue("tags", newTags, { shouldValidate: true });
+  };
+
+  const onSubmit = async (form: FormData) => {
+    if (form.images.length < 2) {
+      return alert("Please upload at least 2 images");
+    }
+    setIsSaving(true);
+
+    try {
+      await tesloApi({
+        url: "/admin/products",
+        method: form._id ? "PUT" : "POST", // si hay id es un put, sino post
+        data: form,
+      });
+
+      if (!form._id) {
+        setIsSaving(false);
+        return router.replace(`/admin/products/${form.slug}`); // recargar navegador
+      } else {
+        return setIsSaving(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsSaving(false);
+    }
+  };
+
+  const onChangeSize = (size: string) => {
+    const currentSizes = getValues("sizes");
+    if (currentSizes.includes(size)) {
+      return setValue(
+        "sizes",
+        currentSizes.filter((s) => s !== size),
+        { shouldValidate: true }
+      );
+    }
+
+    setValue("sizes", [...currentSizes, size], { shouldValidate: true });
+  };
+
+  const onDeleteImage = (image: string) => {
+    setValue(
+      "images",
+      getValues("images").filter((i) => i !== image),
+      { shouldValidate: true }
+    );
+  };
 
   return (
-    <AdminLayout title={"Producto"} subtitle={`Editando: ${product.title}`} icon={<DriveFileRenameOutline />}>
-      <form>
+    <AdminLayout back title={"Producto"} subtitle={`Editando: ${product.title}`} icon={<DriveFileRenameOutline />}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Box display='flex' justifyContent='end' sx={{ mb: 1 }}>
-          <Button color='secondary' startIcon={<SaveOutlined />} sx={{ width: "150px" }} type='submit'>
+          <Button
+            disabled={isSaving}
+            color='secondary'
+            startIcon={<SaveOutlined />}
+            sx={{ width: "150px" }}
+            type='submit'
+            onKeyUp={(e) => e.preventDefault()}>
             Guardar
           </Button>
         </Box>
@@ -54,19 +189,55 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               variant='filled'
               fullWidth
               sx={{ mb: 1 }}
-              // { ...register('name', {
-              //     required: 'Este campo es requerido',
-              //     minLength: { value: 2, message: 'Mínimo 2 caracteres' }
-              // })}
-              // error={ !!errors.name }
-              // helperText={ errors.name?.message }
+              {...register("title", {
+                required: "Este campo es requerido",
+                minLength: { value: 2, message: "Mínimo 2 caracteres" },
+              })}
+              error={!!errors.title}
+              helperText={errors.title?.message}
             />
 
-            <TextField label='Descripción' variant='filled' fullWidth multiline sx={{ mb: 1 }} />
+            <TextField
+              label='Descripción'
+              variant='filled'
+              fullWidth
+              multiline
+              sx={{ mb: 1 }}
+              {...register("description", {
+                required: "Este campo es requerido",
+                minLength: { value: 2, message: "Mínimo 2 caracteres" },
+              })}
+              error={!!errors.description}
+              helperText={errors.description?.message}
+            />
 
-            <TextField label='Inventario' type='number' variant='filled' fullWidth sx={{ mb: 1 }} />
+            <TextField
+              label='Inventario'
+              type='number'
+              variant='filled'
+              fullWidth
+              sx={{ mb: 1 }}
+              {...register("inStock", {
+                required: "Este campo es requerido",
+                minLength: { value: 0, message: "Necesita completar este campo" },
+              })}
+              error={!!errors.inStock}
+              helperText={errors.inStock?.message}
+            />
 
-            <TextField label='Precio' type='number' variant='filled' fullWidth sx={{ mb: 1 }} />
+            <TextField
+              label='Precio'
+              type='number'
+              variant='filled'
+              fullWidth
+              sx={{ mb: 1 }}
+              {...register("price", {
+                required: "Este campo es requerido",
+                minLength: { value: 0, message: "Debe valer al menos 0" },
+              })}
+              error={!!errors.price}
+              helperText={errors.price?.message}
+            />
 
             <Divider sx={{ my: 1 }} />
 
@@ -74,9 +245,8 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               <FormLabel>Tipo</FormLabel>
               <RadioGroup
                 row
-                // value={ status }
-                // onChange={ onStatusChanged }
-              >
+                value={getValues("type")}
+                onChange={(e) => setValue("type", e.target.value, { shouldValidate: true })}>
                 {validTypes.map((option) => (
                   <FormControlLabel
                     key={option}
@@ -92,9 +262,8 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               <FormLabel>Género</FormLabel>
               <RadioGroup
                 row
-                // value={ status }
-                // onChange={ onStatusChanged }
-              >
+                value={getValues("gender")}
+                onChange={(e) => setValue("gender", e.target.value, { shouldValidate: true })}>
                 {validGender.map((option) => (
                   <FormControlLabel
                     key={option}
@@ -109,14 +278,30 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
             <FormGroup>
               <FormLabel>Tallas</FormLabel>
               {validSizes.map((size) => (
-                <FormControlLabel key={size} control={<Checkbox />} label={size} />
+                <FormControlLabel
+                  key={size}
+                  control={<Checkbox checked={getValues("sizes").includes(size)} />}
+                  label={size}
+                  onChange={() => onChangeSize(size)}
+                />
               ))}
             </FormGroup>
           </Grid>
 
           {/* Tags e imagenes */}
           <Grid item xs={12} sm={6}>
-            <TextField label='Slug - URL' variant='filled' fullWidth sx={{ mb: 1 }} />
+            <TextField
+              label='Slug - URL'
+              variant='filled'
+              fullWidth
+              sx={{ mb: 1 }}
+              {...register("slug", {
+                required: "Este campo es requerido",
+                validate: (val) => (val.trim().includes(" ") ? "No puede contener espacios" : undefined),
+              })}
+              error={!!errors.slug}
+              helperText={errors.slug?.message}
+            />
 
             <TextField
               label='Etiquetas'
@@ -124,6 +309,11 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               fullWidth
               sx={{ mb: 1 }}
               helperText='Presiona [spacebar] para agregar'
+              value={newTagValue}
+              onChange={(e) => setNewTagValue(e.target.value)}
+              onKeyUp={({ code }) => {
+                code === "Space" ? onNewTag() : null;
+              }}
             />
 
             <Box
@@ -135,7 +325,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                 m: 0,
               }}
               component='ul'>
-              {product.tags.map((tag) => {
+              {getValues("tags").map((tag) => {
                 return (
                   <Chip
                     key={tag}
@@ -153,19 +343,42 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 
             <Box display='flex' flexDirection='column'>
               <FormLabel sx={{ mb: 1 }}>Imágenes</FormLabel>
-              <Button color='secondary' fullWidth startIcon={<UploadOutlined />} sx={{ mb: 3 }}>
+              <Button
+                color='secondary'
+                fullWidth
+                startIcon={<UploadOutlined />}
+                sx={{ mb: 3 }}
+                onClick={() => fileInputRef.current?.click()}>
                 Cargar imagen
               </Button>
+              <input
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                type='file'
+                multiple
+                accept='image/png, image/png, /image/jpeg, image/jpg'
+                onChange={onFileSelected}
+              />
 
-              <Chip label='Es necesario al 2 imagenes' color='error' variant='outlined' />
+              <Chip
+                sx={{
+                  visibility: getValues("images").length < 2 ? "visible" : "hidden",
+                  mb: 2,
+                  transition: "0.3 ease all",
+                }}
+                label='Es necesario al menos 2 imagenes'
+                color='error'
+                variant='outlined'
+                className='fadeIn'
+              />
 
               <Grid container spacing={2}>
-                {product.images.map((img) => (
+                {getValues("images").map((img) => (
                   <Grid item xs={4} sm={3} key={img}>
                     <Card>
-                      <CardMedia component='img' className='fadeIn' image={`/products/${img}`} alt={img} />
+                      <CardMedia component='img' className='fadeIn' image={`${img}`} alt={img} />
                       <CardActions>
-                        <Button fullWidth color='error'>
+                        <Button fullWidth color='error' onClick={() => onDeleteImage(img)}>
                           Borrar
                         </Button>
                       </CardActions>
@@ -187,7 +400,16 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { slug = "" } = query;
 
-  const product = await dbProducts.getProductsBySlug(slug.toString());
+  let product: IProduct | null;
+
+  if (slug === "new") {
+    const tempProduct = JSON.parse(JSON.stringify(new Product()));
+    delete tempProduct._id;
+    tempProduct.images = ["https://via.placeholder.com/150", "https://via.placeholder.com/160"];
+    product = tempProduct;
+  } else {
+    product = await dbProducts.getProductsBySlug(slug.toString());
+  }
 
   if (!product) {
     return {

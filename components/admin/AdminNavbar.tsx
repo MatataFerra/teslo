@@ -1,11 +1,19 @@
 import { FC, useContext } from "react";
+import { useRouter } from "next/router";
 
 import { AppBar, Box, Button, Link, Toolbar, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { UiContext } from "../../context/";
+import { ArrowBack } from "@mui/icons-material";
+import HouseIcon from "@mui/icons-material/House";
 
-export const AdminNavbar: FC = () => {
+interface Props {
+  back?: boolean;
+}
+
+export const AdminNavbar: FC<Props> = ({ back = false }) => {
   const { toogleSideMenu } = useContext(UiContext);
+  const router = useRouter();
 
   return (
     <AppBar>
@@ -19,8 +27,19 @@ export const AdminNavbar: FC = () => {
           </Link>
         </NextLink>
         <Box flex={1} />
+        <Box display='flex' gap={2}>
+          {back && (
+            <Button startIcon={<ArrowBack />} variant='contained' color='primary' onClick={() => router.back()}>
+              Back
+            </Button>
+          )}
 
-        <Button onClick={toogleSideMenu}>Menú</Button>
+          <Button color='primary' onClick={() => router.push("/admin")}>
+            <HouseIcon />
+          </Button>
+
+          <Button onClick={toogleSideMenu}>Menú</Button>
+        </Box>
       </Toolbar>
     </AppBar>
   );

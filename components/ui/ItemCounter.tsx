@@ -30,7 +30,7 @@ export const ItemCounter: FC<Props> = ({ quantity, inStock, restStock, onStock }
       <Typography variant='body2' sx={{ width: 40, textAlign: "center" }}>
         {quantity}
       </Typography>
-      <IconButton onClick={handleAdd}>
+      <IconButton onClick={handleAdd} data-testid='item-counter-add'>
         <AddCircleOutline />
       </IconButton>
     </Box>

@@ -48,6 +48,8 @@ const OrdersPage: NextPage = () => {
   if (!data && !error) return <div>Loading...</div>;
   if (error) return <div>Error</div>;
 
+  console.log({ data });
+
   const rows = data!.map((order) => {
     return {
       id: order._id,

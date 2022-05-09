@@ -60,6 +60,7 @@ const DashboardPage: NextPage = () => {
           title={numberOfOrders}
           subtitle='Órdenes completadas'
           Icon={<CreditCardOffOutlined color='secondary' sx={{ fontSize: iconFontSize }} />}
+          route='/admin/orders'
         />
 
         <SummaryTile
@@ -78,12 +79,14 @@ const DashboardPage: NextPage = () => {
           title={numberOfClients}
           subtitle='Clientes'
           Icon={<GroupOutlined color='primary' sx={{ fontSize: iconFontSize }} />}
+          route='/admin/users'
         />
 
         <SummaryTile
           title={numberOfProducts}
           subtitle='Productos'
           Icon={<CategoryOutlined color='warning' sx={{ fontSize: iconFontSize }} />}
+          route='/admin/products'
         />
 
         <SummaryTile
