@@ -40,7 +40,7 @@ const columns: GridColDef[] = [
   { field: "type", headerName: "Tipo" },
   { field: "inStock", headerName: "Inventario" },
   { field: "price", headerName: "Precio" },
-  { field: "sizes", headerName: "Tallas", width: 250 },
+  { field: "sizes", headerName: "Tallas", width: 180 },
 ];
 
 const ProductsPage: NextPage = () => {

@@ -34,8 +34,6 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const updatedProducts = products.map((product) => {
     product.images = product.images.map((image) => {
       const regex = new RegExp(/https?/g);
-      // image.includes("http") ? image : `${process.env.HOST_NAME}products/${image}`;
-
       return regex.test(image) ? image : `${process.env.HOST_NAME}products/${image}`;
     });
 
@@ -70,7 +68,7 @@ const updateProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
     // TODO: eliminar fotos cloudinary
     product.images.forEach(async (image) => {
       if (!images.includes(image)) {
-        const [fileId, extension] = image.substring(image.lastIndexOf("/") + 1).split(".");
+        const [fileId] = image.substring(image.lastIndexOf("/") + 1).split(".");
         await cloudinary.uploader.destroy(fileId);
       }
     });
@@ -94,13 +92,6 @@ const createProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
   }
 
   // TODO: hay que evitar que se cree la ruta de la imagen
-  // const updatedProducts = products.map((product) => {
-  //   product.images = product.images.map((image) => {
-  //     return image.includes("http") ? image : `${process.env.HOST_NAME}products/${image}`;
-  //   });
-
-  //   return product;
-  // });
 
   try {
     await db.connect();
@@ -114,8 +105,6 @@ const createProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
     const product = new Product(req.body);
     await product.save();
     await db.disconnect();
-
-    console.log({ product: req.body });
 
     return res.status(201).json(product);
   } catch (error) {

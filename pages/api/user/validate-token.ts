@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../database";
 import { User } from "../../../models";
-import bcrypt from "bcryptjs";
 import { jwt } from "../../../utils";
 import { userApiResponse } from "../../../interfaces";
 
@@ -12,10 +11,7 @@ type Data =
       user: userApiResponse;
     };
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   if (req.method === "POST") {
     return checkJWT(req, res);
   }
@@ -35,9 +31,7 @@ const checkJWT = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     await db.disconnect();
 
     if (!user) {
-      return res
-        .status(400)
-        .json({ message: "Usuario o correo no válidos - EMAIL" });
+      return res.status(400).json({ message: "Usuario o correo no válidos - EMAIL" });
     }
 
     const { role, name, email } = user;

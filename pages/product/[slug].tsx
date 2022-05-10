@@ -1,12 +1,11 @@
 import { useState, useContext, useEffect } from "react";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
-import { useRouter } from "next/router";
 import { dbProducts } from "../../database";
 import { ShopLayout } from "../../components/layouts";
 import { Grid, Box, Typography, Button, Chip } from "@mui/material";
 import { ProductSlideShow, SizeSelector } from "../../components/products";
 import { ItemCounter } from "../../components/ui";
-import { ICartProduct, IProduct, ISize } from "../../interfaces";
+import { ICartProduct, IProduct, ISize, IProductSize } from "../../interfaces";
 import { CartContext } from "../../context/";
 
 interface Props {
@@ -14,7 +13,6 @@ interface Props {
 }
 
 const ProductPage: NextPage<Props> = ({ product }) => {
-  const router = useRouter();
   const { addProductsToCart, cart } = useContext(CartContext);
   const [sizeSoldedOut, setSizeSoldedOut] = useState<(ISize | undefined)[]>([]);
 
@@ -26,7 +24,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
     slug: product.slug,
     title: product.title,
     gender: product.gender,
-    quantity: 1,
+    quantity: 0,
     productStock: product.inStock,
     restStock: product.inStock,
   });
@@ -59,10 +57,11 @@ const ProductPage: NextPage<Props> = ({ product }) => {
     });
   };
 
-  const handleAddProductToCart = () => {
+  const handleAddProductToCart = async () => {
     if (!tempCartProduct.size) return;
     addProductsToCart(tempCartProduct);
-    router.push("/cart");
+
+    //router.push("/cart");
   };
 
   return (
@@ -118,9 +117,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
   );
 };
 
-// You should use getStaticPaths if you’re statically pre-rendering pages that use dynamic routes
-
-export const getStaticPaths: GetStaticPaths = async (ctx) => {
+export const getStaticPaths: GetStaticPaths = async () => {
   const slugs = await dbProducts.getAllProductsBySlug(); // your fetch function here
 
   return {
@@ -128,12 +125,6 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
     fallback: "blocking",
   };
 };
-
-// You should use getStaticProps when:
-//- The data required to render the page is available at build time ahead of a user’s request.
-//- The data comes from a headless CMS.
-//- The data can be publicly cached (not user-specific).
-//- The page must be pre-rendered (for SEO) and be very fast — getStaticProps generates HTML and JSON files, both of which can be cached by a CDN for performance.
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
   const { slug } = ctx.params as { slug: string };

@@ -1,3 +1,4 @@
+import { ISizeStock } from "./";
 export interface IProduct {
   _id: string;
   description: string;
@@ -5,6 +6,22 @@ export interface IProduct {
   inStock: number;
   price: number;
   sizes: ISize[];
+  slug: string;
+  tags: string[];
+  title: string;
+  type: IType;
+  gender: IGender;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IProductSize {
+  _id: string;
+  description: string;
+  images: string[];
+  inStock: number;
+  price: number;
+  sizes: ISizeStock[];
   slug: string;
   tags: string[];
   title: string;
