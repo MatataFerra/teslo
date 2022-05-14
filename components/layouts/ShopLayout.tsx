@@ -1,12 +1,12 @@
 import { FC, ReactElement } from "react";
 import Head from "next/head";
 import { Navbar, SideMenu } from "../ui";
+import { Children } from "../../interfaces";
 
-interface Props {
+interface Props extends Children {
   title: string;
   pageDescription: string;
   imageFullUrl?: string;
-  children: ReactElement[] | ReactElement;
 }
 
 export const ShopLayout: FC<Props> = ({
