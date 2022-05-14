@@ -25,7 +25,7 @@ export const CartList: FC<Props> = ({ editable = false, products }) => {
   return (
     <>
       {prodcutsToShow.map((product) => (
-        <Grid container spacing={2} sx={{ mb: 1 }} key={product.slug + product.size}>
+        <Grid container spacing={2} sx={{ mb: 1 }} key={product.slug + product.size?.size}>
           <Grid item xs={3}>
             <NextLink href={`/product/${product.slug}`} passHref>
               <Link>
@@ -38,14 +38,11 @@ export const CartList: FC<Props> = ({ editable = false, products }) => {
           <Grid item xs={6}>
             <Box display='flex' flexDirection='column'>
               <Typography variant='body1'> {product.title} </Typography>
-              <Typography variant='body2'>
-                Talla: <strong> {product.size} </strong>
-              </Typography>
+              <Typography variant='body2'>Talla: {product.size?.size ?? "Sin talla"}</Typography>
               {editable ? (
                 <ItemCounter
+                  sizeStock={product.size}
                   quantity={product.quantity}
-                  inStock={product.productStock}
-                  restStock={product.restStock}
                   onStock={(stock, productQuantity) => handleUpdateCartQuantity(product, productQuantity, stock)}
                 />
               ) : (

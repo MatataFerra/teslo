@@ -88,6 +88,7 @@ export const CartProvider: FC<Children> = ({ children }) => {
 
   const addProductsToCart = (product: ICartProduct) => {
     const productInCart = state.cart.some((p) => p._id === product._id);
+
     if (!productInCart) {
       return dispatch({
         type: "[Cart] - Add product to cart",
@@ -95,7 +96,9 @@ export const CartProvider: FC<Children> = ({ children }) => {
       });
     }
 
-    const productWithDifferentSize = state.cart.some((p) => p._id === product._id && p.size === product.size);
+    const productWithDifferentSize = state.cart.some(
+      (p) => p._id === product._id && p.size?.size === product.size?.size
+    );
     if (!productWithDifferentSize) {
       return dispatch({
         type: "[Cart] - Add product to cart",
@@ -103,23 +106,28 @@ export const CartProvider: FC<Children> = ({ children }) => {
       });
     }
 
+    // 6279cf010c34ce7fdcf76d04
+
     const updatedProducts = state.cart.map((p) => {
       if (p._id !== product._id) return p;
-      if (p.size !== product.size) return p;
+      if (p.size?.size !== product.size?.size) return p;
 
-      if (p.quantity + product.quantity > p.productStock) {
+      if (p.quantity + product.quantity > (p.size?.stock ?? 0)) {
         return {
           ...p,
-          quantity: p.productStock,
-          restStock: 0,
+          quantity: p.size?.stock ?? 0,
+          size: {
+            ...p!.size,
+            sizeRestStock: 0,
+          },
         };
       }
 
       p.quantity += product.quantity;
-      p.restStock -= product.quantity;
+      p.size!.sizeRestStock -= product.quantity;
 
       return p;
-    });
+    }) as ICartProduct[];
 
     dispatch({
       type: "[Cart] - Add product to cart",
@@ -130,7 +138,7 @@ export const CartProvider: FC<Children> = ({ children }) => {
   const updateCartQuantity = (product: ICartProduct) => {
     const updatedProducts = state.cart.map((p) => {
       if (p._id !== product._id) return p;
-      if (p.size !== product.size) return p;
+      if (p.size?.size !== product.size?.size) return p;
 
       // if (p.quantity + product.quantity > p.productStock) {
       //   return {
@@ -150,7 +158,10 @@ export const CartProvider: FC<Children> = ({ children }) => {
   };
 
   const removeItemFromCart = (product: ICartProduct) => {
-    const updatedProducts = state.cart.filter((p) => p._id !== product._id && p.size !== product.size);
+    const updatedProducts = state.cart.filter((p) => !(p._id === product._id && p.size?.size === product.size?.size));
+
+    console.log({ updatedProducts, cart: state.cart });
+
     dispatch({
       type: "[Cart] - Remove item from cart",
       payload: updatedProducts,
@@ -192,7 +203,7 @@ export const CartProvider: FC<Children> = ({ children }) => {
     try {
       const { data } = await tesloApi.post<IOrder>("/orders", body);
       data.orderItems.forEach(async (p) => {
-        await tesloApi.put(`/products/${p.slug}`, { inStock: p.restStock });
+        await tesloApi.put(`/products/${p.slug}`, { inStock: p.size?.sizeRestStock });
       });
 
       dispatch({ type: "[Cart] - Order complete" });

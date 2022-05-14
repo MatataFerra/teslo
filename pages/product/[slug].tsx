@@ -1,20 +1,28 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useMemo } from "react";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { dbProducts } from "../../database";
 import { ShopLayout } from "../../components/layouts";
 import { Grid, Box, Typography, Button, Chip } from "@mui/material";
 import { ProductSlideShow, SizeSelector } from "../../components/products";
 import { ItemCounter } from "../../components/ui";
-import { ICartProduct, IProduct, ISize, IProductSize } from "../../interfaces";
+import { ICartProduct, IProduct, ISize, IProductSize, ISizeStock } from "../../interfaces";
 import { CartContext } from "../../context/";
 
 interface Props {
-  product: IProduct;
+  product: IProductSize;
 }
 
 const ProductPage: NextPage<Props> = ({ product }) => {
   const { addProductsToCart, cart } = useContext(CartContext);
-  const [sizeSoldedOut, setSizeSoldedOut] = useState<(ISize | undefined)[]>([]);
+  const [sizeSoldedOut, setSizeSoldedOut] = useState<(ISizeStock | undefined)[]>([]);
+
+  const sizeMemorized = useMemo<ISize[]>(
+    () =>
+      product.sizes.map((s) => {
+        return s.size;
+      }),
+    [product.sizes]
+  );
 
   const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
     _id: product._id,
@@ -25,18 +33,19 @@ const ProductPage: NextPage<Props> = ({ product }) => {
     title: product.title,
     gender: product.gender,
     quantity: 0,
-    productStock: product.inStock,
-    restStock: product.inStock,
   });
 
   useEffect(() => {
     cart.map((p) => {
       if (p._id !== product._id) return p;
       if (p.size === undefined) return p;
-      const sizeSoldedOut = product.sizes.find((s) => s === p.size);
-      if (p.restStock === 0 && p.size === sizeSoldedOut) {
+      const sizeSoldedOut = product.sizes.find((s) => s.size === p.size?.size);
+
+      // * Puede pasar que el talle no tenga stock
+      // p.restStock === 0 &&
+      if (p.size.size === sizeSoldedOut?.size) {
         setSizeSoldedOut((currentSizes) => {
-          if (currentSizes.find((s) => s === sizeSoldedOut)) return currentSizes;
+          if (currentSizes.find((s) => s?.size === sizeSoldedOut.size)) return currentSizes;
           return [...currentSizes, p.size];
         });
       }
@@ -46,19 +55,35 @@ const ProductPage: NextPage<Props> = ({ product }) => {
   }, [cart, product]);
 
   const handleSizeSelected = (size: ISize) => {
-    setTempCartProduct({ ...tempCartProduct, size });
+    const productSize = product.sizes.find((s) => s.size === size);
+
+    if (productSize === undefined) return;
+
+    const sizeStock: ISizeStock = {
+      ...productSize,
+      sizeRestStock: tempCartProduct.quantity === 0 ? productSize.stock : productSize.stock - tempCartProduct.quantity,
+      size,
+    };
+
+    setTempCartProduct({ ...tempCartProduct, size: sizeStock });
   };
 
   const handleStock = (stock: number, productQuantity: number) => {
+    if (!tempCartProduct.size) return setTempCartProduct({ ...tempCartProduct, quantity: productQuantity });
+
     setTempCartProduct({
       ...tempCartProduct,
       quantity: productQuantity,
-      restStock: stock,
+      size: {
+        ...tempCartProduct.size,
+        sizeRestStock: stock,
+      },
     });
   };
 
   const handleAddProductToCart = async () => {
     if (!tempCartProduct.size) return;
+    if (tempCartProduct.quantity === 0) return;
     addProductsToCart(tempCartProduct);
 
     //router.push("/cart");
@@ -83,12 +108,12 @@ const ProductPage: NextPage<Props> = ({ product }) => {
               <Typography variant='subtitle2'>Cantidad</Typography>
               <ItemCounter
                 quantity={tempCartProduct.quantity}
-                inStock={tempCartProduct.productStock}
-                restStock={tempCartProduct.restStock}
+                sizeSelected={tempCartProduct?.size?.size}
+                sizeStock={tempCartProduct.size}
                 onStock={handleStock}
               />
               <SizeSelector
-                sizes={product.sizes}
+                sizes={sizeMemorized}
                 selectedSize={tempCartProduct.size}
                 setSizeSelected={handleSizeSelected}
                 sizeSoldOut={sizeSoldedOut}
@@ -100,9 +125,9 @@ const ProductPage: NextPage<Props> = ({ product }) => {
               <Button
                 color='secondary'
                 className='circular-btn'
-                disabled={!!!tempCartProduct.size}
+                disabled={tempCartProduct.quantity === 0 || tempCartProduct.size === undefined}
                 onClick={handleAddProductToCart}>
-                {tempCartProduct.size ? "Agregar al carrito" : "Seleccione un tamaño"}
+                {tempCartProduct.size?.size ? "Agregar al carrito" : "Seleccione un tamaño"}
               </Button>
             )}
 

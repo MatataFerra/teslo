@@ -1,14 +1,12 @@
-import { ISize, IGender } from ".";
+import { ISize, IGender, ISizeStock } from ".";
 
 export interface ICartProduct {
   _id: string;
   gender: IGender;
   image: string;
   price: number;
-  productStock: number;
   quantity: number;
-  restStock: number;
-  size?: ISize;
+  size?: ISizeStock;
   slug: string;
   title: string;
 }

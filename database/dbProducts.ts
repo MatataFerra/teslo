@@ -1,10 +1,10 @@
 import { db } from "./";
-import { Product } from "../models";
-import { IProduct } from "../interfaces";
+import { Product, ProductSize } from "../models";
+import { IProduct, IProductSize } from "../interfaces";
 
-export const getProductsBySlug = async (slug: string): Promise<IProduct | null> => {
+export const getProductsBySlug = async (slug: string): Promise<IProductSize | null> => {
   await db.connect();
-  const product = await Product.findOne({ slug }).lean();
+  const product = await ProductSize.findOne({ slug }).lean();
   await db.disconnect();
 
   if (!product) {

@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db, SHOP_CONSTANTS } from "../../../database";
-import { IProduct } from "../../../interfaces";
-import { Product } from "../../../models";
+import { IProduct, IProductSize } from "../../../interfaces";
+import { Product, ProductSize } from "../../../models";
 
-type Data = { message: string } | IProduct[];
+type Data = { message: string } | IProductSize[];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   if (req.method === "GET") {
@@ -23,7 +23,7 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
   await db.connect();
 
-  const products = await Product.find(condition).select("title images price inStock slug -_id").lean();
+  const products = await ProductSize.find(condition).select("title images price inStock slug -_id").lean();
   await db.disconnect();
 
   const updatedProducts = products.map((product) => {

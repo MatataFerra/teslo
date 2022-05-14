@@ -1,10 +1,10 @@
+import NextLink from "next/link";
 import { Grid, Card, CardActionArea, CardMedia, Box, Typography, Link, Skeleton, Chip } from "@mui/material";
 import { FC, useMemo, useState, useEffect, useContext } from "react";
-import NextLink from "next/link";
-import { IProduct } from "../../interfaces";
+import { IProduct, IProductSize } from "../../interfaces";
 
 interface Props {
-  product: IProduct;
+  product: IProductSize;
 }
 
 export const ProductCard: FC<Props> = ({ product }) => {
