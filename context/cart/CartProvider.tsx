@@ -160,8 +160,6 @@ export const CartProvider: FC<Children> = ({ children }) => {
   const removeItemFromCart = (product: ICartProduct) => {
     const updatedProducts = state.cart.filter((p) => !(p._id === product._id && p.size?.size === product.size?.size));
 
-    console.log({ updatedProducts, cart: state.cart });
-
     dispatch({
       type: "[Cart] - Remove item from cart",
       payload: updatedProducts,
@@ -190,7 +188,11 @@ export const CartProvider: FC<Children> = ({ children }) => {
     const body: IOrder = {
       orderItems: state.cart.map((p) => ({
         ...p,
-        size: p.size!,
+        size: {
+          stock: p.size!.sizeRestStock,
+          size: p.size!.size,
+          sizeRestStock: p.size!.sizeRestStock,
+        },
       })),
       shippingAddress: state.shippingAddress,
       numberOfItems: state.numberOfItems,
@@ -203,7 +205,7 @@ export const CartProvider: FC<Children> = ({ children }) => {
     try {
       const { data } = await tesloApi.post<IOrder>("/orders", body);
       data.orderItems.forEach(async (p) => {
-        await tesloApi.put(`/products/${p.slug}`, { inStock: p.size?.sizeRestStock });
+        await tesloApi.put(`/products/${p.slug}`, { sizeStock: p.size });
       });
 
       dispatch({ type: "[Cart] - Order complete" });

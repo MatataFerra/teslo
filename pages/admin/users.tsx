@@ -7,6 +7,7 @@ import { Grid, MenuItem, Select } from "@mui/material";
 import useSWR from "swr";
 import { IUser } from "../../interfaces";
 import { tesloApi } from "../../api";
+import { FullScreenLoading, ErrorComponent } from "../../components/ui";
 
 const UsersPage: NextPage = () => {
   const { data, error } = useSWR<IUser[]>("/api/admin/user");
@@ -18,8 +19,8 @@ const UsersPage: NextPage = () => {
     }
   }, [data]);
 
-  if (!data && !error) return <div>Loading...</div>;
-  if (error) return <div>Error</div>;
+  if (!data && !error) return <FullScreenLoading />;
+  if (error) return <ErrorComponent />;
 
   const onRoleUpdate = async (userId: string, newRole: string) => {
     const prevUsers = users.map((u) => ({ ...u }));

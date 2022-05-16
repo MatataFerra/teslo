@@ -10,7 +10,7 @@ interface Props {
   onStock: (stock: number, productQuantity: number) => void;
 }
 
-export const ItemCounter: FC<Props> = ({ quantity, onStock, sizeSelected, sizeStock }) => {
+export const ItemCounter: FC<Props> = ({ quantity, onStock, sizeSelected = undefined, sizeStock }) => {
   const handleAdd = () => {
     if (quantity >= (sizeStock?.stock ?? 0)) return;
     if (sizeStock) return onStock(sizeStock.sizeRestStock - 1, quantity + 1);
@@ -33,9 +33,12 @@ export const ItemCounter: FC<Props> = ({ quantity, onStock, sizeSelected, sizeSt
       <IconButton onClick={handleAdd} data-testid='item-counter-add'>
         <AddCircleOutline />
       </IconButton>
-      <Typography>
-        {sizeSelected && quantity >= (sizeStock?.stock ?? 0) && <span>No puede llevar más de {sizeStock!.stock}</span>}
-      </Typography>
+
+      {sizeSelected && quantity >= (sizeStock?.stock ?? 0) && (
+        <Typography color='error' variant='caption' className='shake'>
+          Solo nos quedan {sizeStock!.stock} llevalas ahora 😎
+        </Typography>
+      )}
     </Box>
   );
 };

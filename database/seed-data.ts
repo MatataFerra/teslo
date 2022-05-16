@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { IGender, ISizeStock, IType } from "../interfaces";
+import { IGender, IType } from "../interfaces";
 
 interface SeedProduct {
   description: string;
@@ -19,7 +19,7 @@ interface SeedProductSize {
   images: string[];
   inStock: number;
   price: number;
-  sizes: ISizeStock[];
+  sizes: SeedSize[];
   slug: string;
   tags: string[];
   title: string;
@@ -32,6 +32,11 @@ interface SeedUser {
   email: string;
   password: string;
   role: "client" | "admin";
+}
+
+interface SeedSize {
+  stock: number;
+  size: ValidSizes;
 }
 
 type ValidSizes = "XS" | "S" | "M" | "L" | "XL" | "XXL" | "XXXL";

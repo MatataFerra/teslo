@@ -13,12 +13,9 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  ListSubheader,
 } from "@mui/material";
 import {
   AccountCircleOutlined,
-  AdminPanelSettings,
-  CategoryOutlined,
   ConfirmationNumberOutlined,
   EscalatorWarningOutlined,
   FemaleOutlined,

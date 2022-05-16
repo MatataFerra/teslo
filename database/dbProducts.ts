@@ -24,7 +24,7 @@ interface ProductSlug {
 
 export const getAllProductsBySlug = async (): Promise<ProductSlug[]> => {
   await db.connect();
-  const slugs = await Product.find().select("slug -_id").lean();
+  const slugs = await ProductSize.find().select("slug -_id").lean();
   await db.disconnect();
 
   if (!slugs) {
@@ -34,11 +34,11 @@ export const getAllProductsBySlug = async (): Promise<ProductSlug[]> => {
   return JSON.parse(JSON.stringify(slugs));
 };
 
-export const getProductsByTerms = async (term: string): Promise<IProduct[]> => {
+export const getProductsByTerms = async (term: string): Promise<IProductSize[]> => {
   await db.connect();
   const termSearch = `/${term.toLowerCase()}/`;
 
-  const products = await Product.find({
+  const products = await ProductSize.find({
     $text: { $search: `${termSearch}` },
   })
 
@@ -57,9 +57,9 @@ export const getProductsByTerms = async (term: string): Promise<IProduct[]> => {
   return updatedProducts;
 };
 
-export const getAllProducts = async (): Promise<IProduct[]> => {
+export const getAllProducts = async (): Promise<IProductSize[]> => {
   await db.connect();
-  const products = await Product.find().lean();
+  const products = await ProductSize.find().lean();
   await db.disconnect();
 
   const updatedProducts = products.map((product) => {

@@ -5,7 +5,7 @@ import { ShopLayout } from "../../components/layouts";
 import { Grid, Box, Typography, Button, Chip } from "@mui/material";
 import { ProductSlideShow, SizeSelector } from "../../components/products";
 import { ItemCounter } from "../../components/ui";
-import { ICartProduct, IProduct, ISize, IProductSize, ISizeStock } from "../../interfaces";
+import { ICartProduct, ISize, IProductSize, ISizeStock } from "../../interfaces";
 import { CartContext } from "../../context/";
 
 interface Props {
@@ -20,6 +20,14 @@ const ProductPage: NextPage<Props> = ({ product }) => {
     () =>
       product.sizes.map((s) => {
         return s.size;
+      }),
+    [product.sizes]
+  );
+
+  const sizeStockMemorized = useMemo<ISizeStock[]>(
+    () =>
+      product.sizes.map((s) => {
+        return { ...s };
       }),
     [product.sizes]
   );
@@ -40,7 +48,6 @@ const ProductPage: NextPage<Props> = ({ product }) => {
       if (p._id !== product._id) return p;
       if (p.size === undefined) return p;
       const sizeSoldedOut = product.sizes.find((s) => s.size === p.size?.size);
-
       // * Puede pasar que el talle no tenga stock
       // p.restStock === 0 &&
       if (p.size.size === sizeSoldedOut?.size) {
@@ -53,6 +60,10 @@ const ProductPage: NextPage<Props> = ({ product }) => {
       return p;
     });
   }, [cart, product]);
+
+  useEffect(() => {
+    console.log("sizeSoldedOut", sizeSoldedOut, product.sizes);
+  }, [sizeSoldedOut, product.sizes]);
 
   const handleSizeSelected = (size: ISize) => {
     const productSize = product.sizes.find((s) => s.size === size);
@@ -117,6 +128,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
                 selectedSize={tempCartProduct.size}
                 setSizeSelected={handleSizeSelected}
                 sizeSoldOut={sizeSoldedOut}
+                sizeMemorized={sizeStockMemorized}
               />
             </Box>
             {product.inStock === 0 ? (

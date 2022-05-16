@@ -1,14 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import { db } from "../../../database";
-import { IProduct } from "../../../interfaces";
-import Product from "../../../models/Product";
+import { IProduct, IProductSize } from "../../../interfaces";
+import { Product, ProductSize } from "../../../models";
 
 type Data =
   | {
-      name: string;
+      message: string;
     }
-  | IProduct;
+  | IProductSize;
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   if (req.method === "GET") {
@@ -19,16 +19,16 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     return updateProductBySlug(req, res);
   }
 
-  res.status(400).json({ name: "Method not Allowed" });
+  res.status(400).json({ message: "Method not Allowed" });
 }
 const getProductsBySlug = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   await db.connect();
   const { slug } = req.query;
-  const product = await Product.findOne({ slug }).lean();
+  const product = await ProductSize.findOne({ slug }).lean();
   await db.disconnect();
 
   if (!product) {
-    return res.status(404).json({ name: "Product not found" });
+    return res.status(404).json({ message: "Product not found" });
   }
 
   product.images = product.images.map((image) => {
@@ -40,24 +40,34 @@ const getProductsBySlug = async (req: NextApiRequest, res: NextApiResponse<Data>
 
 const updateProductBySlug = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const { slug } = req.query;
-  const { inStock } = req.body;
+  const { sizeStock } = req.body;
   const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
   if (!session) {
-    return res.status(401).json({ name: "You can't update this product" });
+    return res.status(401).json({ message: "You can't update this product" });
   }
 
-  if (!inStock) {
-    return res.status(400).json({ name: "Bad request" });
+  if (!sizeStock) {
+    return res.status(400).json({ message: "You don't send any value to update stock" });
   }
 
   await db.connect();
-  const product = await Product.findOneAndUpdate({ slug }, { inStock }, { new: true }).lean();
+  const product = await ProductSize.findOne({ slug });
 
   if (!product) {
     await db.disconnect();
-    return res.status(404).json({ name: "Product not found" });
+    return res.status(404).json({ message: "Product not found" });
   }
+
+  product.sizes.forEach((size) => {
+    if (size.size === sizeStock.size) {
+      size.stock = sizeStock.stock;
+    }
+
+    product.inStock = product.sizes.reduce((acc, size) => acc + size.stock, 0);
+  });
+
+  product.save();
 
   await db.disconnect();
 

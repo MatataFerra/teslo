@@ -23,10 +23,6 @@ const SummaryPage: NextPage = () => {
     if (!Cookie.get("firstName")) {
       return router.back();
     }
-
-    // if (!shippingAddress) {
-    //   return loadShippingAddress();
-    // }
   }, [router]);
 
   const onCreateOrder = async () => {

@@ -8,10 +8,18 @@ const orderSchema = new Schema(
       {
         _id: { type: Schema.Types.ObjectId, ref: "Product", required: true },
         title: { type: String, required: true },
-        size: { type: String, required: true },
+        size: {
+          stock: { type: Number, required: true },
+          size: {
+            type: String,
+            required: true,
+            enum: {
+              values: ["XS", "S", "M", "L", "XL", "XXL", "XXXL"],
+              message: "enum validator failed for path `{PATH}` with value `{VALUE}`",
+            },
+          },
+        },
         quantity: { type: Number, required: true },
-        productStock: { type: Number },
-        restStock: { type: Number },
         slug: { type: String, required: true },
         image: { type: String, required: true },
         price: { type: Number, required: true },

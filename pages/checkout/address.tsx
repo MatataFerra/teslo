@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { NextPage } from "next";
 import { ShopLayout } from "../../components/layouts";
-import { Typography, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Box, Button } from "@mui/material";
+import { Typography, Grid, TextField, FormControl, Select, MenuItem, Box, Button } from "@mui/material";
 import { countries } from "../../utils";
 import { useForm } from "react-hook-form";
 import Cookies from "js-cookie";
@@ -131,7 +131,7 @@ const AddressPage: NextPage = () => {
             <FormControl fullWidth>
               <Select
                 variant='filled'
-                // value={countries[2].code}
+                value={country}
                 defaultValue={country}
                 {...register("country", {
                   required: "El país requerida",
@@ -169,18 +169,5 @@ const AddressPage: NextPage = () => {
     </ShopLayout>
   );
 };
-
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
-
-// export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-//   const { token = "" } = req.cookies;
-
-//   validations.isValidTokenForSSR(token, "checkout/address");
-
-//   return {
-//     props: {},
-//   };
-// };
 
 export default AddressPage;

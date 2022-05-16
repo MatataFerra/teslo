@@ -1,11 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../database";
-import { IProduct } from "../../../interfaces";
-import { Product } from "../../../models";
+import { IProduct, IProductSize } from "../../../interfaces";
+import { Product, ProductSize } from "../../../models";
 import { isValidObjectId } from "mongoose";
 import { v2 as cloudinary } from "cloudinary";
 
-type Data = { message: string } | IProduct[] | IProduct;
+type Data = { message: string } | IProductSize[] | IProductSize;
 cloudinary.config(process.env.CLOUDINARY_URL || "");
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
@@ -26,7 +26,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 
 const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   await db.connect();
-  const products = await Product.find({}).sort({ title: "asc" }).lean();
+  const products = await ProductSize.find({}).sort({ title: "asc" }).lean();
   await db.disconnect();
 
   // actualizar imagenes
@@ -44,7 +44,7 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 };
 
 const updateProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const { _id = "", images = [] } = req.body as IProduct;
+  const { _id = "", images = [] } = req.body as IProductSize;
 
   if (!isValidObjectId(_id)) {
     return res.status(400).json({ message: "Invalid id" });
@@ -58,7 +58,7 @@ const updateProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
 
   try {
     await db.connect();
-    const product = await Product.findById(_id);
+    const product = await ProductSize.findById(_id);
 
     if (!product) {
       await db.disconnect();
@@ -85,7 +85,7 @@ const updateProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
 };
 
 const createProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const { images = [] } = req.body as IProduct;
+  const { images = [] } = req.body as IProductSize;
 
   if (images.length < 2) {
     return res.status(400).json({ message: "You must upload at least 2 images" });
@@ -95,14 +95,15 @@ const createProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
 
   try {
     await db.connect();
-    const existingProduct = await Product.findOne({ slug: req.body.slug });
+    const existingProduct = await ProductSize.findOne({ slug: req.body.slug });
 
     if (existingProduct) {
       await db.disconnect();
       throw new Error("Product already exists with this slug");
     }
 
-    const product = new Product(req.body);
+    const product = new ProductSize(req.body);
+    product.inStock = product.sizes.reduce((acc, size) => acc + size.stock, 0);
     await product.save();
     await db.disconnect();
 

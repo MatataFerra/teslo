@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { NextPage } from "next";
 import QueryStatsOutlinedIcon from "@mui/icons-material/QueryStatsOutlined";
-import { Grid, Typography } from "@mui/material";
+import { Grid } from "@mui/material";
 import {
   AccessTimeOutlined,
   AttachMoneyOutlined,
@@ -15,6 +15,7 @@ import useSWR from "swr";
 import { AdminLayout } from "../../components/layouts";
 import { SummaryTile } from "../../components/admin";
 import { DashboardSummaryResponse } from "../../interfaces";
+import { FullScreenLoading, ErrorComponent } from "../../components/ui";
 
 const iconFontSize: number = 30;
 
@@ -35,13 +36,8 @@ const DashboardPage: NextPage = () => {
     };
   }, []);
 
-  if (!error && !data) {
-    return <Typography>Loading...</Typography>;
-  }
-
-  if (error) {
-    return <Typography>Error</Typography>;
-  }
+  if (!data && !error) return <FullScreenLoading />;
+  if (error) return <ErrorComponent />;
 
   const {
     numberOfOrders,

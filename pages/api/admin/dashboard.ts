@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../database";
-import { Order, Product, User } from "../../../models";
+import { Order, Product, User, ProductSize } from "../../../models";
 import { DashboardSummaryResponse } from "../../../interfaces";
 
 type Data = DashboardSummaryResponse | { message: string };
@@ -40,7 +40,7 @@ const getDashboardData = async () => {
   const [orders, clients, products] = await Promise.all([
     Order.find({}).lean(),
     User.find({ role: "client" }).lean(),
-    Product.find({}).lean(),
+    ProductSize.find({}).lean(),
   ]);
 
   await db.disconnect();

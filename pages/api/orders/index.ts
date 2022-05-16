@@ -4,7 +4,7 @@ import { IOrder } from "../../../interfaces";
 import { getSession } from "next-auth/react";
 
 import { db } from "../../../database/";
-import { Product, Order } from "../../../models";
+import { Product, Order, ProductSize } from "../../../models";
 
 type Data = { message: string } | IOrder;
 
@@ -25,7 +25,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 async function createOrder(req: NextApiRequest, res: NextApiResponse) {
   const { orderItems, total } = req.body as IOrder;
-
   const session: any = await getSession({ req });
 
   if (!session) return res.status(401).json({ message: "Unauthorized" });
@@ -33,7 +32,7 @@ async function createOrder(req: NextApiRequest, res: NextApiResponse) {
   const productsIds = orderItems.map((item) => item._id);
 
   db.connect();
-  const dbProducts = await Product.find({ _id: { $in: productsIds } }).lean();
+  const dbProducts = await ProductSize.find({ _id: { $in: productsIds } }).lean();
 
   try {
     const subTotal = orderItems.reduce((acc, product) => {

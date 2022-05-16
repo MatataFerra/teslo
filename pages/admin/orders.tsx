@@ -2,15 +2,29 @@ import { NextPage } from "next";
 
 import { AdminLayout } from "../../components/layouts";
 import { ConfirmationNumberOutlined } from "@mui/icons-material";
-import { Grid, Chip } from "@mui/material";
+import { Grid, Chip, Tooltip } from "@mui/material";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import { IOrder, IUser } from "../../interfaces";
 import useSWR from "swr";
+import { date } from "../../utils";
+import { ErrorComponent, FullScreenLoading } from "../../components/ui";
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 100 },
+  {
+    field: "id",
+    headerName: "ID",
+    width: 100,
+    resizable: true,
+    renderCell: ({ row }: GridValueGetterParams) => {
+      return (
+        <Tooltip title={row.id}>
+          <span> {row.id.length > 10 ? row.id.substring(0, 10) + "..." : row.id}</span>
+        </Tooltip>
+      );
+    },
+  },
   { field: "email", headerName: "Email", width: 250 },
-  { field: "name", headerName: "Nombre completo", width: 300 },
+  { field: "name", headerName: "Nombre completo", width: 200 },
   { field: "total", headerName: "Monto Total", width: 150 },
   {
     field: "isPaid",
@@ -39,16 +53,14 @@ const columns: GridColDef[] = [
     },
   },
 
-  { field: "createdAt", headerName: "Órden creada el", align: "center", width: 300 },
+  { field: "createdAt", headerName: "Órden creada el", align: "left", width: 300 },
 ];
 
 const OrdersPage: NextPage = () => {
   const { data, error } = useSWR<IOrder[]>("/api/admin/orders");
 
-  if (!data && !error) return <div>Loading...</div>;
-  if (error) return <div>Error</div>;
-
-  console.log({ data });
+  if (!data && !error) return <FullScreenLoading />;
+  if (error) return <ErrorComponent />;
 
   const rows = data!.map((order) => {
     return {
@@ -58,7 +70,7 @@ const OrdersPage: NextPage = () => {
       total: order.total,
       isPaid: order.isPaid,
       numberOfItems: order.numberOfItems,
-      createdAt: order.createdAt,
+      createdAt: date.getFormatDistanceToNow(order.createdAt ?? "2022-05-14T19:05:05.085+00:00"),
     };
   });
 
