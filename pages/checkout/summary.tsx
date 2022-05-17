@@ -8,10 +8,12 @@ import { CartContext } from "../../context";
 import { countries } from "../../utils";
 import Cookie from "js-cookie";
 import { useRouter } from "next/router";
+import { FullScreenLoading } from "../../components/ui";
 
 const SummaryPage: NextPage = () => {
   const router = useRouter();
   const [isPosting, setIsPosting] = useState<boolean>(false);
+  const [formIsLoaded, setFormIsLoaded] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const { shippingAddress, numberOfItems, createOrder, subTotal, tax, total } = useContext(CartContext);
   const memorizeCountry = useMemo(
@@ -20,9 +22,14 @@ const SummaryPage: NextPage = () => {
   );
 
   useEffect(() => {
-    if (!Cookie.get("firstName")) {
-      return router.back();
-    }
+    const noFormData = async () => {
+      if (!Cookie.get("firstName")) {
+        return router.push("/checkout/address");
+      }
+
+      return setFormIsLoaded(true);
+    };
+    noFormData();
   }, [router]);
 
   const onCreateOrder = async () => {
@@ -38,8 +45,8 @@ const SummaryPage: NextPage = () => {
     router.replace(`/orders/${message}`);
   };
 
-  if (!shippingAddress) {
-    return <></>;
+  if (!formIsLoaded || !shippingAddress) {
+    return <FullScreenLoading />;
   }
 
   const { address, city, country, firstName, lastName, phone, zip, address2 = "" } = shippingAddress;

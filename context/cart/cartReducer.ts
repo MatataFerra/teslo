@@ -9,6 +9,12 @@ export const cartReducer = (state: CartState, action: CartActionType): CartState
         cart: action.payload,
       };
 
+    case "[Cart] - cart is loaded":
+      return {
+        ...state,
+        isLoaded: true,
+      };
+
     case "[Cart] - Add product to cart":
       return {
         ...state,

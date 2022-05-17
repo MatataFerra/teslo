@@ -1,9 +1,10 @@
 import { useState, useContext, useEffect, useMemo } from "react";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { useRouter } from "next/router";
 import { dbProducts } from "../../database";
 import { ShopLayout } from "../../components/layouts";
 import { Grid, Box, Typography, Button, Chip } from "@mui/material";
-import { ProductSlideShow, SizeSelector } from "../../components/products";
+import { CtaButtons, ProductSlideShow, SizeSelector } from "../../components/products";
 import { ItemCounter } from "../../components/ui";
 import { ICartProduct, ISize, IProductSize, ISizeStock } from "../../interfaces";
 import { CartContext } from "../../context/";
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const ProductPage: NextPage<Props> = ({ product }) => {
+  const router = useRouter();
   const { addProductsToCart, cart } = useContext(CartContext);
   const [sizeSoldedOut, setSizeSoldedOut] = useState<(ISizeStock | undefined)[]>([]);
 
@@ -48,8 +50,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
       if (p._id !== product._id) return p;
       if (p.size === undefined) return p;
       const sizeSoldedOut = product.sizes.find((s) => s.size === p.size?.size);
-      // * Puede pasar que el talle no tenga stock
-      // p.restStock === 0 &&
+
       if (p.size.size === sizeSoldedOut?.size) {
         setSizeSoldedOut((currentSizes) => {
           if (currentSizes.find((s) => s?.size === sizeSoldedOut.size)) return currentSizes;
@@ -60,10 +61,6 @@ const ProductPage: NextPage<Props> = ({ product }) => {
       return p;
     });
   }, [cart, product]);
-
-  useEffect(() => {
-    console.log("sizeSoldedOut", sizeSoldedOut, product.sizes);
-  }, [sizeSoldedOut, product.sizes]);
 
   const handleSizeSelected = (size: ISize) => {
     const productSize = product.sizes.find((s) => s.size === size);
@@ -96,8 +93,13 @@ const ProductPage: NextPage<Props> = ({ product }) => {
     if (!tempCartProduct.size) return;
     if (tempCartProduct.quantity === 0) return;
     addProductsToCart(tempCartProduct);
+  };
 
-    //router.push("/cart");
+  const handleBuyNow = async () => {
+    if (!tempCartProduct.size) return;
+    if (tempCartProduct.quantity === 0) return;
+    addProductsToCart(tempCartProduct);
+    router.push("/checkout/summary");
   };
 
   return (
@@ -134,13 +136,11 @@ const ProductPage: NextPage<Props> = ({ product }) => {
             {product.inStock === 0 ? (
               <Chip label='No hay stock de este artículo' color='error' variant='outlined' />
             ) : (
-              <Button
-                color='secondary'
-                className='circular-btn'
-                disabled={tempCartProduct.quantity === 0 || tempCartProduct.size === undefined}
-                onClick={handleAddProductToCart}>
-                {tempCartProduct.size?.size ? "Agregar al carrito" : "Seleccione un tamaño"}
-              </Button>
+              <CtaButtons
+                product={tempCartProduct}
+                handleAddProductToCart={handleAddProductToCart}
+                handleBuyNow={handleBuyNow}
+              />
             )}
 
             <Box sx={{ mt: 3 }}>

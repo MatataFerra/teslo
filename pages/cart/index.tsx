@@ -8,7 +8,7 @@ import { Typography, Grid, Card, CardContent, Divider, Box, Button } from "@mui/
 import { FullScreenLoading } from "../../components/ui";
 
 const CartPage: NextPage = () => {
-  const { numberOfItems, isLoaded, cart, subTotal, tax, total } = useContext(CartContext);
+  const { numberOfItems, isLoaded, cart, subTotal, tax, total, cartIsLoaded } = useContext(CartContext);
 
   const router = useRouter();
   const productText = numberOfItems === 1 ? "producto" : "productos";
@@ -18,6 +18,10 @@ const CartPage: NextPage = () => {
       router.replace("/cart/empty");
     }
   }, [isLoaded, router, cart]);
+
+  useEffect(() => {
+    cartIsLoaded();
+  }, [cartIsLoaded]);
 
   if (!isLoaded || cart.length === 0) {
     return <FullScreenLoading />;

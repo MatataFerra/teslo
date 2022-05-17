@@ -12,7 +12,6 @@ export interface CartState {
   subTotal: number;
   tax: number;
   numberOfItems: number;
-
   shippingAddress?: ShippingAddress;
 }
 
@@ -23,7 +22,6 @@ const CART_INITIAL_STATE: CartState = {
   subTotal: 0,
   tax: 0,
   numberOfItems: 0,
-
   shippingAddress: undefined,
 };
 
@@ -105,8 +103,6 @@ export const CartProvider: FC<Children> = ({ children }) => {
         payload: [...state.cart, product],
       });
     }
-
-    // 6279cf010c34ce7fdcf76d04
 
     const updatedProducts = state.cart.map((p) => {
       if (p._id !== product._id) return p;
@@ -229,10 +225,15 @@ export const CartProvider: FC<Children> = ({ children }) => {
     }
   };
 
+  const cartIsLoaded = () => {
+    dispatch({ type: "[Cart] - cart is loaded" });
+  };
+
   return (
     <CartContext.Provider
       value={{
         ...state,
+        cartIsLoaded,
         addProductsToCart,
         updateCartQuantity,
         removeItemFromCart,

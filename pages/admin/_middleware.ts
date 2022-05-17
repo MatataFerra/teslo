@@ -10,8 +10,6 @@ export async function middleware(req: NextRequest | any, ev: NextFetchEvent) {
     url.pathname = `/auth/login`;
     url.searchParams.append("p", requestedPage);
 
-    console.log(url);
-
     return NextResponse.redirect(url);
   }
 

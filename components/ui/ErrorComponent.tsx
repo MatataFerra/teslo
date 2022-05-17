@@ -15,7 +15,7 @@ export const ErrorComponent: FC = () => {
 
         <Box display='flex' justifyContent='center' alignItems='center' mt={2}>
           <Typography variant='subtitle2' sx={{ textAlign: "center" }}>
-            Comúniquese con el administrador
+            Comuníquese con el administrador
           </Typography>
         </Box>
       </Box>
