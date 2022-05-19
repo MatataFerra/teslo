@@ -196,6 +196,7 @@ export const CartProvider: FC<Children> = ({ children }) => {
       tax: state.tax,
       total: state.total,
       isPaid: false,
+      status: "pending",
     };
 
     try {

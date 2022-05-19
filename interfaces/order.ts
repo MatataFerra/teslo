@@ -13,6 +13,8 @@ export interface IOrder {
   isPaid: boolean;
   paidAt?: string;
 
+  status?: OrderStatus;
+
   transactionId?: string;
 
   createdAt?: string;
@@ -39,4 +41,14 @@ export interface ShippingAddress {
   city: string;
   country: string;
   phone: string;
+}
+
+export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+
+export enum OrderStatusEnum {
+  pending = "pending",
+  processing = "processing",
+  shipped = "shipped",
+  delivered = "delivered",
+  cancelled = "cancelled",
 }

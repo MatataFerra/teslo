@@ -4,7 +4,7 @@ import { NextPage } from "next";
 import { ShopLayout } from "../../components/layouts";
 import { Typography, Grid, TextField, FormControl, Select, MenuItem, Box, Button } from "@mui/material";
 import { countries } from "../../utils";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import Cookies from "js-cookie";
 import { CartContext } from "../../context";
 
@@ -37,20 +37,23 @@ const getAddressFromCookies = (): FormData => {
 const AddressPage: NextPage = () => {
   const router = useRouter();
   const { updateAddress } = useContext(CartContext);
-  const [country, setCountry] = useState("");
-
-  useEffect(() => {
-    const cookies = Cookies.get("country") ?? "ARG";
-    setCountry(cookies);
-  }, []);
+  const [country, setCountry] = useState("ARG");
 
   const {
     handleSubmit,
     register,
     formState: { errors },
+    control,
   } = useForm<FormData>({
     defaultValues: getAddressFromCookies(),
   });
+
+  useEffect(() => {
+    const cookies = Cookies.get("country") ?? "ARG";
+    setCountry(cookies);
+
+    console.log();
+  }, []);
 
   const onSubmitForm = async (data: FormData) => {
     updateAddress(data);
@@ -129,21 +132,20 @@ const AddressPage: NextPage = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
-              <Select
-                variant='filled'
+              <TextField
+                select
+                sx={{ backgroundColor: "rgba(0, 0, 0, 0.06)", border: "none" }}
+                label='País de residencia'
                 value={country}
-                defaultValue={country}
                 {...register("country", {
-                  required: "El país requerida",
-                })}
-                error={!!errors.country}
-                placeholder='Selecciona un país'>
+                  required: "País requerido",
+                })}>
                 {countries.map((country) => (
                   <MenuItem key={country.code} value={country.code}>
                     {country.name}
                   </MenuItem>
                 ))}
-              </Select>
+              </TextField>
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>

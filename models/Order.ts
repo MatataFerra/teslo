@@ -46,6 +46,17 @@ const orderSchema = new Schema(
     isPaid: { type: Boolean, required: true, default: false },
     paidAt: { type: String },
 
+    status: {
+      type: String,
+      required: true,
+      enum: {
+        values: ["pending", "processing", "shipped", "delivered", "cancelled"],
+        message: "enum validator failed for path `{PATH}` with value `{VALUE}`",
+      },
+
+      default: "pending",
+    },
+
     transactionId: { type: String },
   },
   {

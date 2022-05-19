@@ -50,6 +50,15 @@
   animation-iteration-count: 1;
 }
 
+.MuiDataGrid-cell--withRenderer:focus,
+.MuiDataGrid-cell:focus,
+.MuiDataGrid-cell--withRenderer:focus-visible,
+.MuiDataGrid-cell:focus-visible,
+.MuiDataGrid-cell--withRenderer:focus-within,
+.MuiDataGrid-cell:focus-within {
+  outline: none !important;
+}
+
 @keyframes shake {
   0% {
     transform: translate(1px, 1px) rotate(0deg);

@@ -8,11 +8,12 @@ import { CartContext } from "../../context";
 import { countries } from "../../utils";
 import Cookie from "js-cookie";
 import { useRouter } from "next/router";
-import { FullScreenLoading } from "../../components/ui";
+import { FullScreenLoading, ModalTransition } from "../../components/ui";
 
 const SummaryPage: NextPage = () => {
   const router = useRouter();
   const [isPosting, setIsPosting] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [formIsLoaded, setFormIsLoaded] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const { shippingAddress, numberOfItems, createOrder, subTotal, tax, total } = useContext(CartContext);
@@ -34,10 +35,12 @@ const SummaryPage: NextPage = () => {
 
   const onCreateOrder = async () => {
     setIsPosting(true);
+    changeModalState(true);
     const { hasError, message } = await createOrder();
 
     if (hasError) {
       setIsPosting(false);
+      changeModalState(false);
       setErrorMessage(message);
       return router.replace("/auth/login?p=/checkout/summary");
     }
@@ -49,6 +52,10 @@ const SummaryPage: NextPage = () => {
     return <FullScreenLoading />;
   }
 
+  const changeModalState = (state: boolean) => {
+    setIsModalOpen(state);
+  };
+
   const { address, city, country, firstName, lastName, phone, zip, address2 = "" } = shippingAddress;
 
   return (
@@ -56,6 +63,8 @@ const SummaryPage: NextPage = () => {
       <Typography variant='h1' component='h1'>
         Resumen de la orden
       </Typography>
+
+      <ModalTransition isOpen={isModalOpen} onClose={() => changeModalState(isModalOpen)} />
 
       <Grid container mt={2}>
         <Grid item xs={12} sm={7}>

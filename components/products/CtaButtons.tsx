@@ -19,7 +19,7 @@ export const CtaButtons: FC<Props> = ({ product, handleAddProductToCart, handleB
             sx={{ width: "100%" }}
             disabled={product.quantity === 0 || product.size === undefined}
             onClick={handleAddProductToCart}>
-            {product.size?.size ? "Agregar al carrito" : "Seleccione un tamaño"}
+            Agregar al carrito
           </Button>
         </Grid>
 
