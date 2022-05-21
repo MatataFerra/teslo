@@ -36,7 +36,7 @@ const OrdersPage: NextPage = () => {
         );
       },
     },
-    { field: "email", headerName: "Email", width: 250 },
+    { field: "email", headerName: "Email" },
     { field: "name", headerName: "Nombre completo", width: 200 },
     { field: "total", headerName: "Monto Total", width: 150 },
     {
@@ -56,7 +56,7 @@ const OrdersPage: NextPage = () => {
     {
       field: "status",
       headerName: "Estado de la oden",
-
+      width: 250,
       renderCell: ({ row }: GridValueGetterParams) => {
         return (
           <Select

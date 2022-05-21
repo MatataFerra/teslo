@@ -1,4 +1,4 @@
-import { ISize, IGender, ISizeStock } from ".";
+import { IGender, ISizeStock } from ".";
 
 export interface ICartProduct {
   _id: string;

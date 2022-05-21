@@ -4,7 +4,7 @@ import { IOrder } from "../../../interfaces";
 import { getSession } from "next-auth/react";
 
 import { db } from "../../../database/";
-import { Product, Order, ProductSize } from "../../../models";
+import { Order, ProductSize } from "../../../models";
 
 type Data = { message: string } | IOrder;
 

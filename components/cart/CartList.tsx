@@ -4,7 +4,7 @@ import { Grid, Link, CardActionArea, CardMedia, Box, Typography } from "@mui/mat
 import { ItemCounter } from "../ui";
 import { Button } from "@mui/material";
 import { CartContext } from "../../context";
-import { IOrderItems } from "../../interfaces";
+import { IOrderItems, ICartProduct } from "../../interfaces";
 
 interface Props {
   editable?: boolean;
@@ -14,9 +14,9 @@ interface Props {
 export const CartList: FC<Props> = ({ editable = false, products }) => {
   const { cart, updateCartQuantity, removeItemFromCart } = useContext(CartContext);
 
-  const handleUpdateCartQuantity = (product: any, quantity: number, stock: number) => {
+  const handleUpdateCartQuantity = (product: ICartProduct, quantity: number, stock: number) => {
     product.quantity = quantity;
-    product.restStock = stock;
+    product.size!.sizeRestStock = stock;
     updateCartQuantity(product);
   };
 

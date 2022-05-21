@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { NextPage, GetServerSideProps } from "next";
 import NextLink from "next/link";
 import { ShopLayout } from "../../components/layouts";
@@ -5,7 +6,7 @@ import { Typography, Grid, Chip, Link, IconButton, Tooltip } from "@mui/material
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import { getSession } from "next-auth/react";
 import { dbOrders } from "../../database";
-import { IOrder, OrderStatus, OrderStatusEnum } from "../../interfaces";
+import { IOrder, OrderStatus, OrderStatusEnum, ISizeStock } from "../../interfaces";
 import {
   BeenhereOutlined,
   BuildCircleOutlined,
@@ -16,16 +17,6 @@ import {
 } from "@mui/icons-material";
 import { StatusOrderIcon } from "../../components/orders";
 import { tesloApi } from "../../api";
-
-const onDeleteOrder = async (id: string, status: OrderStatus) => {
-  if (status === "cancelled") {
-    const { data } = await tesloApi.put("/orders", { status, orderId: id });
-    console.log({ data });
-    return data;
-  }
-
-  return null;
-};
 
 interface StatusIconsPros {
   [OrderStatusEnum.pending]: JSX.Element;
@@ -53,83 +44,104 @@ const statusIcons: StatusIconsPros = {
   ),
 };
 
-const columns: GridColDef[] = [
-  {
-    field: "id",
-    headerName: "ID",
-    width: 100,
-  },
-
-  {
-    field: "fullname",
-    headerName: "Nombre completo",
-    width: 300,
-  },
-  {
-    field: "paid",
-    headerName: "Pagado",
-    description: "Muestra la orden si fue pagada o no",
-    width: 200,
-    renderCell: (params: GridValueGetterParams) => {
-      return params.row.paid ? (
-        <Chip label='Pagado' color='success' variant='outlined' />
-      ) : (
-        <Chip label='Pendiente' color='error' variant='outlined' />
-      );
-    },
-  },
-  {
-    field: "link",
-    headerName: "Orden",
-    width: 200,
-    sortable: false,
-    renderCell: (params: GridValueGetterParams) => {
-      return (
-        <NextLink href={`/orders/${params.row.orderId}`} passHref>
-          <Link underline='hover'>Ver orden</Link>
-        </NextLink>
-      );
-    },
-  },
-  {
-    field: "info",
-    headerName: "Información",
-    description: "Muestra la información de la orden",
-    width: 250,
-    renderCell: (params: GridValueGetterParams) => {
-      return statusIcons[params.row.status as OrderStatusEnum] as StatusIconsPros[OrderStatusEnum];
-    },
-  },
-  {
-    field: "actions",
-    headerName: "Acciones",
-    align: "center",
-    headerAlign: "center",
-    renderCell: (params: GridValueGetterParams) => {
-      return (
-        <>
-          <IconButton
-            disabled={params.row.status === OrderStatusEnum.cancelled}
-            onClick={() => onDeleteOrder(params.row.orderId, "cancelled")}>
-            <Tooltip title='Cancelá la órden' placement='top' arrow>
-              <DeleteOutline />
-            </Tooltip>
-          </IconButton>
-          {/* <IconButton>
-            <UpdateOutlined />
-          </IconButton> */}
-        </>
-      );
-    },
-  },
-];
-
 interface Props {
   orders: IOrder[];
 }
 
 const HistoryPage: NextPage<Props> = ({ orders }) => {
-  const rows = orders.map((order, i) => {
+  const [updateOrders, setUpdateOrders] = useState<IOrder[]>(orders);
+
+  const onDeleteOrder = async (id: string, status: OrderStatus) => {
+    if (status === "cancelled") {
+      const [orders, update] = await Promise.all([
+        tesloApi.put<IOrder>("/orders", { status, orderId: id }),
+        tesloApi.put("/products/update", { orderId: id }),
+      ]);
+
+      if (orders.status === 200) {
+        const orderToUpdate = updateOrders.find((order) => order._id === orders.data._id);
+        if (orderToUpdate) {
+          orderToUpdate.status = orders.data.status;
+          setUpdateOrders([...updateOrders]);
+        }
+      }
+    }
+
+    return null;
+  };
+
+  const columns: GridColDef[] = [
+    {
+      field: "id",
+      headerName: "ID",
+      width: 100,
+    },
+
+    {
+      field: "fullname",
+      headerName: "Nombre completo",
+      width: 300,
+    },
+    {
+      field: "paid",
+      headerName: "Pagado",
+      description: "Muestra la orden si fue pagada o no",
+      width: 200,
+      renderCell: (params: GridValueGetterParams) => {
+        return params.row.paid ? (
+          <Chip label='Pagado' color='success' variant='outlined' />
+        ) : (
+          <Chip label='Pendiente' color='error' variant='outlined' />
+        );
+      },
+    },
+    {
+      field: "link",
+      headerName: "Orden",
+      width: 200,
+      sortable: false,
+      renderCell: (params: GridValueGetterParams) => {
+        return (
+          <NextLink href={`/orders/${params.row.orderId}`} passHref>
+            <Link underline='hover'>Ver orden</Link>
+          </NextLink>
+        );
+      },
+    },
+    {
+      field: "info",
+      headerName: "Información",
+      description: "Muestra la información de la orden",
+      width: 250,
+      renderCell: (params: GridValueGetterParams) => {
+        return statusIcons[params.row.status as OrderStatusEnum] as StatusIconsPros[OrderStatusEnum];
+      },
+    },
+    {
+      field: "actions",
+      headerName: "Acciones",
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params: GridValueGetterParams) => {
+        return (
+          <>
+            <IconButton
+              disabled={params.row.status === OrderStatusEnum.cancelled}
+              onClick={() => onDeleteOrder(params.row.orderId, "cancelled")}>
+              <Tooltip title='Cancelá la órden' placement='top' arrow>
+                <DeleteOutline />
+              </Tooltip>
+            </IconButton>
+            {/* <IconButton>
+              <UpdateOutlined />
+            </IconButton> */}
+          </>
+        );
+      },
+    },
+  ];
+
+  const rows = updateOrders.map((order, i) => {
     return {
       id: i + 1,
       paid: order.isPaid,
@@ -152,6 +164,9 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
     </ShopLayout>
   );
 };
+
+// You should use getServerSideProps when:
+// - Only if you need to pre-render a page whose data must be fetched at request time
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const session: any = await getSession({ req });

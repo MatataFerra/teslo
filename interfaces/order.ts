@@ -1,4 +1,4 @@
-import { IUser, ISize, IGender, ISizeStock } from "./";
+import { IUser, IGender, ISizeStock } from "./";
 export interface IOrder {
   _id?: string;
   user?: IUser | string;

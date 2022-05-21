@@ -3,7 +3,7 @@ import { NextPage, GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 
 import { getSession } from "next-auth/react";
-import { Typography, Grid, Card, CardContent, Divider, Box, Button, Link, Chip, CircularProgress } from "@mui/material";
+import { Typography, Grid, Card, CardContent, Divider, Box, Chip, CircularProgress } from "@mui/material";
 import { CartList, OrderSummary } from "../../components/cart";
 import { PaymentButtonsStatus } from "../../components/orders";
 import { ShopLayout } from "../../components/layouts";
@@ -34,10 +34,18 @@ const OrderPage: NextPage<Props> = ({ order }) => {
     setIsPaying(true);
 
     try {
-      const { data } = await tesloApi.post("/orders/pay", {
-        orderId: order._id,
-        transactionId: details.id,
-      });
+      await Promise.all([
+        tesloApi.post("/orders/pay", {
+          orderId: order._id,
+          transactionId: details.id,
+        }),
+
+        order.orderItems.forEach((p) => {
+          tesloApi.put(`/products/${p.slug}`, p.size);
+        }),
+
+        tesloApi.put("/orders", { status: "processing", orderId: order._id }),
+      ]);
 
       router.reload();
     } catch (error) {

@@ -1,8 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import { db } from "../../../database";
-import { IProduct, IProductSize } from "../../../interfaces";
-import { Product, ProductSize } from "../../../models";
+import { IProductSize, ISizeStock } from "../../../interfaces";
+import { ProductSize } from "../../../models";
 
 type Data =
   | {
@@ -40,7 +40,7 @@ const getProductsBySlug = async (req: NextApiRequest, res: NextApiResponse<Data>
 
 const updateProductBySlug = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const { slug } = req.query;
-  const { sizeStock } = req.body;
+  const sizeStock = req.body as ISizeStock;
   const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
   if (!session) {

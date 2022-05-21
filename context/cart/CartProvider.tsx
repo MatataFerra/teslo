@@ -115,6 +115,7 @@ export const CartProvider: FC<Children> = ({ children }) => {
           size: {
             ...p!.size,
             sizeRestStock: 0,
+            items: p.size?.stock,
           },
         };
       }
@@ -135,14 +136,6 @@ export const CartProvider: FC<Children> = ({ children }) => {
     const updatedProducts = state.cart.map((p) => {
       if (p._id !== product._id) return p;
       if (p.size?.size !== product.size?.size) return p;
-
-      // if (p.quantity + product.quantity > p.productStock) {
-      //   return {
-      //     ...p,
-      //     quantity: p.productStock,
-      //     restStock: 0,
-      //   };
-      // }
 
       return p;
     });
