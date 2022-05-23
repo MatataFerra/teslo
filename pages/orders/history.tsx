@@ -17,6 +17,7 @@ import {
 } from "@mui/icons-material";
 import { StatusOrderIcon } from "../../components/orders";
 import { tesloApi } from "../../api";
+import { ModalTransition } from "../../components/ui";
 
 interface StatusIconsPros {
   [OrderStatusEnum.pending]: JSX.Element;
@@ -50,8 +51,14 @@ interface Props {
 
 const HistoryPage: NextPage<Props> = ({ orders }) => {
   const [updateOrders, setUpdateOrders] = useState<IOrder[]>(orders);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const changeModalState = (state: boolean) => {
+    setIsModalOpen(state);
+  };
 
   const onDeleteOrder = async (id: string, status: OrderStatus) => {
+    changeModalState(true);
     if (status === "cancelled") {
       const [orders, update] = await Promise.all([
         tesloApi.put<IOrder>("/orders", { status, orderId: id }),
@@ -64,6 +71,8 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
           orderToUpdate.status = orders.data.status;
           setUpdateOrders([...updateOrders]);
         }
+
+        changeModalState(false);
       }
     }
 
@@ -155,6 +164,12 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
       <Typography variant='h1' component='h1'>
         Historial de ordenes
       </Typography>
+
+      <ModalTransition
+        isOpen={isModalOpen}
+        onClose={() => changeModalState(isModalOpen)}
+        message='Cancelando la orden'
+      />
 
       <Grid container className='fadeIn'>
         <Grid item xs={12} sx={{ height: 650, width: "100%" }}>

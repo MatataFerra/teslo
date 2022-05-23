@@ -3,7 +3,7 @@ import React, { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
 import { useForm } from "react-hook-form";
 import { AdminLayout } from "../../../components/layouts";
-import { IProduct } from "../../../interfaces";
+import { IProductSize, ISizeStock, ISize } from "../../../interfaces";
 import { DriveFileRenameOutline, SaveOutlined, UploadOutlined } from "@mui/icons-material";
 import { dbProducts } from "../../../database";
 import {
@@ -30,7 +30,7 @@ import { Product } from "../../../models";
 
 const validTypes = ["shirts", "pants", "hoodies", "hats"];
 const validGender = ["men", "women", "kid", "unisex"];
-const validSizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+const validSizes: ISize[] = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 
 interface FormData {
   _id?: string;
@@ -38,7 +38,7 @@ interface FormData {
   images: string[];
   inStock: number;
   price: number;
-  sizes: string[];
+  sizes: ISizeStock[];
   slug: string;
   tags: string[];
   title: string;
@@ -47,7 +47,7 @@ interface FormData {
 }
 
 interface Props {
-  product: IProduct;
+  product: IProductSize;
 }
 
 const ProductAdminPage: FC<Props> = ({ product }) => {
@@ -81,6 +81,14 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 
         setValue("slug", newSlug);
       }
+
+      if (name === "sizes") {
+        const countStock = value.sizes?.reduce((acc, size) => {
+          return acc + (size?.stock ?? 0);
+        }, 0);
+
+        setValue("inStock", countStock!);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -89,7 +97,6 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
   const onFileSelected = async ({ target }: ChangeEvent<HTMLInputElement>) => {
     if (!target.files || target.files.length === 0) return;
 
-    // iterate over the files
     for (let i = 0; i < target.files.length; i++) {
       const formData = new FormData();
       formData.append("file", target.files[i]);
@@ -102,7 +109,6 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
   const onNewTag = () => {
     if (newTagValue.trim() !== "") {
       setNewTagValue("");
-
       const currentTag = getValues("tags");
 
       if (currentTag.includes(newTagValue.trim().toLowerCase())) {
@@ -116,7 +122,6 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 
   const onDeleteTag = (tag: string) => {
     const newTags = getValues("tags").filter((t) => t !== tag);
-
     setValue("tags", newTags, { shouldValidate: true });
   };
 
@@ -145,17 +150,44 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     }
   };
 
-  const onChangeSize = (size: string) => {
+  const onChangeSize = (size: ISize) => {
     const currentSizes = getValues("sizes");
-    if (currentSizes.includes(size)) {
+
+    if (currentSizes.find((s) => s.size === size)?.size) {
+      console.log("ya existe");
       return setValue(
         "sizes",
-        currentSizes.filter((s) => s !== size),
+        currentSizes.filter((s) => s.size !== size),
         { shouldValidate: true }
       );
     }
 
-    setValue("sizes", [...currentSizes, size], { shouldValidate: true });
+    const sizes = {
+      size: size,
+      stock: 1,
+      sizeRestStock: 1,
+    };
+
+    setValue("sizes", [...currentSizes, sizes], { shouldValidate: true });
+  };
+
+  const onChangeStock = (stock: number, size?: ISizeStock) => {
+    if (!size) return;
+    const currentSizes = getValues("sizes");
+
+    const newSizes = currentSizes.map((s) => {
+      if (s.size === size.size) {
+        return {
+          ...s,
+          stock,
+        };
+      }
+      return s;
+    });
+
+    console.log({ newSizes, m: "Stock" });
+
+    setValue("sizes", newSizes, { shouldValidate: true });
   };
 
   const onDeleteImage = (image: string) => {
@@ -201,7 +233,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               label='Descripción'
               variant='filled'
               fullWidth
-              multiline
+              rows={4}
               sx={{ mb: 1 }}
               {...register("description", {
                 required: "Este campo es requerido",
@@ -274,18 +306,36 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                 ))}
               </RadioGroup>
             </FormControl>
+            <Box display='flex'>
+              <FormGroup>
+                <FormLabel>Tallas</FormLabel>
+                {validSizes.map((size, i) => {
+                  const sizeChecked = getValues("sizes").find((s) => s.size === size);
 
-            <FormGroup>
-              <FormLabel>Tallas</FormLabel>
-              {validSizes.map((size) => (
-                <FormControlLabel
-                  key={size}
-                  control={<Checkbox checked={getValues("sizes").includes(size)} />}
-                  label={size}
-                  onChange={() => onChangeSize(size)}
-                />
-              ))}
-            </FormGroup>
+                  return (
+                    <Grid key={size} container spacing={2}>
+                      <Grid item xs={6}>
+                        <FormControlLabel
+                          control={<Checkbox checked={!!sizeChecked?.size} />}
+                          label={size}
+                          onChange={() => onChangeSize(size)}
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <TextField
+                          type='number'
+                          size='small'
+                          value={sizeChecked?.stock ?? 0}
+                          onChange={(e) => onChangeStock(parseInt(e.target.value), sizeChecked)}
+                          sx={{ width: 70 }}
+                          disabled={!sizeChecked?.stock}
+                        />
+                      </Grid>
+                    </Grid>
+                  );
+                })}
+              </FormGroup>
+            </Box>
           </Grid>
 
           {/* Tags e imagenes */}
@@ -394,13 +444,10 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
   );
 };
 
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
-
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { slug = "" } = query;
 
-  let product: IProduct | null;
+  let product: IProductSize | null;
 
   if (slug === "new") {
     const tempProduct = JSON.parse(JSON.stringify(new Product()));

@@ -4,6 +4,7 @@ import { Loader } from ".";
 
 interface Props {
   isOpen: boolean;
+  message?: string;
   onClose: () => void;
 }
 
@@ -22,7 +23,7 @@ const style = {
   flexDirection: "column",
 };
 
-export const ModalTransition: FC<Props> = ({ isOpen, onClose }) => {
+export const ModalTransition: FC<Props> = ({ isOpen, onClose, message = "Operación en proceso" }) => {
   return (
     <>
       <Modal
@@ -32,7 +33,7 @@ export const ModalTransition: FC<Props> = ({ isOpen, onClose }) => {
         aria-describedby='modal-modal-description'>
         <Box sx={style}>
           <Typography id='modal-modal-title' variant='h6' component='h2' align='center'>
-            Creando orden
+            {message}
           </Typography>
           <Loader />
         </Box>

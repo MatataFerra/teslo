@@ -56,7 +56,7 @@ const SummaryPage: NextPage = () => {
     setIsModalOpen(state);
   };
 
-  const { address, city, country, firstName, lastName, phone, zip, address2 = "" } = shippingAddress;
+  const { address, city, firstName, lastName, phone, zip, address2 = "" } = shippingAddress;
 
   return (
     <ShopLayout title='Resumen de orden' pageDescription='Resumen de la orden'>
@@ -64,11 +64,11 @@ const SummaryPage: NextPage = () => {
         Resumen de la orden
       </Typography>
 
-      <ModalTransition isOpen={isModalOpen} onClose={() => changeModalState(isModalOpen)} />
+      <ModalTransition isOpen={isModalOpen} message='Crando Orden' onClose={() => changeModalState(isModalOpen)} />
 
       <Grid container mt={2}>
         <Grid item xs={12} sm={7}>
-          <CartList />
+          <CartList isProcessing={isPosting} />
         </Grid>
         <Grid item xs={12} sm={5}>
           <Card className='summary-card'>
