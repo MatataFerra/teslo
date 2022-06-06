@@ -18,6 +18,7 @@ import {
   AccountCircleOutlined,
   ConfirmationNumberOutlined,
   EscalatorWarningOutlined,
+  FavoriteBorderOutlined,
   FemaleOutlined,
   LoginOutlined,
   MaleOutlined,
@@ -83,6 +84,13 @@ export const SideMenu = () => {
                   <ConfirmationNumberOutlined />
                 </ListItemIcon>
                 <ListItemText primary={"Mis Ordenes"} />
+              </ListItem>
+
+              <ListItem button onClick={() => navigateTo("/")}>
+                <ListItemIcon>
+                  <FavoriteBorderOutlined />
+                </ListItemIcon>
+                <ListItemText primary={"Favoritos"} />
               </ListItem>
             </>
           )}

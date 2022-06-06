@@ -16,6 +16,7 @@ interface Props {
 const ProductPage: NextPage<Props> = ({ product }) => {
   const router = useRouter();
   const { addProductsToCart, cart } = useContext(CartContext);
+  const [isBuying, setIsBuying] = useState(false);
   const [sizeSoldedOut, setSizeSoldedOut] = useState<(ISizeStock | undefined)[]>([]);
 
   const sizeMemorized = useMemo<ISize[]>(
@@ -72,7 +73,6 @@ const ProductPage: NextPage<Props> = ({ product }) => {
       sizeRestStock: tempCartProduct.quantity === 0 ? productSize.stock : productSize.stock - tempCartProduct.quantity,
       size,
     };
-
     setTempCartProduct({ ...tempCartProduct, size: sizeStock });
   };
 
@@ -93,12 +93,14 @@ const ProductPage: NextPage<Props> = ({ product }) => {
     if (!tempCartProduct.size) return;
     if (tempCartProduct.quantity === 0) return;
     addProductsToCart(tempCartProduct);
+    router.push("/cart");
   };
 
   const handleBuyNow = async () => {
     if (!tempCartProduct.size) return;
     if (tempCartProduct.quantity === 0) return;
     addProductsToCart(tempCartProduct);
+    setIsBuying(true);
     router.push("/checkout/summary");
   };
 
@@ -138,6 +140,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
             ) : (
               <CtaButtons
                 product={tempCartProduct}
+                disableAddToCart={isBuying}
                 handleAddProductToCart={handleAddProductToCart}
                 handleBuyNow={handleBuyNow}
               />

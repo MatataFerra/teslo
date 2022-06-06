@@ -185,8 +185,6 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
       return s;
     });
 
-    console.log({ newSizes, m: "Stock" });
-
     setValue("sizes", newSizes, { shouldValidate: true });
   };
 

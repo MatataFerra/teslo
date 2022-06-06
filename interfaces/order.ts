@@ -52,3 +52,12 @@ export enum OrderStatusEnum {
   delivered = "delivered",
   cancelled = "cancelled",
 }
+
+export interface ILoadingStatus {
+  loading: number;
+  error: boolean;
+}
+
+export interface IOrderStatus extends IOrder {
+  loadingStatus?: ILoadingStatus;
+}

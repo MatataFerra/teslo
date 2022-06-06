@@ -1,26 +1,97 @@
 import { NextPage } from "next";
-
 import { AdminLayout } from "../../components/layouts";
 import { ConfirmationNumberOutlined } from "@mui/icons-material";
-import { Grid, Chip, Tooltip, MenuItem, TextField, Select } from "@mui/material";
+import { Grid, Chip, Tooltip, MenuItem, Select } from "@mui/material";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
-import { IOrder, IUser, OrderStatusEnum } from "../../interfaces";
+import axios from "axios";
+import { IOrder, IUser, OrderStatusEnum, OrderStatus, IOrderStatus } from "../../interfaces";
 import useSWR from "swr";
-import { date } from "../../utils";
+import { date, mapOrdersAddStatus, mapOrdersAddStatusById } from "../../utils";
 import { ErrorComponent, FullScreenLoading } from "../../components/ui";
+import { tesloApi } from "../../api";
+import { useEffect, useState } from "react";
+import { OrderItemStatus } from "../../components/admin";
+
+export interface ValidStatus {
+  status: OrderStatus;
+  label: string;
+}
+
+const validStatus: ValidStatus[] = [
+  {
+    status: OrderStatusEnum.pending,
+    label: "Pendiente",
+  },
+
+  {
+    status: OrderStatusEnum.processing,
+    label: "En proceso",
+  },
+
+  {
+    status: OrderStatusEnum.shipped,
+    label: "Enviado",
+  },
+
+  {
+    status: OrderStatusEnum.delivered,
+    label: "Entregado",
+  },
+
+  {
+    status: OrderStatusEnum.cancelled,
+    label: "Cancelado",
+  },
+];
 
 const OrdersPage: NextPage = () => {
   const { data, error } = useSWR<IOrder[]>("/api/admin/orders");
+  const [dataFromApi, setDataFromApi] = useState<IOrderStatus[]>([]);
 
-  if (!data && !error) return <FullScreenLoading />;
+  useEffect(() => {
+    if (data) {
+      setDataFromApi(
+        mapOrdersAddStatus(data, {
+          loading: 0,
+          error: false,
+        })
+      );
+    }
+  }, [data]);
+
+  if (dataFromApi.length === 0 && !error) return <FullScreenLoading />;
   if (error) return <ErrorComponent />;
 
   const onStatusUpdate = async (orderId: string, newRole: string) => {
-    console.log({ orderId, newRole });
-    return {
-      orderId,
-      role: newRole,
-    };
+    try {
+      await tesloApi.put(`/admin/orders/${orderId}`, { status: newRole });
+      setDataFromApi(
+        mapOrdersAddStatusById(
+          dataFromApi,
+          {
+            loading: 1,
+            error: false,
+          },
+          orderId
+        )
+      );
+    } catch (error) {
+      setDataFromApi(
+        mapOrdersAddStatusById(
+          dataFromApi,
+          {
+            loading: 0,
+            error: true,
+          },
+          orderId
+        )
+      );
+
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+      }
+    }
+    return null;
   };
 
   const columns: GridColDef[] = [
@@ -64,11 +135,15 @@ const OrdersPage: NextPage = () => {
             name={row.status}
             onChange={(e) => onStatusUpdate(row.id, e.target.value)}
             sx={{ width: "100%", border: "none" }}>
-            <MenuItem value={OrderStatusEnum.pending}> Pendiente </MenuItem>
-            <MenuItem value={OrderStatusEnum.processing}>En Proceso</MenuItem>
-            <MenuItem value={OrderStatusEnum.shipped}>Enviando</MenuItem>
-            <MenuItem value={OrderStatusEnum.delivered}>Entregada</MenuItem>
-            <MenuItem value={OrderStatusEnum.cancelled}>Cancelada</MenuItem>
+            {validStatus.map((status) => (
+              <MenuItem key={status.status} value={status.status}>
+                <OrderItemStatus
+                  status={status.label}
+                  opacityLoader={row.loadingStatus.loading}
+                  orderError={row.loadingStatus.error}
+                />
+              </MenuItem>
+            ))}
           </Select>
         );
       },
@@ -91,7 +166,7 @@ const OrdersPage: NextPage = () => {
     { field: "createdAt", headerName: "Órden creada el", align: "left", width: 300 },
   ];
 
-  const rows = data!.map((order) => {
+  const rows = dataFromApi!.map((order) => {
     return {
       id: order._id,
       email: (order.user as IUser).email,
@@ -100,6 +175,7 @@ const OrdersPage: NextPage = () => {
       isPaid: order.isPaid,
       numberOfItems: order.numberOfItems,
       status: order.status,
+      loadingStatus: order.loadingStatus,
       createdAt: date.getFormatDistanceToNow(order.createdAt ?? "2022-05-14T19:05:05.085+00:00"),
     };
   });
