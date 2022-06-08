@@ -27,11 +27,12 @@ export const ProductCard: FC<Props> = ({ product }) => {
   const [isInWishlist, setIsInWishlist] = useState(false);
 
   useEffect(() => {
-    const cookie = Cookies.get("wishlist") ?? " - ";
-    const cookiesParsed: string[] = JSON.parse(cookie);
+    const cookie = Cookies.get("wishlist") ?? null;
+    if (!cookie) return;
+    const cookiesParsed: string[] = JSON.parse(cookie) ?? [];
 
     if (cookiesParsed.includes(product.slug)) {
-      setIsInWishlist(true);
+      return setIsInWishlist(true);
     }
   }, [product.slug]);
 
@@ -47,14 +48,15 @@ export const ProductCard: FC<Props> = ({ product }) => {
     setIsInWishlist((prev) => !prev);
     const wishlistedProducts = Cookies.get("wishlist");
     const wishlist = wishlistedProducts ? JSON.parse(wishlistedProducts) : [];
-    const productExists = wishlist.find((p: any) => p.slug === product.slug);
+    const productExists = wishlist.find((p: any) => p === product.slug);
 
     if (productExists) {
-      const newWishlist = wishlist.filter((p: any) => p.slug !== product.slug);
+      const newWishlist = wishlist.filter((p: any) => p !== product.slug);
       Cookies.set("wishlist", JSON.stringify([...newWishlist]));
-    } else {
-      Cookies.set("wishlist", JSON.stringify([...wishlist, product.slug]));
+      return;
     }
+
+    Cookies.set("wishlist", JSON.stringify([...wishlist, product.slug]));
   };
 
   return (

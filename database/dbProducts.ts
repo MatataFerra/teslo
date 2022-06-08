@@ -34,6 +34,20 @@ export const getAllProductsBySlug = async (): Promise<ProductSlug[]> => {
   return JSON.parse(JSON.stringify(slugs));
 };
 
+export const getAllDataProductsBySlug = async (slug: string[]): Promise<IProductSize[]> => {
+  await db.connect();
+  const productsData = await ProductSize.find({ slug: { $in: slug } })
+    .select("slug images price title _id ")
+    .lean();
+  await db.disconnect();
+
+  if (!productsData) {
+    throw null;
+  }
+
+  return JSON.parse(JSON.stringify(productsData));
+};
+
 export const getProductsByTerms = async (term: string): Promise<IProductSize[]> => {
   await db.connect();
   const termSearch = `/${term.toLowerCase()}/`;
@@ -71,4 +85,18 @@ export const getAllProducts = async (): Promise<IProductSize[]> => {
   });
 
   return JSON.parse(JSON.stringify(updatedProducts));
+};
+
+export const getProductsById = async (ids: string[]): Promise<IProductSize[]> => {
+  await db.connect();
+  const products = await ProductSize.find({ _id: { $in: ids } })
+    .select("title images price slug inStock -_id")
+    .lean();
+  await db.disconnect();
+
+  if (!products) {
+    throw null;
+  }
+
+  return JSON.parse(JSON.stringify(products));
 };

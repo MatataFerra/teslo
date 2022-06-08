@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { db, SHOP_CONSTANTS } from "../../../database";
 import { IProductSize } from "../../../interfaces";
 import { ProductSize } from "../../../models";
+import { parseImagesOnProducts } from "../../../utils";
 
 type Data = { message: string } | IProductSize[];
 
@@ -26,13 +27,7 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const products = await ProductSize.find(condition).select("title images price inStock slug -_id").lean();
   await db.disconnect();
 
-  const updatedProducts = products.map((product) => {
-    product.images = product.images.map((image) => {
-      return image.includes("http") ? image : `${process.env.HOST_NAME}products/${image}`;
-    });
-
-    return product;
-  });
+  const updatedProducts = parseImagesOnProducts(products);
 
   return res.status(200).json(updatedProducts);
 };

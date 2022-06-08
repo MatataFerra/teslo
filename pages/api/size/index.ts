@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../database";
-import { IProduct, IProductSize } from "../../../interfaces";
-import { Product, ProductSize } from "../../../models";
+import { IProductSize } from "../../../interfaces";
+import { ProductSize } from "../../../models";
 
 type Data = { message: string } | IProductSize[] | IProductSize;
 

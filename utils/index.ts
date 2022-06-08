@@ -4,3 +4,4 @@ export * as validations from "./validations";
 export * from "./countries";
 export * as date from "./datefn";
 export * from "./orders";
+export * from "./products";

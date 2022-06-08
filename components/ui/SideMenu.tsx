@@ -86,7 +86,7 @@ export const SideMenu = () => {
                 <ListItemText primary={"Mis Ordenes"} />
               </ListItem>
 
-              <ListItem button onClick={() => navigateTo("/")}>
+              <ListItem button onClick={() => navigateTo("/wishlist")}>
                 <ListItemIcon>
                   <FavoriteBorderOutlined />
                 </ListItemIcon>
