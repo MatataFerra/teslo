@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, SetStateAction } from "react";
 import { Favorite } from "@mui/icons-material";
 import {
   Box,
@@ -14,14 +14,33 @@ import {
 } from "@mui/material";
 import NextLink from "next/link";
 import { IProductSize } from "../../interfaces";
+import Cookies from "js-cookie";
+import { tesloApi } from "../../api";
+import { useSession } from "next-auth/react";
 
 interface Props {
   product?: IProductSize;
   isImageLoaded: boolean;
   skeleton: boolean;
+  setWishlist: (value: SetStateAction<IProductSize[]>) => void;
 }
 
-export const WishListCard: FC<Props> = ({ isImageLoaded = true, skeleton = true, product }) => {
+export const WishListCard: FC<Props> = ({ isImageLoaded = true, skeleton = true, product, setWishlist }) => {
+  const { status } = useSession();
+  const onUnfavorite = async () => {
+    if (status === "unauthenticated") return;
+
+    const cookies = Cookies.get("wishlist");
+    if (cookies) {
+      const slugs = JSON.parse(cookies);
+      const newSlugs = slugs.filter((item: string) => item !== product?.slug);
+      Cookies.set("wishlist", JSON.stringify(newSlugs));
+      setWishlist((prevState: IProductSize[]) => {
+        return prevState.filter((item: IProductSize) => item.slug !== product?.slug);
+      });
+    }
+  };
+
   return (
     <Grid item xs={12} sm={6} md={3}>
       <Card sx={{ position: "relative" }}>
@@ -38,7 +57,7 @@ export const WishListCard: FC<Props> = ({ isImageLoaded = true, skeleton = true,
             <Skeleton variant='rectangular' width='100%' height='400px' />
           )}
         </CardActionArea>
-        <IconButton sx={{ position: "absolute", zIndex: 99, top: 10, right: 10 }}>
+        <IconButton sx={{ position: "absolute", zIndex: 99, top: 10, right: 10 }} onClick={onUnfavorite}>
           <Favorite color='error' />
         </IconButton>
       </Card>

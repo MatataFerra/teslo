@@ -11,10 +11,11 @@ import {
   Chip,
   IconButton,
 } from "@mui/material";
-import { FC, useMemo, useState, useEffect } from "react";
+import { FC, useMemo, useState, useEffect, useContext } from "react";
 import { IProductSize } from "../../interfaces";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import Cookies from "js-cookie";
+import { WishlistContext } from "../../context";
 
 interface Props {
   product: IProductSize;
@@ -25,16 +26,13 @@ export const ProductCard: FC<Props> = ({ product }) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [skeleton, setSkeleton] = useState(false);
   const [isInWishlist, setIsInWishlist] = useState(false);
+  const { wishlist } = useContext(WishlistContext);
 
   useEffect(() => {
-    const cookie = Cookies.get("wishlist") ?? null;
-    if (!cookie) return;
-    const cookiesParsed: string[] = JSON.parse(cookie) ?? [];
-
-    if (cookiesParsed.includes(product.slug)) {
+    if (wishlist && wishlist.length > 0 && wishlist.includes(product.slug)) {
       return setIsInWishlist(true);
     }
-  }, [product.slug]);
+  }, [product.slug, wishlist]);
 
   useEffect(() => {
     product && setIsImageLoaded(true);

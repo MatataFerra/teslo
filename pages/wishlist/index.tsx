@@ -1,34 +1,34 @@
 import Cookies from "js-cookie";
 import { NextPage, GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
-import { useEffect } from "react";
-import { tesloApi } from "../../api";
+import { useEffect, useState } from "react";
 import { ShopLayout } from "../../components/layouts";
 import { WishListCardList } from "../../components/wishlist";
 import { dbProducts, dbWishList } from "../../database";
 import { getAllDataProductsBySlug } from "../../database/dbProducts";
 import { IProductSize } from "../../interfaces";
-
-interface WishList {
-  products: IProductSize[];
-}
+import { WishListEmpty } from "../../components/wishlist";
 
 interface Props {
   favorites: IProductSize[];
 }
 
 const WishList: NextPage<Props> = ({ favorites }) => {
+  const [wishlist, setWishlist] = useState(favorites);
+
   useEffect(() => {
     const cookies = Cookies.get("wishlist");
     if (!cookies) {
-      const slugs = favorites.map((item: any) => item.slug);
-      Cookies.set("wishlist", JSON.stringify(slugs));
+      if (wishlist.length > 0) {
+        const slugs = wishlist.map((item: any) => item.slug);
+        Cookies.set("wishlist", JSON.stringify(slugs));
+      }
     }
-  }, [favorites]);
+  }, [wishlist]);
 
   return (
     <ShopLayout title='Wishlist' pageDescription='Wishlist'>
-      <WishListCardList products={favorites} />
+      {favorites.length > 0 ? <WishListCardList products={wishlist} setWishlist={setWishlist} /> : <WishListEmpty />}
     </ShopLayout>
   );
 };
@@ -48,6 +48,15 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
   if (!cookies.wishlist) {
     const favorites = await dbWishList.getFavorites(session.user._id);
+
+    if (!favorites || favorites.length === 0) {
+      return {
+        props: {
+          favorites: null,
+        },
+      };
+    }
+
     const slugs = await dbProducts.getProductsById(favorites.products);
 
     return {

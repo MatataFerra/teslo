@@ -62,6 +62,7 @@ export const AuthProvider: FC<Children> = ({ children }) => {
       const { data } = await tesloApi.post("/user/login", { email, password });
       const { user, token } = data;
       Cookie.set("token", token);
+      Cookie.remove("wishlist");
       dispatch({ type: "[Auth] - Login", payload: user });
       return true;
     } catch (error) {
@@ -113,6 +114,7 @@ export const AuthProvider: FC<Children> = ({ children }) => {
     Cookie.remove("city");
     Cookie.remove("country");
     Cookie.remove("phone");
+    Cookie.remove("wishlist");
     // router.reload();
     signOut();
     dispatch({ type: "[Auth] - Logout" });

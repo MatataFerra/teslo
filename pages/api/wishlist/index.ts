@@ -21,16 +21,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     return getWishlistUser(req, res);
   }
 
-  console.log(body.cookie, body.userId);
-
-  res.status(200).json({ message: "Example" });
+  res.status(400).json({ message: "Method not allowed" });
 }
 
 const getWishlistUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const params = req.query as { userId: string };
 
   if (!isValidObjectId(params.userId)) {
-    return res.status(400).json({ message: "Bad Request" });
+    return res.status(400).json({ message: "Invalid Id" });
   }
 
   await db.connect();
@@ -39,7 +37,7 @@ const getWishlistUser = async (req: NextApiRequest, res: NextApiResponse<Data>) 
 
   if (!user) {
     await db.disconnect();
-    return res.status(400).json({ message: "Bad Request" });
+    return res.status(400).json({ message: "User not found" });
   }
 
   const wishlistProducts = (await WishList.findOne({ userId: params.userId })) as any;
@@ -53,7 +51,7 @@ const updateWishlistUser = async (req: NextApiRequest, res: NextApiResponse<Data
   const { body } = req as { body: { cookies: string; userId: string } };
 
   if (!isValidObjectId(body.userId)) {
-    return res.status(400).json({ message: "Bad Request" });
+    return res.status(400).json({ message: "No valid Id" });
   }
 
   await db.connect();
@@ -62,7 +60,7 @@ const updateWishlistUser = async (req: NextApiRequest, res: NextApiResponse<Data
 
   if (!user) {
     await db.disconnect();
-    return res.status(400).json({ message: "Bad Request" });
+    return res.status(400).json({ message: "User not found" });
   }
 
   const wishlistProducts = (await WishList.findOne({ userId: body.userId })) as any;
