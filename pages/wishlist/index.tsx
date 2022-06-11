@@ -17,14 +17,16 @@ const WishList: NextPage<Props> = ({ favorites }) => {
   const [wishlist, setWishlist] = useState(favorites);
 
   useEffect(() => {
-    const cookies = Cookies.get("wishlist");
-    if (!cookies) {
+    const wishlistCookie = Cookies.get("wishlist") ?? "[]";
+    const cookies = JSON.parse(wishlistCookie) ?? [];
+
+    if (cookies.length === 0) {
       if (wishlist.length > 0) {
         const slugs = wishlist.map((item: any) => item.slug);
         Cookies.set("wishlist", JSON.stringify(slugs));
       }
     }
-  }, [wishlist]);
+  }, [favorites, wishlist]);
 
   return (
     <ShopLayout title='Wishlist' pageDescription='Wishlist'>
@@ -46,7 +48,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     };
   }
 
-  if (!cookies.wishlist) {
+  if (!cookies.wishlist || JSON.parse(cookies.wishlist).length === 0) {
     const favorites = await dbWishList.getFavorites(session.user._id);
 
     if (!favorites || favorites.length === 0) {
@@ -65,17 +67,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
       },
     };
   }
-
-  await fetch(`${process.env.HOST_NAME}/api/wishlist`, {
-    method: "PUT",
-    body: JSON.stringify({
-      userId: session.user._id,
-      cookies: cookies.wishlist,
-    }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
 
   const favorites = await getAllDataProductsBySlug(JSON.parse(cookies.wishlist));
 

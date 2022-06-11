@@ -72,7 +72,7 @@ export const SideMenu = () => {
 
           {isLoggedIn && (
             <>
-              <ListItem button>
+              <ListItem button onClick={() => navigateTo("/profile")}>
                 <ListItemIcon>
                   <AccountCircleOutlined />
                 </ListItemIcon>

@@ -16,6 +16,8 @@ import { IProductSize } from "../../interfaces";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import Cookies from "js-cookie";
 import { WishlistContext } from "../../context";
+import { FavoriteButton } from "./FavoriteButton";
+import { useSession } from "next-auth/react";
 
 interface Props {
   product: IProductSize;
@@ -26,7 +28,13 @@ export const ProductCard: FC<Props> = ({ product }) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [skeleton, setSkeleton] = useState(false);
   const [isInWishlist, setIsInWishlist] = useState(false);
+  const [wishlistLoaded, setWishlistLoaded] = useState(false);
   const { wishlist } = useContext(WishlistContext);
+  const data = useSession();
+
+  useEffect(() => {
+    product && setIsImageLoaded(true);
+  }, [product]);
 
   useEffect(() => {
     if (wishlist && wishlist.length > 0 && wishlist.includes(product.slug)) {
@@ -35,27 +43,21 @@ export const ProductCard: FC<Props> = ({ product }) => {
   }, [product.slug, wishlist]);
 
   useEffect(() => {
-    product && setIsImageLoaded(true);
-  }, [product]);
+    if (data.data?.user?.email) {
+      isImageLoaded &&
+        wishlist.length > 0 &&
+        setTimeout(() => {
+          setWishlistLoaded(true);
+        }, 1000);
+      return;
+    }
+
+    setWishlistLoaded(true);
+  }, [data.data?.user?.email, isImageLoaded, wishlist.length]);
 
   const productImage = useMemo(() => {
     return isHovered ? `${product.images[1]}` : `${product.images[0]}`;
   }, [isHovered, product.images]);
-
-  const onWishlist = async () => {
-    setIsInWishlist((prev) => !prev);
-    const wishlistedProducts = Cookies.get("wishlist");
-    const wishlist = wishlistedProducts ? JSON.parse(wishlistedProducts) : [];
-    const productExists = wishlist.find((p: any) => p === product.slug);
-
-    if (productExists) {
-      const newWishlist = wishlist.filter((p: any) => p !== product.slug);
-      Cookies.set("wishlist", JSON.stringify([...newWishlist]));
-      return;
-    }
-
-    Cookies.set("wishlist", JSON.stringify([...wishlist, product.slug]));
-  };
 
   return (
     <Grid item xs={6} sm={4} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
@@ -86,9 +88,16 @@ export const ProductCard: FC<Props> = ({ product }) => {
             <Skeleton variant='rectangular' width='100%' height='400px' />
           )}
         </CardActionArea>
-        <IconButton sx={{ position: "absolute", zIndex: 99, top: 10, right: 10 }} onClick={onWishlist}>
-          {isInWishlist ? <Favorite color='error' /> : <FavoriteBorder sx={{ transition: ".3s ease all" }} />}
-        </IconButton>
+        {!wishlistLoaded ? (
+          <Skeleton
+            variant='circular'
+            width={30}
+            height={30}
+            sx={{ position: "absolute", zIndex: 99, top: 10, right: 10 }}
+          />
+        ) : (
+          <FavoriteButton isInWishlist={isInWishlist} product={product} setIsInWishlist={setIsInWishlist} />
+        )}
       </Card>
 
       <Box sx={{ mt: 1 }} className='fadeIn'>

@@ -63,6 +63,7 @@ export const AuthProvider: FC<Children> = ({ children }) => {
       const { user, token } = data;
       Cookie.set("token", token);
       Cookie.remove("wishlist");
+      Cookie.remove("userdataproducts");
       dispatch({ type: "[Auth] - Login", payload: user });
       return true;
     } catch (error) {
@@ -115,6 +116,7 @@ export const AuthProvider: FC<Children> = ({ children }) => {
     Cookie.remove("country");
     Cookie.remove("phone");
     Cookie.remove("wishlist");
+    Cookie.remove("userdataproducts");
     // router.reload();
     signOut();
     dispatch({ type: "[Auth] - Logout" });
