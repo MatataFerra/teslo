@@ -16,12 +16,6 @@ import { signIn, getSession } from "next-auth/react";
 
 type FormData = { email: string; password: string; name: string };
 
-type DataResponse = {
-  token: string | Error;
-  user: userApiResponse;
-  message: string;
-};
-
 const RegisterPage: NextPage = () => {
   const router = useRouter();
   const { registerUser } = useContext(AuthContext);
@@ -41,9 +35,6 @@ const RegisterPage: NextPage = () => {
       setErrorMessage(message ?? "An error occured");
       return;
     }
-
-    // const destination = router.query.p?.toString() ?? "/";
-    // router.replace(destination);
 
     await signIn("credentials", { email: formData.email, password: formData.password });
   };

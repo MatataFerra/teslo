@@ -38,16 +38,6 @@ const LoginPage: NextPage = () => {
     setShowError(false);
     setLogin(true);
 
-    // const isValidLogin = await loginUser(email, password);
-
-    // if (!isValidLogin) {
-    //   return setShowError(true);
-    // }
-
-    // // TODO: navegar a la pantalla que el usuario estaba antes de hacer login
-    // const destination = router.query.p?.toString() ?? "/";
-    // router.replace(destination);
-
     await signIn("credentials", { email, password });
   };
 

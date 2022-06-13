@@ -1,6 +1,7 @@
 import { Avatar, Grid, List, Stack, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { FC, useState } from "react";
+import { FC, useContext, useState } from "react";
+import { ProfileContext } from "../../context";
 import { Item, ProfileItems } from "../../interfaces";
 import { AsideItem } from "./AsideItem";
 
@@ -10,13 +11,14 @@ export interface ItemClicked {
 }
 
 export const AsideMenu: FC = () => {
+  const { menuItemSelected, menu } = useContext(ProfileContext);
   const [itemClicked, setItemClicked] = useState<ItemClicked>({
     "Datos personales": {
-      isClicked: false,
+      isClicked: menu === "Datos personales" ? true : false,
       label: "Datos personales",
     },
     "Mis pedidos": {
-      isClicked: false,
+      isClicked: menu === "Mis pedidos" ? true : false,
       label: "Mis pedidos",
     },
   });
@@ -33,6 +35,7 @@ export const AsideMenu: FC = () => {
           },
         }));
       }
+      menuItemSelected(item);
 
       return setItemClicked((prevState) => ({
         ...prevState,
@@ -46,13 +49,9 @@ export const AsideMenu: FC = () => {
 
   return (
     <>
-      <Stack direction='row' spacing={2} alignItems='center' p={2}>
-        <Avatar
-          sx={{ height: 100, width: 100, margin: "0 auto" }}
-          alt='Remy Sharp'
-          src='https://picsum.photos/150/150'
-        />
-        <Typography variant='h6' sx={{ fontWeight: "bold", marginTop: "1rem" }}>
+      <Stack direction='row' alignItems='center' gap={2} pt={4} pb={4}>
+        <Avatar sx={{ height: 100, width: 100 }} alt='Remy Sharp' src='https://picsum.photos/150/150' />
+        <Typography variant='h6' sx={{ fontWeight: "bold" }}>
           Nombre
         </Typography>
       </Stack>

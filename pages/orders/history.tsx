@@ -141,9 +141,6 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
                 <DeleteOutline />
               </Tooltip>
             </IconButton>
-            {/* <IconButton>
-              <UpdateOutlined />
-            </IconButton> */}
           </>
         );
       },
