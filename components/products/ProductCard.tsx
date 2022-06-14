@@ -43,17 +43,10 @@ export const ProductCard: FC<Props> = ({ product }) => {
   }, [product.slug, wishlist]);
 
   useEffect(() => {
-    if (data.data?.user?.email) {
-      isImageLoaded &&
-        wishlist.length > 0 &&
-        setTimeout(() => {
-          setWishlistLoaded(true);
-        }, 1000);
-      return;
-    }
-
-    setWishlistLoaded(true);
-  }, [data.data?.user?.email, isImageLoaded, wishlist.length]);
+    setTimeout(() => {
+      setWishlistLoaded(true);
+    }, 1000);
+  }, []);
 
   const productImage = useMemo(() => {
     return isHovered ? `${product.images[1]}` : `${product.images[0]}`;

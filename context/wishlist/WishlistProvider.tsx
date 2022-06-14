@@ -29,7 +29,6 @@ export const WishlistProvider: FC<Children> = ({ children }) => {
 
       Cookies.set("userdataproducts", JSON.stringify(data.products));
       const { data: products } = await tesloApi.get(`/products/id`);
-      console.log({ data, products, userId });
 
       return products;
     };
@@ -41,7 +40,6 @@ export const WishlistProvider: FC<Children> = ({ children }) => {
 
     getWishList()
       .then((wishlist) => {
-        console.log({ wishlist });
         if (!wishlist || wishlist.length === 0) Cookies.set("wishlist", JSON.stringify([]));
         const slugs = wishlist.map((item: any) => item.slug);
         Cookies.set("wishlist", JSON.stringify(slugs));

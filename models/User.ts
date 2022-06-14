@@ -15,6 +15,11 @@ const userSchema = new Schema(
       default: "client",
       required: true,
     },
+    active: {
+      type: Boolean,
+      default: true,
+      required: true,
+    },
   },
   {
     timestamps: true,

@@ -22,3 +22,20 @@ export const getOrdersByUserId = async (userId: string): Promise<IOrder[]> => {
 
   return JSON.parse(JSON.stringify(orders));
 };
+
+export const getLastOrderByUserId = async (userId: string): Promise<IOrder[] | null> => {
+  if (!isValidObjectId(userId)) return null;
+  await db.connect();
+  const order = await Order.find({
+    user: userId,
+    $where: function () {
+      return this.status === "pending";
+    },
+  })
+    .sort({ createdAt: -1 })
+    .limit(3)
+    .lean();
+  await db.disconnect();
+
+  return JSON.parse(JSON.stringify(order));
+};
