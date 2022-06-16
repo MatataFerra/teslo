@@ -47,8 +47,9 @@ export const UpdateData: FC = () => {
         }}>
         <Stack p={2} spacing={2}>
           <form onSubmit={handleSubmit(onSubmitForm)}>
-            <Box width='100%' display='flex' gap={2} mb={2}>
+            <Box width='100%' display='flex' gap={2} mb={2} flexWrap='wrap'>
               <TextField
+                sx={{ width: { xs: "100%", sm: "initial" } }}
                 label='Nombre'
                 type='text'
                 {...register("firstName", {
@@ -58,6 +59,7 @@ export const UpdateData: FC = () => {
                 helperText={errors.firstName?.message}
               />
               <TextField
+                sx={{ width: { xs: "100%", sm: "initial" } }}
                 label='Apellido'
                 type='text'
                 {...register("lastName", {
@@ -67,6 +69,7 @@ export const UpdateData: FC = () => {
                 helperText={errors.lastName?.message}
               />
               <TextField
+                sx={{ width: { xs: "100%", sm: "initial" } }}
                 label='Calle y número'
                 type='text'
                 {...register("address", {
@@ -76,6 +79,7 @@ export const UpdateData: FC = () => {
                 helperText={errors.address?.message}
               />
               <TextField
+                sx={{ width: { xs: "100%", sm: "initial" } }}
                 label='Código postal'
                 type='text'
                 {...register("zip", {
@@ -85,8 +89,9 @@ export const UpdateData: FC = () => {
                 helperText={errors.zip?.message}
               />
             </Box>
-            <Box display='flex' gap={2}>
+            <Box display='flex' gap={2} flexWrap='wrap'>
               <TextField
+                sx={{ width: { xs: "100%", sm: "initial" } }}
                 label='Teléfono'
                 type='text'
                 {...register("phone", {
@@ -97,6 +102,7 @@ export const UpdateData: FC = () => {
                 helperText={errors.phone?.message}
               />
               <TextField
+                sx={{ width: { xs: "100%", sm: "initial" } }}
                 label='Ciudad'
                 type='text'
                 {...register("city", {
@@ -105,10 +111,10 @@ export const UpdateData: FC = () => {
                 error={!!errors.city}
                 helperText={errors.city?.message}
               />
-              <FormControl fullWidth>
+              <FormControl>
                 <TextField
                   select
-                  sx={{ backgroundColor: "rgba(0, 0, 0, 0.06)", border: "none" }}
+                  sx={{ backgroundColor: "rgba(0, 0, 0, 0.06)", border: "none", width: { xs: "100%", sm: "initial" } }}
                   label='País de residencia'
                   defaultValue={shippingAddress?.country}
                   {...register("country", {

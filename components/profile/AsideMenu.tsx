@@ -52,7 +52,7 @@ export const AsideMenu: FC = () => {
       <Stack direction='row' alignItems='center' gap={2} pt={4} pb={4}>
         <Avatar sx={{ height: 100, width: 100 }} alt='Remy Sharp' src='https://picsum.photos/150/150' />
         <Typography variant='h6' sx={{ fontWeight: "bold" }}>
-          Nombre
+          Hola!
         </Typography>
       </Stack>
       <Stack>
