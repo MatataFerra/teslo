@@ -1,6 +1,6 @@
-import { Box, Divider, Stack, Typography } from "@mui/material";
+import { Box, Button, Divider, Stack, Typography } from "@mui/material";
 import { FC } from "react";
-import { ProfileTitle } from ".";
+import { ProfileTitle, UpdateData, ProfileAddress } from ".";
 
 interface Props {
   name: string;
@@ -15,6 +15,12 @@ export const PersonalData: FC<Props> = ({ name, email }) => {
       <Box mt={2}>
         <Typography>Nombre: {name}</Typography>
         <Typography>Email: {email}</Typography>
+      </Box>
+      <Box>
+        <ProfileAddress />
+      </Box>
+      <Box mt={2}>
+        <UpdateData />
       </Box>
     </Stack>
   );

@@ -7,7 +7,6 @@ import { dbOrders } from "../../database";
 import { IOrder } from "../../interfaces";
 import { useContext } from "react";
 import { ProfileContext } from "../../context";
-import { ProfileItems } from "../../interfaces/profile";
 
 interface Props {
   orders: IOrder[];

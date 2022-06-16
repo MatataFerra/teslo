@@ -2,37 +2,12 @@ import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { NextPage } from "next";
 import { ShopLayout } from "../../components/layouts";
-import { Typography, Grid, TextField, FormControl, Select, MenuItem, Box, Button } from "@mui/material";
-import { countries } from "../../utils";
-import { useForm, Controller } from "react-hook-form";
+import { Typography, Grid, TextField, FormControl, MenuItem, Box, Button } from "@mui/material";
+import { countries, getAddressFromCookies } from "../../utils";
+import { useForm } from "react-hook-form";
 import Cookies from "js-cookie";
 import { CartContext } from "../../context";
-
-type FormData = {
-  firstName: string;
-  lastName: string;
-  address: string;
-  address2?: string;
-  zip: string;
-  city: string;
-  country: string;
-  phone: string;
-};
-
-const getAddressFromCookies = (): FormData => {
-  const cookies: FormData = {
-    firstName: Cookies.get("firstName") ?? "",
-    lastName: Cookies.get("lastName") ?? "",
-    address: Cookies.get("address") ?? "",
-    address2: Cookies.get("address2") ?? "",
-    zip: Cookies.get("zip") ?? "",
-    city: Cookies.get("city") ?? "",
-    country: Cookies.get("country") ?? "",
-    phone: Cookies.get("phone") ?? "",
-  };
-
-  return cookies;
-};
+import { FormData } from "../../interfaces";
 
 const AddressPage: NextPage = () => {
   const router = useRouter();
@@ -43,7 +18,6 @@ const AddressPage: NextPage = () => {
     handleSubmit,
     register,
     formState: { errors },
-    control,
   } = useForm<FormData>({
     defaultValues: getAddressFromCookies(),
   });
@@ -51,8 +25,6 @@ const AddressPage: NextPage = () => {
   useEffect(() => {
     const cookies = Cookies.get("country") ?? "ARG";
     setCountry(cookies);
-
-    console.log();
   }, []);
 
   const onSubmitForm = async (data: FormData) => {

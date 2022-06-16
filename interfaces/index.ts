@@ -10,3 +10,4 @@ export * from "./sizeStock";
 export * from "./wishlist";
 export * from "./profile";
 export * from "./pickup";
+export * from "./form";
