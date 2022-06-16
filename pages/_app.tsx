@@ -4,7 +4,7 @@ import { SessionProvider } from "next-auth/react";
 import { SWRConfig } from "swr";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { lightTheme } from "../themes";
-import { CartProvider, UiProvider, AuthProvider, WishlistProvider, ProfileProvider } from "../context";
+import { CartProvider, UiProvider, AuthProvider, WishlistProvider, ProfileProvider, PickupProvider } from "../context";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -18,14 +18,16 @@ function MyApp({ Component, pageProps }: AppProps) {
           <AuthProvider>
             <CartProvider>
               <ProfileProvider>
-                <WishlistProvider>
-                  <UiProvider>
-                    <ThemeProvider theme={lightTheme}>
-                      <CssBaseline />
-                      <Component {...pageProps} />
-                    </ThemeProvider>
-                  </UiProvider>
-                </WishlistProvider>
+                <PickupProvider>
+                  <WishlistProvider>
+                    <UiProvider>
+                      <ThemeProvider theme={lightTheme}>
+                        <CssBaseline />
+                        <Component {...pageProps} />
+                      </ThemeProvider>
+                    </UiProvider>
+                  </WishlistProvider>
+                </PickupProvider>
               </ProfileProvider>
             </CartProvider>
           </AuthProvider>
