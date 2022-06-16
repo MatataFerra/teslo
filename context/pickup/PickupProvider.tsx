@@ -8,9 +8,9 @@ export interface PickupState {
 
 const Pickup_INITIAL_STATE: PickupState = {
   pickup: {
-    latitude: "45.51",
-    longitude: "-122.68",
-    name: "Oregon",
+    latitude: "-34.57873740816326",
+    longitude: "-58.49272191020408",
+    name: "Busque su ubicación",
   },
 };
 

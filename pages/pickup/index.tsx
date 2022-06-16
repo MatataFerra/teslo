@@ -18,11 +18,11 @@ const PickupPoints: NextPage = () => {
   return (
     <>
       <ShopLayout title='Sucursales sercanas' pageDescription='Encuentre sucursales cercanas a su domicilio'>
-        <Grid container spacing={3} height='calc(100vh - 160px)'>
-          <Grid item xs={4}>
+        <Grid container spacing={4} height='calc(100vh - 160px)'>
+          <Grid item xs={12} lg={4}>
             <SearchPickupPoints />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={12} lg={8} height={{ xs: "50vh", lg: "auto" }}>
             <MemoMap />
           </Grid>
         </Grid>

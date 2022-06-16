@@ -1,6 +1,6 @@
 import { SearchOutlined } from "@mui/icons-material";
 import { Input, InputAdornment, IconButton } from "@mui/material";
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import { ChangeEvent, FC, KeyboardEvent, useState } from "react";
 import { pickupApi } from "../../api";
 import { IApiPickupPoints, IPickupPoint } from "../../interfaces";
 import { ListPickupSearch } from "./ListPickupSearch";
@@ -14,7 +14,7 @@ export const SearchPickupPoints: FC = () => {
     setinputSearch(e.target.value);
   };
 
-  const onGetResults = async () => {
+  const onSearchSubmit = async () => {
     setPickupPoints([]);
     setinputSearch("");
     if ("e.target.value".length > 2) {
@@ -33,12 +33,23 @@ export const SearchPickupPoints: FC = () => {
     }
   };
 
+  const onGetResults = () => {
+    onSearchSubmit();
+  };
+
+  const onPressEnter = (e: KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      onSearchSubmit();
+    }
+  };
+
   return (
     <>
       <Input
         placeholder='Busqueda por direccion'
         type='text'
-        sx={{ width: "75%", mb: 1 }}
+        sx={{ width: "100%", mb: 1 }}
+        onKeyDown={(e) => onPressEnter(e)}
         endAdornment={
           <InputAdornment position='end'>
             <IconButton aria-label='search icon submit' onClick={onGetResults}>
