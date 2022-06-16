@@ -1,10 +1,6 @@
 import { FC, useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
-import {
-  ClearOutlined,
-  SearchOutlined,
-  ShoppingCartOutlined,
-} from "@mui/icons-material";
+import { ClearOutlined, RoomOutlined, SearchOutlined, ShoppingCartOutlined } from "@mui/icons-material";
 import {
   AppBar,
   Badge,
@@ -15,6 +11,7 @@ import {
   InputAdornment,
   Link,
   Toolbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
@@ -44,40 +41,33 @@ export const Navbar: FC = () => {
   return (
     <AppBar>
       <Toolbar>
-        <NextLink href="/" passHref>
-          <Link display="flex" alignItems="center">
-            <Typography variant="h6"> Teslo </Typography>
-            <Typography variant="h6" sx={{ ml: 0.5 }}>
+        <NextLink href='/' passHref>
+          <Link display='flex' alignItems='center'>
+            <Typography variant='h6'> Teslo </Typography>
+            <Typography variant='h6' sx={{ ml: 0.5 }}>
               Shop
             </Typography>
           </Link>
         </NextLink>
         <Box flex={1} />
         <Box
-          className="fadeIn"
+          className='fadeIn'
           sx={{
             display: isSearchVisible ? "none" : { xs: "none", sm: "block" },
-          }}
-        >
-          <NextLink href="/category/men" passHref>
+          }}>
+          <NextLink href='/category/men' passHref>
             <Link>
-              <Button color={option === "men" ? "primary" : "info"}>
-                Hombres
-              </Button>
+              <Button color={option === "men" ? "primary" : "info"}>Hombres</Button>
             </Link>
           </NextLink>
-          <NextLink href="/category/women" passHref>
+          <NextLink href='/category/women' passHref>
             <Link>
-              <Button color={option === "women" ? "primary" : "info"}>
-                Mujeres
-              </Button>
+              <Button color={option === "women" ? "primary" : "info"}>Mujeres</Button>
             </Link>
           </NextLink>
-          <NextLink href="/category/kid" passHref>
+          <NextLink href='/category/kid' passHref>
             <Link>
-              <Button color={option === "kid" ? "primary" : "info"}>
-                Niños
-              </Button>
+              <Button color={option === "kid" ? "primary" : "info"}>Niños</Button>
             </Link>
           </NextLink>
         </Box>
@@ -91,20 +81,17 @@ export const Navbar: FC = () => {
             sx={{
               display: { xs: "none", sm: "flex" },
             }}
-            className="fadeIn"
+            className='fadeIn'
             autoFocus
             value={searchTerm}
-            name="search"
+            name='search'
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSearchTerm()}
-            type="text"
-            placeholder="Buscar..."
+            type='text'
+            placeholder='Buscar...'
             endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={() => setIsSearchVisible(false)}
-                >
+              <InputAdornment position='end'>
+                <IconButton aria-label='toggle password visibility' onClick={() => setIsSearchVisible(false)}>
                   <ClearOutlined />
                 </IconButton>
               </InputAdornment>
@@ -113,29 +100,32 @@ export const Navbar: FC = () => {
         ) : (
           <IconButton
             onClick={() => setIsSearchVisible(true)}
-            className="fadeIn"
-            sx={{ display: { xs: "none", sm: "flex" } }}
-          >
+            className='fadeIn'
+            sx={{ display: { xs: "none", sm: "flex" } }}>
             <SearchOutlined />
           </IconButton>
         )}
 
         {/* Pantallas pequeñas */}
 
-        <IconButton
-          sx={{ display: { xs: "flex", sm: "none" } }}
-          onClick={toogleSideMenu}
-        >
+        <NextLink href='/pickup' passHref>
+          <Link>
+            <IconButton>
+              <Tooltip title='Sucursales cercanas' arrow>
+                <RoomOutlined />
+              </Tooltip>
+            </IconButton>
+          </Link>
+        </NextLink>
+
+        <IconButton sx={{ display: { xs: "flex", sm: "none" } }} onClick={toogleSideMenu}>
           <SearchOutlined />
         </IconButton>
 
-        <NextLink href="/cart" passHref>
+        <NextLink href='/cart' passHref>
           <Link>
             <IconButton>
-              <Badge
-                badgeContent={numberOfItems > 15 ? "+15" : numberOfItems}
-                color="secondary"
-              >
+              <Badge badgeContent={numberOfItems > 15 ? "+15" : numberOfItems} color='secondary'>
                 <ShoppingCartOutlined />
               </Badge>
             </IconButton>
