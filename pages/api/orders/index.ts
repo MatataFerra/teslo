@@ -32,6 +32,10 @@ async function createOrder(req: NextApiRequest, res: NextApiResponse) {
 
   if (!session) return res.status(401).json({ message: "Unauthorized" });
 
+  if (!session?.user.active) {
+    return res.status(400).json({ message: "User not active" });
+  }
+
   const productsIds = orderItems.map((item) => item._id);
 
   db.connect();

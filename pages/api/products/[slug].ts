@@ -41,10 +41,14 @@ const getProductsBySlug = async (req: NextApiRequest, res: NextApiResponse<Data>
 const updateProductBySlug = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const { slug } = req.query;
   const sizeStock = req.body as ISizeStock;
-  const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const session: any = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
   if (!session) {
     return res.status(401).json({ message: "You can't update this product" });
+  }
+
+  if (!session?.user.active) {
+    return res.status(400).json({ message: "User not active" });
   }
 
   if (!sizeStock) {

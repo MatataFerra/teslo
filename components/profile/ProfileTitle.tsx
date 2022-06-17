@@ -1,6 +1,8 @@
-import { Box, Typography, Link } from "@mui/material";
+import { Box, Typography, Link, Chip } from "@mui/material";
+import { useSession } from "next-auth/react";
 import NextLink from "next/link";
-import { FC } from "react";
+import { FC, useContext, useEffect } from "react";
+import { AuthContext } from "../../context";
 
 interface Props {
   title: string;
@@ -10,11 +12,25 @@ interface Props {
 }
 
 export const ProfileTitle: FC<Props> = ({ title = "Default Title", link = false, href = "/", linkTitle }) => {
+  const { user } = useContext(AuthContext);
+
+  useEffect(() => {
+    console.log(user, "PROFILE TITLE");
+  }, [user]);
+
   return (
-    <Box display='flex' justifyContent='space-between'>
-      <Typography variant='h6' color='primary'>
-        {title}
-      </Typography>
+    <Box display='flex' justifyContent='space-between' alignItems='center'>
+      <Box display='flex' alignItems='center' gap={2} mb={2}>
+        <Typography variant='h6' color='primary'>
+          {title}
+        </Typography>
+        {user && user?.active ? (
+          <Chip size='small' color='success' variant='filled' label='Usuario activo' />
+        ) : (
+          <Chip size='small' color='error' variant='filled' label='Usuario inactivo' />
+        )}
+      </Box>
+
       {link && (
         <NextLink href={href} passHref>
           <Link variant='button' underline='always' color='secondary' component='button'>

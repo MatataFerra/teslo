@@ -1,12 +1,13 @@
 import { Box, Button, FormControl, MenuItem, Popover, Stack, TextField, Typography } from "@mui/material";
 import { FC, MouseEvent, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { CartContext } from "../../context";
+import { AuthContext, CartContext } from "../../context";
 import { FormData } from "../../interfaces";
 import { countries, getAddressFromCookies } from "../../utils";
 
 export const UpdateData: FC = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const { user } = useContext(AuthContext);
   const { updateAddress, shippingAddress } = useContext(CartContext);
   const {
     handleSubmit,
@@ -33,7 +34,7 @@ export const UpdateData: FC = () => {
 
   return (
     <>
-      <Button aria-describedby={id} color='primary' variant='outlined' onClick={handleClick}>
+      <Button aria-describedby={id} color='primary' variant='outlined' onClick={handleClick} disabled={!user?.active}>
         Actualizar información de envío
       </Button>
       <Popover

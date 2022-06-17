@@ -189,6 +189,15 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     };
   }
 
+  if (!session.user.active) {
+    return {
+      redirect: {
+        destination: `/`,
+        permanent: false,
+      },
+    };
+  }
+
   const orders = await dbOrders.getOrdersByUserId(session.user._id);
 
   return {

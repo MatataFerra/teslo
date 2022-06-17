@@ -51,10 +51,14 @@ const getWishlistUser = async (req: NextApiRequest, res: NextApiResponse<Data>) 
 
 const updateWishlistUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const cookies = req.cookies;
-  const session = (await getSession({ req })) as any;
+  const session: any = await getSession({ req });
 
   if (!isValidObjectId(session?.user._id)) {
     return res.status(400).json({ message: "No valid Id" });
+  }
+
+  if (!session?.user.active) {
+    return res.status(400).json({ message: "User not active" });
   }
 
   await db.connect();

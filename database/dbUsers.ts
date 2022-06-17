@@ -11,13 +11,14 @@ export const checkUserEmailPassword = async (email: string, password: string) =>
 
   if (!bcrypt.compareSync(password, user.password ?? "")) return null;
 
-  const { role, name, _id } = user;
+  const { role, name, _id, active } = user;
 
   return {
     _id,
     email: email.toLocaleLowerCase(),
     role,
     name,
+    active,
   };
 };
 
@@ -27,8 +28,8 @@ export const oAuthToDbUser = async (oAuthName: string, oAuthEmail: string) => {
 
   if (user) {
     await db.disconnect();
-    const { _id, name, email, role } = user;
-    return { _id, name, email, role };
+    const { _id, name, email, role, active } = user;
+    return { _id, name, email, role, active };
   }
 
   const newUser = new User({
@@ -36,12 +37,13 @@ export const oAuthToDbUser = async (oAuthName: string, oAuthEmail: string) => {
     email: oAuthEmail,
     password: "@",
     role: "client",
+    active: true,
   });
 
   await newUser.save();
   await db.disconnect();
 
-  const { _id, name, email, role } = newUser;
+  const { _id, name, email, role, active } = newUser;
 
-  return { _id, name, email, role };
+  return { _id, name, email, role, active };
 };

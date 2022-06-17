@@ -6,7 +6,6 @@ import { AuthLayout } from "../../components/layouts";
 import { useForm } from "react-hook-form";
 import { validations } from "../../utils";
 import { ErrorOutline } from "@mui/icons-material";
-import { AuthContext } from "../../context";
 import { useRouter } from "next/router";
 import { signIn, getSession, getProviders } from "next-auth/react";
 
@@ -22,7 +21,6 @@ const LoginPage: NextPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-  const { loginUser } = useContext(AuthContext);
 
   const [showError, setShowError] = useState(false);
   const [login, setLogin] = useState(false);
@@ -37,6 +35,8 @@ const LoginPage: NextPage = () => {
   const onLoginUser = async ({ email, password }: FormData) => {
     setShowError(false);
     setLogin(true);
+
+    console.log("logeando");
 
     await signIn("credentials", { email, password });
   };
@@ -138,9 +138,6 @@ const LoginPage: NextPage = () => {
     </AuthLayout>
   );
 };
-
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
   const session = await getSession({ req });

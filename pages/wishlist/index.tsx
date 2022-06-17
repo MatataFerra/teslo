@@ -48,6 +48,15 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     };
   }
 
+  if (!session.user.active) {
+    return {
+      redirect: {
+        destination: `/`,
+        permanent: false,
+      },
+    };
+  }
+
   if (!cookies.wishlist || JSON.parse(cookies.wishlist).length === 0) {
     const favorites = await dbWishList.getFavorites(session.user._id);
 

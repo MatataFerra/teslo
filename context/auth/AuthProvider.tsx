@@ -25,17 +25,13 @@ type Data = {
 export const AuthProvider: FC<Children> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
   const router = useRouter();
-  const { data, status } = useSession();
+  const { data, status } = useSession() as any;
 
   useEffect(() => {
     if (status === "authenticated") {
       return dispatch({ type: "[Auth] - Login", payload: data?.user as IUser });
     }
   }, [data, status]);
-
-  // useEffect(() => {
-  //   checkToken();
-  // }, []);
 
   const checkToken = async () => {
     const token = Cookie.get("token");
@@ -61,10 +57,23 @@ export const AuthProvider: FC<Children> = ({ children }) => {
     try {
       const { data } = await tesloApi.post("/user/login", { email, password });
       const { user, token } = data;
+
+      console.log({ data });
+
       Cookie.set("token", token);
       Cookie.remove("wishlist");
       Cookie.remove("userdataproducts");
       dispatch({ type: "[Auth] - Login", payload: user });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const inactiveUser = async (): Promise<boolean> => {
+    try {
+      const { data } = await tesloApi.put("/user/me/delete");
+      dispatch({ type: "[Auth] - Inactive", payload: data });
       return true;
     } catch (error) {
       return false;
@@ -129,6 +138,7 @@ export const AuthProvider: FC<Children> = ({ children }) => {
         loginUser,
         registerUser,
         logoutUser,
+        inactiveUser,
       }}>
       {children}
     </AuthContext.Provider>

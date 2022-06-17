@@ -12,10 +12,7 @@ type Data =
       user: userApiResponse;
     };
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
+export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   if (req.method === "POST") {
     return loginUser(req, res);
   }
@@ -31,18 +28,14 @@ const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   await db.disconnect();
 
   if (!user) {
-    return res
-      .status(400)
-      .json({ message: "Usuario o correo no válidos - EMAIL" });
+    return res.status(400).json({ message: "Usuario o correo no válidos" });
   }
 
   if (!bcrypt.compareSync(password, user.password!)) {
-    return res
-      .status(400)
-      .json({ message: "Usuario o correo no válidos - PASSWORD" });
+    return res.status(400).json({ message: "Usuario o correo no válidos" });
   }
 
-  const { role, name, _id } = user;
+  const { role, name, _id, active } = user;
   const token = signToken(_id, email);
 
   return res.status(200).json({
@@ -51,6 +44,7 @@ const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       role,
       name,
       email,
+      active,
     },
   });
 };
