@@ -1,6 +1,6 @@
 import { FC, useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
-import { ClearOutlined, RoomOutlined, SearchOutlined, ShoppingCartOutlined } from "@mui/icons-material";
+import { ClearOutlined, RoomRounded, SearchOutlined, ShoppingCartOutlined } from "@mui/icons-material";
 import {
   AppBar,
   Badge,
@@ -112,7 +112,7 @@ export const Navbar: FC = () => {
           <Link>
             <IconButton>
               <Tooltip title='Sucursales cercanas' arrow>
-                <RoomOutlined />
+                <RoomRounded />
               </Tooltip>
             </IconButton>
           </Link>

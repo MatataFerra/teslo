@@ -1,4 +1,4 @@
-import { RoomOutlined } from "@mui/icons-material";
+import { RoomRounded } from "@mui/icons-material";
 import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { FC, useContext } from "react";
 import { PickupContext } from "../../context";
@@ -23,7 +23,7 @@ export const PickupSearchItem: FC<Props> = ({ name = "Nombre sucursal", latitude
   return (
     <ListItemButton onClick={onSelectedPickupPoint}>
       <ListItemIcon>
-        <RoomOutlined color='primary' />
+        <RoomRounded color='primary' />
       </ListItemIcon>
       <ListItemText primary={name} />
     </ListItemButton>

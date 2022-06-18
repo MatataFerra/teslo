@@ -8,8 +8,11 @@ import {
   CancelPresentationOutlined,
   CategoryOutlined,
   CreditCardOffOutlined,
+  CreditCardOutlined,
   GroupOutlined,
   ProductionQuantityLimitsOutlined,
+  RoomOutlined,
+  RoomRounded,
 } from "@mui/icons-material";
 import useSWR from "swr";
 import { AdminLayout } from "../../components/layouts";
@@ -47,6 +50,7 @@ const DashboardPage: NextPage = () => {
     notPaidOrders,
     productsWithNoInventory,
     lowInventory,
+    totalPickups,
   } = data!;
 
   return (
@@ -55,7 +59,7 @@ const DashboardPage: NextPage = () => {
         <SummaryTile
           title={numberOfOrders}
           subtitle='Órdenes completadas'
-          Icon={<CreditCardOffOutlined color='secondary' sx={{ fontSize: iconFontSize }} />}
+          Icon={<CreditCardOutlined color='success' sx={{ fontSize: iconFontSize }} />}
           route='/admin/orders'
         />
 
@@ -95,6 +99,13 @@ const DashboardPage: NextPage = () => {
           title={lowInventory}
           subtitle='Bajo inventario'
           Icon={<ProductionQuantityLimitsOutlined color='warning' sx={{ fontSize: iconFontSize }} />}
+        />
+
+        <SummaryTile
+          title={totalPickups}
+          subtitle='Total de Sucursales'
+          Icon={<RoomRounded color='secondary' sx={{ fontSize: iconFontSize }} />}
+          route='/admin/pickups'
         />
 
         <SummaryTile

@@ -6,4 +6,5 @@ export interface DashboardSummaryResponse {
   numberOfProducts: number;
   productsWithNoInventory: number;
   lowInventory: number;
+  totalPickups: number;
 }

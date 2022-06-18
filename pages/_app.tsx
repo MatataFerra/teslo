@@ -2,6 +2,7 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { SWRConfig } from "swr";
+import { SnackbarProvider } from "notistack";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { lightTheme } from "../themes";
 import { CartProvider, UiProvider, AuthProvider, WishlistProvider, ProfileProvider, PickupProvider } from "../context";
@@ -16,20 +17,27 @@ function MyApp({ Component, pageProps }: AppProps) {
             fetcher: (resource, init) => fetch(resource, init).then((res) => res.json()),
           }}>
           <AuthProvider>
-            <CartProvider>
-              <ProfileProvider>
-                <PickupProvider>
-                  <WishlistProvider>
-                    <UiProvider>
-                      <ThemeProvider theme={lightTheme}>
-                        <CssBaseline />
-                        <Component {...pageProps} />
-                      </ThemeProvider>
-                    </UiProvider>
-                  </WishlistProvider>
-                </PickupProvider>
-              </ProfileProvider>
-            </CartProvider>
+            <SnackbarProvider
+              maxSnack={3}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}>
+              <CartProvider>
+                <ProfileProvider>
+                  <PickupProvider>
+                    <WishlistProvider>
+                      <UiProvider>
+                        <ThemeProvider theme={lightTheme}>
+                          <CssBaseline />
+                          <Component {...pageProps} />
+                        </ThemeProvider>
+                      </UiProvider>
+                    </WishlistProvider>
+                  </PickupProvider>
+                </ProfileProvider>
+              </CartProvider>
+            </SnackbarProvider>
           </AuthProvider>
         </SWRConfig>
       </PayPalScriptProvider>

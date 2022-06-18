@@ -1,11 +1,14 @@
-import { FC, useContext, useMemo } from "react";
-import { MapContainer, Marker, Popup, TileLayer, Tooltip } from "react-leaflet";
-import mock from "../../mocks/pickup.json";
+import { FC, Suspense, useContext, useEffect, useMemo, useState } from "react";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
 import "leaflet/dist/leaflet.css";
 import * as L from "leaflet";
 import { LeafletControlGeocoder } from ".";
 import { PickupContext } from "../../context";
+import { IPickupPoint } from "../../interfaces";
+import { tesloApi } from "../../api";
+import useSWR from "swr";
+import { ErrorComponent, FullScreenLoading } from "../ui";
 
 const icon = L.icon({
   iconSize: [35, 41],
@@ -25,8 +28,11 @@ const searchIcon = L.icon({
 
 const MapLeafletContainer: FC = () => {
   const { pickup } = useContext(PickupContext);
-
+  const { data, error } = useSWR<IPickupPoint[]>("/api/pickups");
   const pickupMemo = useMemo(() => pickup.name, [pickup]);
+
+  if (!data && !error) return <FullScreenLoading />;
+  if (error) return <ErrorComponent />;
 
   return (
     <>
@@ -35,12 +41,13 @@ const MapLeafletContainer: FC = () => {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         />
-        {mock.data.GetPickupPoints.map((marker, index) => (
-          <Marker key={index} position={[Number(marker.latitude), Number(marker.longitude)]} icon={icon}>
-            <Popup>{marker.name}</Popup>
-          </Marker>
-        ))}
-
+        <Suspense>
+          {data?.map((marker, index) => (
+            <Marker key={index} position={[Number(marker.latitude), Number(marker.longitude)]} icon={icon}>
+              <Popup>{marker.name}</Popup>
+            </Marker>
+          ))}
+        </Suspense>
         {pickup.latitude && pickup.longitude && (
           <Marker position={[Number(pickup.latitude), Number(pickup.longitude)]} icon={searchIcon}>
             <Popup>{pickupMemo}</Popup>

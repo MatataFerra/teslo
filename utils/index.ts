@@ -6,3 +6,4 @@ export * as date from "./datefn";
 export * from "./orders";
 export * from "./products";
 export * from "./form";
+export * from "./pickup";

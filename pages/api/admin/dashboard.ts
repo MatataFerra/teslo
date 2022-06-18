@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../database";
-import { Order, Product, User, ProductSize } from "../../../models";
+import { Order, User, ProductSize, Pickup } from "../../../models";
 import { DashboardSummaryResponse } from "../../../interfaces";
 
 type Data = DashboardSummaryResponse | { message: string };
@@ -19,6 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       numberOfProducts,
       productsWithNoInventory,
       lowInventory,
+      totalPickups,
     } = await getDashboardData();
     return res.status(200).json({
       numberOfOrders,
@@ -28,6 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       numberOfProducts,
       productsWithNoInventory,
       lowInventory,
+      totalPickups,
     });
   } catch (error) {
     console.log(error);
@@ -37,10 +39,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 const getDashboardData = async () => {
   await db.connect();
-  const [orders, clients, products] = await Promise.all([
+  const [orders, clients, products, pickups] = await Promise.all([
     Order.find({}).lean(),
     User.find({ role: "client" }).lean(),
     ProductSize.find({}).lean(),
+    Pickup.find({}).lean(),
   ]);
 
   await db.disconnect();
@@ -52,6 +55,7 @@ const getDashboardData = async () => {
   const numberOfOrders = orders.length;
   const numberOfClients = clients.length;
   const numberOfProducts = products.length;
+  const totalPickups = pickups.length;
   const paidOrders = orders.filter((order) => order.isPaid && order.transactionId).length;
   const notPaidOrders = orders.filter((order) => !order.isPaid).length;
   const productsWithNoInventory = products.filter((product) => product.inStock === 0).length;
@@ -65,5 +69,6 @@ const getDashboardData = async () => {
     numberOfProducts,
     productsWithNoInventory,
     lowInventory,
+    totalPickups,
   };
 };

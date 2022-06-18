@@ -82,5 +82,18 @@ export const lightTheme = createTheme({
         },
       },
     },
+
+    MuiAlert: {
+      // change de info color
+      styleOverrides: {
+        root: {
+          backgroundColor: "#e5f6fd",
+        },
+
+        icon: {
+          color: "#45bef6 !important",
+        },
+      },
+    },
   },
 });

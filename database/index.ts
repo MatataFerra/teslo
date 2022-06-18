@@ -6,3 +6,4 @@ export * as dbProducts from "./dbProducts";
 export * as dbUsers from "./dbUsers";
 export * as dbOrders from "./dbOrders";
 export * as dbWishList from "./dbWishList";
+export * as dbPickups from "./dbPickups";

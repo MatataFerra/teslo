@@ -1,17 +1,16 @@
 import { FC, useReducer } from "react";
-import { Children, IPickupPoint } from "../../interfaces";
+import { Children, IPickupPoint, PickupModalActions } from "../../interfaces";
 import { PickupContext, pickupReducer } from ".";
+import { defaultPickup } from "../../utils";
 
 export interface PickupState {
   pickup: IPickupPoint;
+  pickupModal: boolean;
 }
 
 const Pickup_INITIAL_STATE: PickupState = {
-  pickup: {
-    latitude: "-34.57873740816326",
-    longitude: "-58.49272191020408",
-    name: "Busque su ubicación",
-  },
+  pickup: defaultPickup,
+  pickupModal: false,
 };
 
 export const PickupProvider: FC<Children> = ({ children }) => {
@@ -21,11 +20,16 @@ export const PickupProvider: FC<Children> = ({ children }) => {
     dispatch({ type: "[Pickup] - Select address", payload: pickup });
   };
 
+  const onPickupModal = (action: PickupModalActions) => {
+    dispatch({ type: action });
+  };
+
   return (
     <PickupContext.Provider
       value={{
         ...state,
         setPickup,
+        onPickupModal,
       }}>
       {children}
     </PickupContext.Provider>

@@ -17,3 +17,5 @@ export interface IPickupPoint {
   longitude: string;
   name: string;
 }
+
+export type PickupModalActions = "[Pickup] - Open modal" | "[Pickup] - Close modal";

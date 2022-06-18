@@ -27,6 +27,7 @@ import {
 } from "@mui/material";
 import { tesloApi } from "../../../api";
 import { Product } from "../../../models";
+import { TagManager } from "../../../components/ui";
 
 const validTypes = ["shirts", "pants", "hoodies", "hats"];
 const validGender = ["men", "women", "kid", "unisex"];
@@ -52,7 +53,6 @@ interface Props {
 
 const ProductAdminPage: FC<Props> = ({ product }) => {
   const router = useRouter();
-  const [newTagValue, setNewTagValue] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -104,25 +104,6 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 
       setValue("images", [...getValues("images"), data.message], { shouldValidate: true });
     }
-  };
-
-  const onNewTag = () => {
-    if (newTagValue.trim() !== "") {
-      setNewTagValue("");
-      const currentTag = getValues("tags");
-
-      if (currentTag.includes(newTagValue.trim().toLowerCase())) {
-        return;
-      }
-      const newTags = [...getValues("tags"), newTagValue.trim().toLowerCase()];
-
-      setValue("tags", newTags);
-    }
-  };
-
-  const onDeleteTag = (tag: string) => {
-    const newTags = getValues("tags").filter((t) => t !== tag);
-    setValue("tags", newTags, { shouldValidate: true });
   };
 
   const onSubmit = async (form: FormData) => {
@@ -351,41 +332,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               helperText={errors.slug?.message}
             />
 
-            <TextField
-              label='Etiquetas'
-              variant='filled'
-              fullWidth
-              sx={{ mb: 1 }}
-              helperText='Presiona [spacebar] para agregar'
-              value={newTagValue}
-              onChange={(e) => setNewTagValue(e.target.value)}
-              onKeyUp={({ code }) => {
-                code === "Space" ? onNewTag() : null;
-              }}
-            />
-
-            <Box
-              sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                listStyle: "none",
-                p: 0,
-                m: 0,
-              }}
-              component='ul'>
-              {getValues("tags").map((tag) => {
-                return (
-                  <Chip
-                    key={tag}
-                    label={tag}
-                    onDelete={() => onDeleteTag(tag)}
-                    color='primary'
-                    size='small'
-                    sx={{ ml: 1, mt: 1 }}
-                  />
-                );
-              })}
-            </Box>
+            <TagManager getValues={getValues} setValue={setValue} />
 
             <Divider sx={{ my: 2 }} />
 

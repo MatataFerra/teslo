@@ -6,3 +6,4 @@ export * from "./ErrorComponent";
 export * from "./SideAdminPanel";
 export * from "./ModalTransition";
 export * from "./Loader";
+export * from "./TagManager";
