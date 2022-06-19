@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NextPage, GetServerSideProps } from "next";
 import NextLink from "next/link";
 import { ShopLayout } from "../../components/layouts";
@@ -6,7 +6,7 @@ import { Typography, Grid, Chip, Link, IconButton, Tooltip } from "@mui/material
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import { getSession } from "next-auth/react";
 import { dbOrders } from "../../database";
-import { IOrder, OrderStatus, OrderStatusEnum, ISizeStock } from "../../interfaces";
+import { IOrder, OrderStatus, OrderStatusEnum } from "../../interfaces";
 import {
   BeenhereOutlined,
   BuildCircleOutlined,

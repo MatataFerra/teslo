@@ -11,7 +11,6 @@ import {
   CreditCardOutlined,
   GroupOutlined,
   ProductionQuantityLimitsOutlined,
-  RoomOutlined,
   RoomRounded,
 } from "@mui/icons-material";
 import useSWR from "swr";

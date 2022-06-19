@@ -79,14 +79,16 @@ const updateStatusOrder = async (req: NextApiRequest, res: NextApiResponse) => {
   if (!status) return res.status(400).json({ message: "status is required" });
 
   try {
+    db.connect();
     const order = await Order.findById(orderId);
     if (!order) return res.status(400).json({ message: "Order not found" });
     order.status = status;
     await order.save();
-
+    await db.disconnect();
     return res.status(200).json(order);
   } catch (error: any) {
     console.log(error);
+    await db.disconnect();
     return res.status(500).json({ message: error.message || "Revise la consola" });
   }
 };

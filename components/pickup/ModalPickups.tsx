@@ -27,7 +27,7 @@ interface FormData {
 
 export const ModalPickups: FC = () => {
   const { onPickupModal, pickupModal, pickup, setPickup } = useContext(PickupContext);
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
 
   const { handleSubmit, getValues, setValue } = useForm<FormData>({
     defaultValues: { ...pickup, tags: [] },

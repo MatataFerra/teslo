@@ -42,6 +42,7 @@ const checkJWT = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         role,
         name,
         email,
+        active: true,
       },
     });
   } catch (error) {
