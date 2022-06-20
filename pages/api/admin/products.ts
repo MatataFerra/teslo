@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../database";
-import { IProduct, IProductSize } from "../../../interfaces";
-import { Product, ProductSize } from "../../../models";
+import { IProductSize } from "../../../interfaces";
+import { ProductSize } from "../../../models";
 import { isValidObjectId } from "mongoose";
 import { v2 as cloudinary } from "cloudinary";
 
