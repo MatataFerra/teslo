@@ -7,6 +7,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { lightTheme } from "../themes";
 import { CartProvider, UiProvider, AuthProvider, WishlistProvider, ProfileProvider, PickupProvider } from "../context";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { MapProvider } from "react-map-gl";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -23,20 +24,22 @@ function MyApp({ Component, pageProps }: AppProps) {
                 vertical: "top",
                 horizontal: "right",
               }}>
-              <CartProvider>
-                <ProfileProvider>
-                  <PickupProvider>
-                    <WishlistProvider>
-                      <UiProvider>
-                        <ThemeProvider theme={lightTheme}>
-                          <CssBaseline />
-                          <Component {...pageProps} />
-                        </ThemeProvider>
-                      </UiProvider>
-                    </WishlistProvider>
-                  </PickupProvider>
-                </ProfileProvider>
-              </CartProvider>
+              <MapProvider>
+                <CartProvider>
+                  <ProfileProvider>
+                    <PickupProvider>
+                      <WishlistProvider>
+                        <UiProvider>
+                          <ThemeProvider theme={lightTheme}>
+                            <CssBaseline />
+                            <Component {...pageProps} />
+                          </ThemeProvider>
+                        </UiProvider>
+                      </WishlistProvider>
+                    </PickupProvider>
+                  </ProfileProvider>
+                </CartProvider>
+              </MapProvider>
             </SnackbarProvider>
           </AuthProvider>
         </SWRConfig>

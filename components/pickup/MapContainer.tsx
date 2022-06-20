@@ -1,50 +1,36 @@
-import { FC, memo, useContext, useEffect, useMemo, useRef, useState } from "react";
-import dynamic from "next/dynamic";
-import Map, { Marker, Popup } from "react-map-gl";
-import mapboxgl from "mapbox-gl";
+import { FC, useContext, useEffect, useMemo, useState } from "react";
+import Map, { Marker, useMap, Popup } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-
-// import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-
-// import "leaflet/dist/leaflet.css";
-// import { LeafletControlGeocoder } from ".";
 import { PickupContext } from "../../context";
 import { IPickupPoint } from "../../interfaces";
-import { tesloApi } from "../../api";
 import useSWR from "swr";
 import { ErrorComponent, FullScreenLoading } from "../ui";
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import Image from "next/image";
-
-// const icon = L({
-//   iconSize: [35, 41],
-//   iconAnchor: [10, 41],
-//   popupAnchor: [2, -40],
-//   iconUrl: `https://res.cloudinary.com/docq8rbdu/image/upload/v1655356024/gaaensta9guiqtf3q6s2.png`,
-//   shadowUrl: "https://unpkg.com/leaflet@1.6/dist/images/marker-shadow.png",
-// });
-
-// const searchIcon = L({
-//   iconSize: [35, 41],
-//   iconAnchor: [10, 41],
-//   popupAnchor: [2, -40],
-//   iconUrl: `https://res.cloudinary.com/docq8rbdu/image/upload/v1655356087/i0kmu4d6ervnvwfdgeg3.png`,
-//   shadowUrl: "https://unpkg.com/leaflet@1.6/dist/images/marker-shadow.png",
-// });
 
 export const MapLeafletContainer: FC = () => {
   const { pickup } = useContext(PickupContext);
   const { data, error } = useSWR<IPickupPoint[]>("/api/pickups");
+  const [openPopup, setOpenPopup] = useState(true);
+  const map = useMap();
   const pickupMemo = useMemo(() => pickup.name, [pickup]);
 
-  const isSSR = typeof window === "undefined";
+  const onClick = () => {};
+
+  useEffect(() => {
+    map.default?.flyTo({
+      center: [Number(pickup.longitude), Number(pickup.latitude)],
+      zoom: 12,
+    });
+    setOpenPopup(true);
+  }, [map.default, pickup.latitude, pickup.longitude]);
 
   if (!data && !error) return <FullScreenLoading />;
   if (error) return <ErrorComponent />;
 
   return (
     <>
-      <Typography> 📢 Estamos trabajando para implementar los mapas 🛠 </Typography>
+      <Button onClick={onClick}>CLICK</Button>
       <Map
         initialViewState={{
           longitude: Number(pickup.longitude),
@@ -75,33 +61,16 @@ export const MapLeafletContainer: FC = () => {
             />
           </Marker>
         )}
+
+        {openPopup && (
+          <Popup
+            onClose={() => setOpenPopup(false)}
+            longitude={Number(pickup.longitude)}
+            latitude={Number(pickup.latitude)}>
+            <Typography>{pickupMemo}</Typography>
+          </Popup>
+        )}
       </Map>
-
-      {/* {isSSR ? (
-        <FullScreenLoading />
-      ) : (
-        // <Typography> 📢 Estamos trabajando para implementar los mapas 🛠 </Typography>
-        <MapContainer zoom={8} style={{ height: "100%", width: "100%" }}>
-          <TileLayer
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-          />
-
-          {data?.map((marker, index) => (
-            <Marker key={index} position={[Number(marker.latitude), Number(marker.longitude)]}>
-              <Popup>{marker.name}</Popup>
-            </Marker>
-          ))}
-
-          {pickup.latitude && pickup.longitude && (
-            <Marker position={[Number(pickup.latitude), Number(pickup.longitude)]}>
-              <Popup>{pickupMemo}</Popup>
-            </Marker>
-          )}
-
-          <LeafletControlGeocoder />
-        </MapContainer>
-      )} */}
     </>
   );
 };
