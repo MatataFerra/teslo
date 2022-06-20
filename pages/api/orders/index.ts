@@ -38,7 +38,7 @@ async function createOrder(req: NextApiRequest, res: NextApiResponse) {
 
   const productsIds = orderItems.map((item) => item._id);
 
-  db.connect();
+  await db.connect();
   const dbProducts = await ProductSize.find({ _id: { $in: productsIds } }).lean();
 
   try {
@@ -79,7 +79,7 @@ const updateStatusOrder = async (req: NextApiRequest, res: NextApiResponse) => {
   if (!status) return res.status(400).json({ message: "status is required" });
 
   try {
-    db.connect();
+    await db.connect();
     const order = await Order.findById(orderId);
     if (!order) return res.status(400).json({ message: "Order not found" });
     order.status = status;

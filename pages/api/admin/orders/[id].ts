@@ -16,7 +16,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 const updateOrderById = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const id = req.query.id as string;
   const { status } = req.body;
-  db.connect();
+  await db.connect();
   const order = await Order.findById(id);
   if (!order) {
     return res.status(404).json({ message: "Order not found" });
@@ -24,7 +24,7 @@ const updateOrderById = async (req: NextApiRequest, res: NextApiResponse<Data>) 
 
   order.status = status;
   await order.save();
-  db.disconnect();
+  await db.disconnect();
 
   return res.status(200).json(order);
 };

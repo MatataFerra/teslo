@@ -60,15 +60,18 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
   const onDeleteOrder = async (id: string, status: OrderStatus) => {
     changeModalState(true);
     if (status === "cancelled") {
-      const [orders, update] = await Promise.all([
-        tesloApi.put<IOrder>("/orders", { status, orderId: id }),
-        tesloApi.put("/products/update", { orderId: id }),
-      ]);
+      // const [orders, update] = await Promise.all([
+      //   tesloApi.put<IOrder>("/orders", { status, orderId: id }),
+      //   tesloApi.put("/products/update", { orderId: id }),
+      // ]);
 
-      if (orders.status === 200) {
-        const orderToUpdate = updateOrders.find((order) => order._id === orders.data._id);
+      const { data: orders } = await tesloApi.put<IOrder>("/orders", { status, orderId: id });
+      const { data: update } = await tesloApi.put("/products/update", { orderId: id });
+
+      if (orders) {
+        const orderToUpdate = updateOrders.find((order) => order._id === orders._id);
         if (orderToUpdate) {
-          orderToUpdate.status = orders.data.status;
+          orderToUpdate.status = orders.status;
           setUpdateOrders([...updateOrders]);
         }
 

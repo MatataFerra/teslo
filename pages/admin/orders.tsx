@@ -59,7 +59,6 @@ const OrdersPage: NextPage = () => {
     }
   }, [data]);
 
-  if (dataFromApi.length === 0 && !error) return <FullScreenLoading />;
   if (error) return <ErrorComponent />;
 
   const onStatusUpdate = async (orderId: string, newRole: string) => {
