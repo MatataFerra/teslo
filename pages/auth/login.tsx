@@ -36,8 +36,6 @@ const LoginPage: NextPage = () => {
     setShowError(false);
     setLogin(true);
 
-    console.log("logeando");
-
     await signIn("credentials", { email, password });
   };
 

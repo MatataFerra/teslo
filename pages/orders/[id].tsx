@@ -128,9 +128,6 @@ const OrderPage: NextPage<Props> = ({ order }) => {
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
   const id = query.id as string;
   const session: any = await getSession({ req });
-
-  console.log({ session });
-
   if (!session) {
     return {
       redirect: {

@@ -135,7 +135,6 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     const currentSizes = getValues("sizes");
 
     if (currentSizes.find((s) => s.size === size)?.size) {
-      console.log("ya existe");
       return setValue(
         "sizes",
         currentSizes.filter((s) => s.size !== size),
