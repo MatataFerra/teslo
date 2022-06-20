@@ -34,7 +34,7 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const updatedProducts = products.map((product) => {
     product.images = product.images.map((image) => {
       const regex = new RegExp(/https?/g);
-      return regex.test(image) ? image : `${process.env.HOST_NAME}products/${image}`;
+      return regex.test(image) ? image : `${process.env.VERCEL_URL}products/${image}`;
     });
 
     return product;
