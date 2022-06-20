@@ -1,34 +1,49 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Next.js Teslo shop
 
-## Getting Started
+Para correr localmente, se necesita la base de datos
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
+```
+docker-compose up -d
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- el -d significa **detached**
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Mongo DB URL Local:
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+```
+mongodb://localhost:27017/teslodb
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## configurar las variables de entorno
 
-## Learn More
+renombrar el archivo **.env.template**
 
-To learn more about Next.js, take a look at the following resources:
+## Lenar la base de datos con datos de prueba
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+ir al endpoint /api/seed
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Tiempos de respuesta de la API
 
-## Deploy on Vercel
+En caso de querer medir el tiempo que una respuesta tarda, usted puede ejecutar en la consola este comando
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+curl http://localhost:3000/api/admin/dashboard -w "@curl-format.txt"
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+el flag -w con un archivo determina un template de respuesta. En otras palabras puede crear un archivo en la raiz del proyecto con el nombre **curl-format.txt**
+
+En el archivo puede pegar este texto
+
+```
+\n
+\n
+   time_namelookup:  %{time_namelookup}\n
+      time_connect:  %{time_connect}\n
+   time_appconnect:  %{time_appconnect}\n
+   time_pretransfer:  %{time_pretransfer}\n
+      time_redirect:  %{time_redirect}\n
+time_starttransfer:  %{time_starttransfer}\n
+                     ----------\n
+         time_total:  %{time_total}\n
+\n
+```

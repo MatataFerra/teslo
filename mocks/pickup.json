@@ -1,0 +1,108 @@
+{
+  "data": {
+    "GetPickupPoints": [
+      {
+        "id": "TSL0030",
+        "name": "Teslo  San Justo II",
+        "latitude": -34.67918,
+        "longitude": -58.5597
+      },
+      {
+        "id": "TSL0002",
+        "name": "Teslo  Shopping Las Toscas, Canning",
+        "latitude": -34.85617,
+        "longitude": -58.50386
+      },
+      {
+        "id": "TSL0006",
+        "name": "Teslo Laferrere",
+        "latitude": -34.7482,
+        "longitude": -58.58782
+      },
+      {
+        "id": "TSL0025",
+        "name": "Teslo Lanus",
+        "latitude": -34.70821,
+        "longitude": -58.38992
+      },
+      {
+        "id": "TSL0029",
+        "name": "Teslo Moreno",
+        "latitude": -34.64799,
+        "longitude": -58.79094
+      },
+      {
+        "id": "TSL0009",
+        "name": "Teslo Morón",
+        "latitude": -34.64997,
+        "longitude": -58.61967
+      },
+      {
+        "id": "TSL0028",
+        "name": "Teslo Moron  2 ",
+        "latitude": -34.64917,
+        "longitude": -58.62026
+      },
+      {
+        "id": "TSL0016",
+        "name": "Teslo Outlet  San Justo ",
+        "latitude": -34.67799,
+        "longitude": -58.56543
+      },
+      {
+        "id": "TSL0027",
+        "name": "Teslo Outlet Canning",
+        "latitude": -34.84907,
+        "longitude": -58.50503
+      },
+      {
+        "id": "TSL0017",
+        "name": "Teslo Palmas del Pilar Shopping",
+        "latitude": -34.44576,
+        "longitude": -58.86863
+      },
+      {
+        "id": "TSL0024",
+        "name": "Teslo Quilmes",
+        "latitude": -34.72094,
+        "longitude": -58.25833
+      },
+      {
+        "id": "TSL0001",
+        "name": "Teslo San Justo",
+        "latitude": -34.68005,
+        "longitude": -58.55835
+      },
+      {
+        "id": "TSL0008",
+        "name": "Teslo Shopping Devoto",
+        "latitude": -34.61135,
+        "longitude": -58.51793
+      },
+      {
+        "id": "TSL0021",
+        "name": "Teslo Shopping Devoto 2",
+        "latitude": -34.61135,
+        "longitude": -58.51793
+      },
+      {
+        "id": "TSL0004",
+        "name": "Teslo Shopping San Justo",
+        "latitude": -34.68535,
+        "longitude": -58.55694
+      },
+      {
+        "id": "TSL0022",
+        "name": "Teslo Tortugas Open Mall",
+        "latitude": -34.45199,
+        "longitude": -58.72622
+      },
+      {
+        "id": "TSL0026",
+        "name": "Teslo Villa Urquiza",
+        "latitude": -34.57539,
+        "longitude": -58.48532
+      }
+    ]
+  }
+}

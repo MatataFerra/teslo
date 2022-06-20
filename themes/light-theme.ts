@@ -1,5 +1,4 @@
 import { createTheme } from "@mui/material/styles";
-import { red } from "@mui/material/colors";
 
 export const lightTheme = createTheme({
   palette: {
@@ -9,6 +8,10 @@ export const lightTheme = createTheme({
     },
     secondary: {
       main: "#3A64D8",
+    },
+
+    info: {
+      main: "#FFF",
     },
   },
   components: {
@@ -52,17 +55,17 @@ export const lightTheme = createTheme({
         variant: "contained",
         size: "small",
         disableElevation: true,
+        color: "info",
       },
       styleOverrides: {
         root: {
-          backgroundColor: "white",
-          color: "black",
           textTransform: "none",
           boxShadow: "none",
           borderRadius: 10,
           ":hover": {
-            backgroundColor: "rgba(0,0,0,0.05)",
+            backgroundColor: "#000",
             transition: "all 0.3s ease-in-out",
+            color: "#FFF",
           },
         },
       },
@@ -76,6 +79,19 @@ export const lightTheme = createTheme({
         root: {
           boxShadow: "0px 5px 5px rgba(0,0,0,0.05)",
           borderRadius: "10px",
+        },
+      },
+    },
+
+    MuiAlert: {
+      // change de info color
+      styleOverrides: {
+        root: {
+          backgroundColor: "#e5f6fd",
+        },
+
+        icon: {
+          color: "#45bef6 !important",
         },
       },
     },
