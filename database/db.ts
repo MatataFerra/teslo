@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { ConnectOptions } from "mongoose";
 
 /**
  * 0 = disconnected
@@ -11,6 +11,9 @@ const mongoConnection = {
 };
 
 export const connect = async () => {
+  const options: ConnectOptions = {
+    dbName: "tesloapp",
+  };
   if (mongoConnection.isConnected) {
     console.log("The database is already connected");
     return;
@@ -27,7 +30,7 @@ export const connect = async () => {
     await mongoose.disconnect();
   }
 
-  await mongoose.connect(process.env.MONGO_URL || "");
+  await mongoose.connect(process.env.MONGO_URL || "", options);
   mongoConnection.isConnected = 1;
   console.log("Connecting to MongoDB:", process.env.MONGO_URL);
 };
