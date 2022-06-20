@@ -34,6 +34,8 @@ export default NextAuth({
     updateAge: 86400, // 1 day
   },
 
+  secret: process.env.SECRET,
+
   callbacks: {
     async jwt({ token, account, user }) {
       if (account) {
