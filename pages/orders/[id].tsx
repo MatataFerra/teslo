@@ -34,18 +34,14 @@ const OrderPage: NextPage<Props> = ({ order }) => {
     setIsPaying(true);
 
     try {
-      await Promise.all([
-        tesloApi.post("/orders/pay", {
-          orderId: order._id,
-          transactionId: details.id,
-        }),
-
-        order.orderItems.forEach((p) => {
-          tesloApi.put(`/products/${p.slug}`, p.size);
-        }),
-
-        tesloApi.put("/orders", { status: "processing", orderId: order._id }),
-      ]);
+      await tesloApi.post("/orders/pay", {
+        orderId: order._id,
+        transactionId: details.id,
+      });
+      await order.orderItems.forEach((p) => {
+        tesloApi.put(`/products/${p.slug}`, p.size);
+      });
+      await tesloApi.put("/orders", { status: "processing", orderId: order._id });
 
       router.reload();
     } catch (error) {
@@ -132,7 +128,6 @@ const OrderPage: NextPage<Props> = ({ order }) => {
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
   const id = query.id as string;
   const session: any = await getSession({ req });
-
   if (!session) {
     return {
       redirect: {

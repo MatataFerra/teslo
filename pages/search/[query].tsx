@@ -1,34 +1,31 @@
 import type { NextPage } from "next";
 import { GetServerSideProps } from "next";
 import { dbProducts } from "../../database";
-import { IProduct } from "../../interfaces";
+import { IProductSize } from "../../interfaces";
 import { ShopLayout } from "../../components/layouts";
 import { ProductList } from "../../components/products";
 import { Typography, Box } from "@mui/material";
 
 interface Props {
-  products: IProduct[];
+  products: IProductSize[];
   foundProducts: boolean;
   query: string;
 }
 
 const SearchPage: NextPage<Props> = ({ products, foundProducts, query }) => {
   return (
-    <ShopLayout
-      title="Teslo - search"
-      pageDescription="Encontrar los mejores productos"
-    >
-      <Typography variant="h1" component="h1">
+    <ShopLayout title='Teslo - search' pageDescription='Encontrar los mejores productos'>
+      <Typography variant='h1' component='h1'>
         Buscar Producto
       </Typography>
       {foundProducts ? (
-        <Typography variant="h2" textTransform="capitalize">
+        <Typography variant='h2' textTransform='capitalize'>
           Productos relacionados con: {query}
         </Typography>
       ) : (
         <Box mb={4}>
-          <Typography variant="h2"> No se encontraron resultados </Typography>
-          <Typography variant="h2" color="secondary" textTransform="capitalize">
+          <Typography variant='h2'> No se encontraron resultados </Typography>
+          <Typography variant='h2' color='secondary' textTransform='capitalize'>
             término buscado: {query}
           </Typography>
         </Box>
@@ -37,9 +34,6 @@ const SearchPage: NextPage<Props> = ({ products, foundProducts, query }) => {
     </ShopLayout>
   );
 };
-
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const query = params?.query?.toString();

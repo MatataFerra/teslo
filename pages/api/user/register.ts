@@ -65,6 +65,7 @@ const registerUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
 
   const { _id, role } = newUser;
   const token = signToken(_id, email);
+  await db.disconnect();
 
   return res.status(200).json({
     token,
@@ -72,6 +73,7 @@ const registerUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
       role,
       name,
       email,
+      active: true,
     },
   });
 };

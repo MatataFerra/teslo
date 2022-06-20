@@ -19,7 +19,7 @@ export const OrderItemStatus: FC<Props> = ({ status, opacityLoader, orderError }
       {orderError ? (
         <Box display='flex' alignItems='center' gap={1} className='shake'>
           <Tooltip title='Error al actualizar el estado de la orden' placement='top' arrow>
-            <Typography color='error'>Pendiente</Typography>
+            <Typography color='error'>{status}</Typography>
           </Tooltip>
           <Warning fontSize='small' color='error' />
         </Box>

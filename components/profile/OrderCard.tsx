@@ -1,6 +1,6 @@
 import { Box, Button, Card, CardContent, CardHeader, CardMedia, Divider, Grid, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useEffect, useMemo } from "react";
 import { IOrder } from "../../interfaces";
 import { getFormatDate } from "../../utils/datefn";
 
@@ -19,6 +19,8 @@ const status = {
 
 export const OrderCard: FC<Props> = ({ order }) => {
   const router = useRouter();
+  const orderImageMemo = useMemo(() => order.orderItems.map((o) => o.image), [order.orderItems]);
+  const orederLen = order.orderItems.length;
 
   const goToPayOrder = (id: string) => {
     router.push(`/orders/${id}`);
@@ -31,9 +33,7 @@ export const OrderCard: FC<Props> = ({ order }) => {
           <Divider />
           <CardMedia
             sx={{ height: "170px" }}
-            image={`${order.orderItems.map((o) => {
-              return o.image;
-            })}`}
+            image={orederLen === 1 ? orderImageMemo.toString() : orderImageMemo[0].toString()}
           />
           <CardContent>
             <Grid item xs={12}>

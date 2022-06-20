@@ -32,7 +32,7 @@ export const PersonalData: FC<Props> = ({ name, email }) => {
         <UpdateData />
       </Box>
       <Box mt={"2rem !important"}>
-        <Button sx={{ width: "200px" }} color='error' onClick={onDeleteUser} disabled={!user?.active}>
+        <Button sx={{ width: "fit-content" }} color='error' onClick={onDeleteUser} disabled={!user?.active}>
           {!user?.active ? "Cuenta desactivada" : "No quiero usar más la cuenta"}
         </Button>
       </Box>

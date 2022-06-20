@@ -31,10 +31,12 @@ export const productSizeMock: IProductSize[] = [
       {
         stock: 4,
         size: "S",
+        sizeRestStock: 20,
       },
       {
         stock: 5,
         size: "M",
+        sizeRestStock: 15,
       },
     ],
     slug: uuid().toString(),
