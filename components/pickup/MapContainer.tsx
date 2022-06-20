@@ -5,7 +5,7 @@ import { PickupContext } from "../../context";
 import { IPickupPoint } from "../../interfaces";
 import useSWR from "swr";
 import { ErrorComponent, FullScreenLoading } from "../ui";
-import { Button, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import Image from "next/image";
 
 export const MapLeafletContainer: FC = () => {
@@ -14,8 +14,6 @@ export const MapLeafletContainer: FC = () => {
   const [openPopup, setOpenPopup] = useState(true);
   const map = useMap();
   const pickupMemo = useMemo(() => pickup.name, [pickup]);
-
-  const onClick = () => {};
 
   useEffect(() => {
     map.default?.flyTo({
@@ -30,7 +28,6 @@ export const MapLeafletContainer: FC = () => {
 
   return (
     <>
-      <Button onClick={onClick}>CLICK</Button>
       <Map
         initialViewState={{
           longitude: Number(pickup.longitude),

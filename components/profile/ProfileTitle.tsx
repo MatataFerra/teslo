@@ -1,7 +1,6 @@
 import { Box, Typography, Link, Chip } from "@mui/material";
-import { useSession } from "next-auth/react";
 import NextLink from "next/link";
-import { FC, useContext, useEffect } from "react";
+import { FC, useContext } from "react";
 import { AuthContext } from "../../context";
 
 interface Props {
@@ -13,10 +12,6 @@ interface Props {
 
 export const ProfileTitle: FC<Props> = ({ title = "Default Title", link = false, href = "/", linkTitle }) => {
   const { user } = useContext(AuthContext);
-
-  useEffect(() => {
-    console.log(user, "PROFILE TITLE");
-  }, [user]);
 
   return (
     <Box display='flex' justifyContent='space-between' alignItems='center'>
