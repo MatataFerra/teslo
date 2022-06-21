@@ -9,9 +9,9 @@ import { CartProvider, UiProvider, AuthProvider, WishlistProvider, ProfileProvid
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { MapProvider } from "react-map-gl";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
-    <SessionProvider>
+    <SessionProvider session={session}>
       <PayPalScriptProvider options={{ "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "" }}>
         <SWRConfig
           value={{
