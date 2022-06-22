@@ -24,6 +24,7 @@ const Home: NextPage = () => {
 // - Only if you need to pre-render a page whose data must be fetched at request time
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL || process.env.VERCEL_URL;
   console.log("getServerSideProps", process.env.NEXTAUTH_URL);
 
   return {
