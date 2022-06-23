@@ -1,3 +1,4 @@
+import { GetServerSideProps } from "next";
 import type { NextPage } from "next";
 import { Typography } from "@mui/material";
 import { ShopLayout } from "../components/layouts";
@@ -17,6 +18,17 @@ const Home: NextPage = () => {
       {isLoading ? <FullScreenLoading /> : <ProductList products={products} />}
     </ShopLayout>
   );
+};
+
+// You should use getServerSideProps when:
+// - Only if you need to pre-render a page whose data must be fetched at request time
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  console.log("NEXTAUTH_URL", process.env.NEXTAUTH_URL, "VERCEL_URL", process.env.VERCEL_URL);
+
+  return {
+    props: {},
+  };
 };
 
 export default Home;

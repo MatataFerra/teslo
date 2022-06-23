@@ -37,4 +37,5 @@ yarn-error.log*
 *.tsbuildinfo
 
 /TODO.js
+/datamock.json
 /*.txt

@@ -14,13 +14,42 @@ docker-compose up -d
 mongodb://localhost:27017/teslodb
 ```
 
-## configurar las variables de entorno
+## Configurar las variables de entorno
 
 renombrar el archivo **.env.template**
+Si el deploy se hace en Vercel no es necesario agregar `VERCEL_URL` y `NEXT_PUBLIC_VERCEL_URL`
+
+de lo contrario agregarlas en el .env
 
 ## Lenar la base de datos con datos de prueba
 
 ir al endpoint /api/seed
+
+Ningún producto en producción se agregará
+el esquema para agregar productos es el siguiente:
+
+```
+{
+  "_id": { "$oid": "62b0a8da3b1e6f56bec7929a" },
+  "description": "Introducing the Tesla Chill Collection. The Men’s Chill Crew Neck Sweatshirt has a premium, heavyweight exterior and soft fleece interior for comfort in any season. The sweatshirt features a subtle thermoplastic polyurethane T logo on the chest and a Tesla wordmark below the back collar. Made from 60% cotton and 40% recycled polyester.",
+  "images": [
+    "https://res.cloudinary.com/docq8rbdu/image/upload/v1655744592/cjf6mcikeipc3onsmctf.webp",
+    "https://res.cloudinary.com/docq8rbdu/image/upload/v1655744592/vsyeldsagijowezyw56k.webp"
+  ],
+  "inStock": { "$numberInt": "21" },
+  "price": { "$numberInt": "75" },
+  "sizes": [
+    { "size": "XS", "stock": { "$numberInt": "7" } },
+    { "size": "S", "stock": { "$numberInt": "7" } },
+    { "size": "M", "stock": { "$numberInt": "7" } }
+  ],
+  "slug": "mens_chill_crew_neck_sweatshirt",
+  "type": "shirts",
+  "tags": ["sweatshirt"],
+  "title": "Men’s Chill Crew Neck Sweatshirt",
+  "gender": "men"
+}
+```
 
 ## Tiempos de respuesta de la API
 

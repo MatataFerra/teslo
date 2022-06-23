@@ -1,5 +1,5 @@
 import axios from "axios";
 
 export const getProducts = axios.create({
-  baseURL: "http://localhost:3000/api/products",
+  baseURL: `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/products`,
 });

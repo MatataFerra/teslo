@@ -12,10 +12,11 @@ export default NextAuth({
     }),
     // ...add more providers here
     Credentials({
-      name: "Custom Login",
+      name: "Credentials",
+
       credentials: {
-        email: { label: "Correo", type: "email", placeholder: "correo@mail.com" },
-        password: { label: "Contraseña", type: "password", placeholder: "Contraseña" },
+        username: { label: "Correo", type: "email", placeholder: "correo@mail.com" },
+        password: { label: "Password", type: "password", placeholder: "Contraseña" },
       },
       async authorize(credentials: any) {
         return await dbUsers.checkUserEmailPassword(credentials.email, credentials.password);
@@ -33,6 +34,8 @@ export default NextAuth({
     strategy: "jwt",
     updateAge: 86400, // 1 day
   },
+
+  secret: process.env.NEXT_PUBLIC_SECRET,
 
   callbacks: {
     async jwt({ token, account, user }) {

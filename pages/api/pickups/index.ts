@@ -14,7 +14,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     return getPickups(req, res);
   }
 
-  res.status(200).json({ message: "Example" });
+  res.status(400).json({ message: "Method not allowed" });
 }
 
 const getPickups = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
