@@ -60,13 +60,8 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
   const onDeleteOrder = async (id: string, status: OrderStatus) => {
     changeModalState(true);
     if (status === "cancelled") {
-      // const [orders, update] = await Promise.all([
-      //   tesloApi.put<IOrder>("/orders", { status, orderId: id }),
-      //   tesloApi.put("/products/update", { orderId: id }),
-      // ]);
-
       const { data: orders } = await tesloApi.put<IOrder>("/orders", { status, orderId: id });
-      const { data: update } = await tesloApi.put("/products/update", { orderId: id });
+      await tesloApi.put("/products/update", { orderId: id });
 
       if (orders) {
         const orderToUpdate = updateOrders.find((order) => order._id === orders._id);
@@ -183,23 +178,23 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const session: any = await getSession({ req });
 
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/auth/login?p=/orders/history",
-        permanent: false,
-      },
-    };
-  }
+  // if (!session) {
+  //   return {
+  //     redirect: {
+  //       destination: "/auth/login?p=/orders/history",
+  //       permanent: false,
+  //     },
+  //   };
+  // }
 
-  if (!session.user.active) {
-    return {
-      redirect: {
-        destination: `/`,
-        permanent: false,
-      },
-    };
-  }
+  // if (!session.user.active) {
+  //   return {
+  //     redirect: {
+  //       destination: `/`,
+  //       permanent: false,
+  //     },
+  //   };
+  // }
 
   const orders = await dbOrders.getOrdersByUserId(session.user._id);
 

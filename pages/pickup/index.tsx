@@ -1,6 +1,5 @@
 import { Grid } from "@mui/material";
 import { NextPage } from "next";
-import dynamic from "next/dynamic";
 import { ShopLayout } from "../../components/layouts";
 import { SearchPickupPoints, MapLeafletContainer } from "../../components/pickup";
 

@@ -26,9 +26,7 @@ export const getLastOrderByUserId = async (userId: string): Promise<IOrder[] | n
   await db.connect();
   const order = await Order.find({
     user: userId,
-    $where: function () {
-      return this.status === "pending";
-    },
+    status: "pending",
   })
     .sort({ createdAt: -1 })
     .limit(3)
