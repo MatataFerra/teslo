@@ -3,7 +3,7 @@ import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import { dbProducts } from "../../database";
 import { ShopLayout } from "../../components/layouts";
-import { Grid, Box, Typography, Button, Chip } from "@mui/material";
+import { Grid, Box, Typography, Chip } from "@mui/material";
 import { CtaButtons, ProductSlideShow, SizeSelector } from "../../components/products";
 import { ItemCounter } from "../../components/ui";
 import { ICartProduct, ISize, IProductSize, ISizeStock } from "../../interfaces";

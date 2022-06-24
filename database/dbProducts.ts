@@ -52,9 +52,7 @@ export const getProductsByTerms = async (term: string): Promise<IProductSize[]> 
   await db.connect();
   const termSearch = `/${term.toLowerCase()}/`;
 
-  const products = await ProductSize.find({
-    $text: { $search: `${termSearch}` },
-  })
+  const products = await ProductSize.find({ title: { $regex: termSearch } })
 
     .select("title images price slug inStock -_id")
     .lean();
