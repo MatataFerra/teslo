@@ -20,12 +20,7 @@ const Home: NextPage = () => {
   );
 };
 
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
-
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  console.log("NEXTAUTH_URL", process.env.NEXTAUTH_URL, "VERCEL_URL", process.env.VERCEL_URL);
-
   return {
     props: {},
   };

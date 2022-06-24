@@ -49,18 +49,6 @@ const productSizeSchema = new Schema(
   }
 );
 
-productSizeSchema.index({ title: "text", tags: "text" });
-productSizeSchema.statics = {
-  searchPartial: function (q, callback) {
-    return this.find(
-      {
-        $or: [{ title: new RegExp(q, "gi") }, { tags: new RegExp(q, "gi") }],
-      },
-      callback
-    );
-  },
-};
-
 const ProductSize: Model<IProductSize> = mongoose.models.ProductSize || model("ProductSize", productSizeSchema);
 
 export default ProductSize;
