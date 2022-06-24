@@ -194,9 +194,12 @@ export const CartProvider: FC<Children> = ({ children }) => {
 
     try {
       const { data } = await tesloApi.post<IOrder>("/orders", body);
-      data.orderItems.forEach(async (p) => {
-        await tesloApi.put(`/products/${p.slug}`, { sizeStock: p.size });
-      });
+
+      if (data.orderItems.length > 0) {
+        data.orderItems.forEach(async (p) => {
+          await tesloApi.put(`/products/${p.slug}`, { sizeStock: p.size });
+        });
+      }
 
       dispatch({ type: "[Cart] - Order complete" });
 
