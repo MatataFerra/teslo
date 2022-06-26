@@ -28,7 +28,6 @@ const getProductsById = async (req: NextApiRequest, res: NextApiResponse<Data>) 
   const products = await ProductSize.find({ _id: { $in: ids } })
     .select("title images price inStock slug -_id")
     .lean();
-  await db.disconnect();
 
   if (!products) {
     return res.status(400).json({ message: "Bad Request" });
