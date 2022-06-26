@@ -9,7 +9,7 @@ export const getAddressFromCookies = (): FormData => {
     address2: Cookies.get("address2") ?? "",
     zip: Cookies.get("zip") ?? "",
     city: Cookies.get("city") ?? "",
-    country: Cookies.get("country") ?? "",
+    country: Cookies.get("country") ?? "ARG",
     phone: Cookies.get("phone") ?? "",
   };
 
