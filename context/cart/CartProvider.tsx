@@ -174,6 +174,8 @@ export const CartProvider: FC<Children> = ({ children }) => {
       throw new Error("Please provide shipping address");
     }
 
+    console.log("Creating order...");
+
     const body: IOrder = {
       orderItems: state.cart.map((p) => ({
         ...p,
@@ -195,6 +197,8 @@ export const CartProvider: FC<Children> = ({ children }) => {
     try {
       const { data } = await tesloApi.post<IOrder>("/orders", body);
 
+      console.log("Order created: ", data);
+
       if (data.orderItems.length > 0) {
         data.orderItems.forEach(async (p) => {
           await tesloApi.put(`/products/${p.slug}`, { sizeStock: p.size });
@@ -211,7 +215,7 @@ export const CartProvider: FC<Children> = ({ children }) => {
       if (axios.isAxiosError(error)) {
         return {
           hasError: true,
-          message: error.response?.data?.message ?? "",
+          message: "Hubo un error en el servidor...",
         };
       }
 

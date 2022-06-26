@@ -24,8 +24,6 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
   await db.connect();
   const products = await ProductSize.find(condition).select("title images price inStock slug -_id").lean();
-  await db.disconnect();
-
   const updatedProducts = parseImagesOnProducts(products);
 
   return res.status(200).json(updatedProducts);

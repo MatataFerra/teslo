@@ -60,17 +60,21 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
   const onDeleteOrder = async (id: string, status: OrderStatus) => {
     changeModalState(true);
     if (status === "cancelled") {
-      const { data: orders } = await tesloApi.put<IOrder>("/orders", { status, orderId: id });
-      await tesloApi.put("/products/update", { orderId: id });
+      try {
+        const { data: orders } = await tesloApi.put<IOrder>(`/orders/${id}`, { status });
 
-      if (orders) {
-        const orderToUpdate = updateOrders.find((order) => order._id === orders._id);
-        if (orderToUpdate) {
-          orderToUpdate.status = orders.status;
-          setUpdateOrders([...updateOrders]);
+        if (orders) {
+          await tesloApi.put("/products/update", { orderItems: orders.orderItems });
+          const orderToUpdate = updateOrders.find((order) => order._id === orders._id);
+          if (orderToUpdate) {
+            orderToUpdate.status = orders.status;
+            setUpdateOrders([...updateOrders]);
+          }
+
+          changeModalState(false);
         }
-
-        changeModalState(false);
+      } catch (error) {
+        console.log("Ocurrió un error: ", error);
       }
     }
 
@@ -177,24 +181,6 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const session: any = await getSession({ req });
-
-  // if (!session) {
-  //   return {
-  //     redirect: {
-  //       destination: "/auth/login?p=/orders/history",
-  //       permanent: false,
-  //     },
-  //   };
-  // }
-
-  // if (!session.user.active) {
-  //   return {
-  //     redirect: {
-  //       destination: `/`,
-  //       permanent: false,
-  //     },
-  //   };
-  // }
 
   const orders = await dbOrders.getOrdersByUserId(session.user._id);
 

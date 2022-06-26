@@ -44,7 +44,6 @@ const getWishlistUser = async (req: NextApiRequest, res: NextApiResponse<Data>) 
   }
 
   const wishlistProducts = (await WishList.findOne({ user: id })) as any;
-  await db.disconnect();
 
   return res.status(200).json(wishlistProducts);
 };
@@ -78,8 +77,6 @@ const updateWishlistUser = async (req: NextApiRequest, res: NextApiResponse<Data
 
   wishlistProducts.products = products.map((item: any) => item._id);
   await wishlistProducts.save();
-
-  await db.disconnect();
 
   return res.status(200).json({ message: "Success" });
 };

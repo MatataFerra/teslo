@@ -45,7 +45,7 @@ const SummaryPage: NextPage = () => {
       return router.replace("/auth/login?p=/checkout/summary");
     }
 
-    router.replace(`/orders/${message}`);
+    !hasError && router.replace(`/orders/${message}`);
   };
 
   if (!formIsLoaded || !shippingAddress) {

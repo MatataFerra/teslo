@@ -10,17 +10,7 @@ type Data = { message: string } | IOrder;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   if (req.method === "POST") {
-    try {
-      const order = (await createOrder(req, res)) as IOrder;
-      return res.status(201).json(order);
-    } catch (error: any) {
-      console.log(error);
-      return res.status(500).json({ message: error.message || "Revise la consola" });
-    }
-  }
-
-  if (req.method === "PUT") {
-    return updateStatusOrder(req, res);
+    return createOrder(req, res);
   }
 
   return res.status(405).json({ message: "Method not allowed" });
@@ -61,34 +51,11 @@ async function createOrder(req: NextApiRequest, res: NextApiResponse) {
     const newOrder = new Order({ ...req.body, isPaid: false, user: userId });
     newOrder.total = Math.round(newOrder.total * 100) / 100;
     await newOrder.save();
-    await db.disconnect();
 
-    return newOrder;
+    return res.status(201).json(newOrder);
   } catch (error: any) {
     await db.disconnect();
     console.log(error);
     return res.status(400).json({ message: error.message || "Revise la consola" });
   }
 }
-
-const updateStatusOrder = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { status, orderId } = req.body;
-
-  if (!orderId) return res.status(400).json({ message: "orderId is required" });
-
-  if (!status) return res.status(400).json({ message: "status is required" });
-
-  try {
-    await db.connect();
-    const order = await Order.findById(orderId);
-    if (!order) return res.status(400).json({ message: "Order not found" });
-    order.status = status;
-    await order.save();
-    await db.disconnect();
-    return res.status(200).json(order);
-  } catch (error: any) {
-    console.log(error);
-    await db.disconnect();
-    return res.status(500).json({ message: error.message || "Revise la consola" });
-  }
-};

@@ -25,7 +25,6 @@ const getProductsBySlug = async (req: NextApiRequest, res: NextApiResponse<Data>
   await db.connect();
   const { slug } = req.query;
   const product = await ProductSize.findOne({ slug }).lean();
-  await db.disconnect();
 
   if (!product) {
     return res.status(404).json({ message: "Product not found" });
@@ -59,7 +58,6 @@ const updateProductBySlug = async (req: NextApiRequest, res: NextApiResponse<Dat
   const product = await ProductSize.findOne({ slug });
 
   if (!product) {
-    await db.disconnect();
     return res.status(404).json({ message: "Product not found" });
   }
 
@@ -71,9 +69,7 @@ const updateProductBySlug = async (req: NextApiRequest, res: NextApiResponse<Dat
     product.inStock = product.sizes.reduce((acc, size) => acc + size.stock, 0);
   });
 
-  product.save();
-
-  await db.disconnect();
+  await product.save();
 
   return res.status(200).json(product);
 };

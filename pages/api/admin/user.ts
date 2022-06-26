@@ -21,7 +21,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 const getUsers = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   await db.connect();
   const users = await User.find().select("-password -__v").lean();
-  await db.disconnect();
 
   if (!users) {
     return res.status(404).json({ message: "No users found" });
@@ -51,7 +50,6 @@ const updateUsers = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
   user.role = role;
   await user.save();
-  await db.disconnect();
 
   return res.status(200).json({ message: "User updated" });
 };
