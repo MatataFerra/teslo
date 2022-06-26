@@ -40,7 +40,5 @@ const deleteUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   user.active = false;
   await user.save();
 
-  await db.disconnect();
-
   return res.status(200).json(user);
 };

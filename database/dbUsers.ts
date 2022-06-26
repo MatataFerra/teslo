@@ -5,7 +5,6 @@ import bcrypt from "bcryptjs";
 export const checkUserEmailPassword = async (email: string, password: string) => {
   await db.connect();
   const user = await User.findOne({ email });
-  await db.disconnect();
 
   if (!user) return null;
 
@@ -41,7 +40,6 @@ export const oAuthToDbUser = async (oAuthName: string, oAuthEmail: string) => {
   });
 
   await newUser.save();
-  await db.disconnect();
 
   const { _id, name, email, role, active } = newUser;
 

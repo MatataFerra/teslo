@@ -61,7 +61,6 @@ const updateWishlistUser = async (req: NextApiRequest, res: NextApiResponse<Data
   }
 
   await db.connect();
-
   const user = await User.findById(session?.user._id).lean();
 
   if (!user) {

@@ -21,7 +21,6 @@ const getPickups = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   await db.connect();
 
   const pickups = await Pickup.find().lean();
-  await db.disconnect();
 
   if (!pickups) return null;
 
