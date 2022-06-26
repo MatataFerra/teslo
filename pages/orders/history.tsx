@@ -109,8 +109,8 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
       sortable: false,
       renderCell: (params: GridValueGetterParams) => {
         return (
-          <NextLink href={`/orders/${params.row.orderId}`} passHref>
-            <Link underline='hover'>Ver orden</Link>
+          <NextLink href={`/orders/${params.row.status === "cancelled" ? "history" : params.row.orderId}`} passHref>
+            <Link underline='hover'>{`${params.row.status === "cancelled" ? "No hay orden" : "Ver orden"}`}</Link>
           </NextLink>
         );
       },
@@ -177,24 +177,6 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const session: any = await getSession({ req });
-
-  // if (!session) {
-  //   return {
-  //     redirect: {
-  //       destination: "/auth/login?p=/orders/history",
-  //       permanent: false,
-  //     },
-  //   };
-  // }
-
-  // if (!session.user.active) {
-  //   return {
-  //     redirect: {
-  //       destination: `/`,
-  //       permanent: false,
-  //     },
-  //   };
-  // }
 
   const orders = await dbOrders.getOrdersByUserId(session.user._id);
 
