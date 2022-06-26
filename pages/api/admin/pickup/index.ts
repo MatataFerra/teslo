@@ -28,8 +28,6 @@ const createPickup = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
 
   const pickup = await Pickup.create(req.body);
 
-  await db.disconnect();
-
   if (!pickup) return null;
 
   return res.status(200).json(pickup);

@@ -27,7 +27,5 @@ const getUserId = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     return res.status(400).json({ message: "Bad Request" });
   }
 
-  await db.disconnect();
-
   return res.status(200).json({ userId: user._id });
 };

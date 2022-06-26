@@ -38,10 +38,10 @@ const OrderPage: NextPage<Props> = ({ order }) => {
         orderId: order._id,
         transactionId: details.id,
       });
-      await order.orderItems.forEach((p) => {
-        tesloApi.put(`/products/${p.slug}`, p.size);
+      await order.orderItems.forEach(async (p) => {
+        await tesloApi.put(`/products/${p.slug}`, p.size);
       });
-      await tesloApi.put("/orders", { status: "processing", orderId: order._id });
+      await tesloApi.put(`/orders/${order._id}`, { status: "processing" });
 
       router.reload();
     } catch (error) {

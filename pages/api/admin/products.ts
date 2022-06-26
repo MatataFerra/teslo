@@ -27,7 +27,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   await db.connect();
   const products = await ProductSize.find({}).sort({ title: "asc" }).lean();
-  await db.disconnect();
 
   // actualizar imagenes
 
@@ -74,7 +73,6 @@ const updateProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
     });
 
     await product.updateOne(req.body);
-    await db.disconnect();
 
     return res.status(200).json(product);
   } catch (error) {
@@ -105,7 +103,6 @@ const createProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
     const product = new ProductSize(req.body);
     product.inStock = product.sizes.reduce((acc, size) => acc + size.stock, 0);
     await product.save();
-    await db.disconnect();
 
     return res.status(201).json(product);
   } catch (error) {

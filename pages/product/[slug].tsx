@@ -186,7 +186,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
       product,
     },
 
-    revalidate: 86400,
+    revalidate: 1800,
   };
 };
 

@@ -46,8 +46,6 @@ const getDashboardData = async () => {
     Pickup.find({}).lean(),
   ]);
 
-  await db.disconnect();
-
   if (!orders || !clients || !products) {
     throw new Error("No se pudo obtener los datos");
   }

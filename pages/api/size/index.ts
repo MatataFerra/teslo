@@ -31,7 +31,6 @@ const createProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
 
     const product = new ProductSize(req.body);
     await product.save();
-    await db.disconnect();
 
     return res.status(201).json(product);
   } catch (error) {

@@ -27,6 +27,12 @@ export const connect = async () => {
       return;
     }
 
+    if (mongoConnection.isConnected === 2) {
+      console.log("Database is connecting...");
+      return;
+    }
+
+    console.log("Disconnecting existing database connection state: ", mongoose.connections[0].readyState);
     await mongoose.disconnect();
   }
 

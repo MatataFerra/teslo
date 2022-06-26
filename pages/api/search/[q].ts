@@ -29,7 +29,6 @@ const searchProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) =
   })
     .select("title images price slug inStock -_id")
     .lean();
-  await db.disconnect();
 
   return res.status(200).json(products);
 };

@@ -24,7 +24,6 @@ const updateOrderById = async (req: NextApiRequest, res: NextApiResponse<Data>) 
 
   order.status = status;
   await order.save();
-  await db.disconnect();
 
   return res.status(200).json(order);
 };

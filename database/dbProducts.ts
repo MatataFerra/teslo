@@ -5,7 +5,6 @@ import { IProductSize } from "../interfaces";
 export const getProductsBySlug = async (slug: string): Promise<IProductSize | null> => {
   await db.connect();
   const product = await ProductSize.findOne({ slug }).lean();
-  await db.disconnect();
 
   if (!product) {
     throw null;
@@ -25,7 +24,6 @@ interface ProductSlug {
 export const getAllProductsBySlug = async (): Promise<ProductSlug[]> => {
   await db.connect();
   const slugs = await ProductSize.find().select("slug -_id").lean();
-  await db.disconnect();
 
   if (!slugs) {
     throw null;
@@ -39,7 +37,6 @@ export const getAllDataProductsBySlug = async (slug: string[]): Promise<IProduct
   const productsData = await ProductSize.find({ slug: { $in: slug } })
     .select("slug images price title _id ")
     .lean();
-  await db.disconnect();
 
   if (!productsData) {
     throw null;
@@ -56,7 +53,6 @@ export const getProductsByTerms = async (term: string): Promise<IProductSize[]> 
 
     .select("title images price slug inStock -_id")
     .lean();
-  await db.disconnect();
 
   const updatedProducts = products.map((product) => {
     product.images = product.images.map((image) => {
@@ -72,7 +68,6 @@ export const getProductsByTerms = async (term: string): Promise<IProductSize[]> 
 export const getAllProducts = async (): Promise<IProductSize[]> => {
   await db.connect();
   const products = await ProductSize.find().lean();
-  await db.disconnect();
 
   const updatedProducts = products.map((product) => {
     product.images = product.images.map((image) => {
@@ -90,7 +85,6 @@ export const getProductsById = async (ids: string[]): Promise<IProductSize[]> =>
   const products = await ProductSize.find({ _id: { $in: ids } })
     .select("title images price slug inStock -_id")
     .lean();
-  await db.disconnect();
 
   if (!products) {
     throw null;
