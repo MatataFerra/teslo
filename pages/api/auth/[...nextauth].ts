@@ -4,7 +4,6 @@ import Credentials from "next-auth/providers/credentials";
 import { dbUsers } from "../../../database";
 
 export default NextAuth({
-  secret: process.env.NEXT_PUBLIC_SECRET,
   // Configure one or more authentication providers
   providers: [
     GithubProvider({
@@ -24,6 +23,7 @@ export default NextAuth({
       },
     }),
   ],
+  secret: process.env.SECRET,
 
   pages: {
     signIn: "/auth/login",
