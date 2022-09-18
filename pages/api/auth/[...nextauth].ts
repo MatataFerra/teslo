@@ -4,6 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import { dbUsers } from "../../../database";
 
 export default NextAuth({
+  secret: process.env.NEXT_PUBLIC_SECRET,
   // Configure one or more authentication providers
   providers: [
     GithubProvider({
@@ -34,8 +35,6 @@ export default NextAuth({
     strategy: "jwt",
     updateAge: 86400, // 1 day
   },
-
-  secret: process.env.NEXT_PUBLIC_SECRET,
 
   callbacks: {
     async jwt({ token, account, user }) {
