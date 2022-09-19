@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { NextPage, GetServerSideProps } from "next";
 import NextLink from "next/link";
 import { Box, Grid, TextField, Typography, Button, Link, Chip, Divider } from "@mui/material";
@@ -40,14 +40,8 @@ const LoginPage: NextPage = () => {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowError(false);
-      setLogin(false);
-    }, 3000);
-
-    return () => {
-      clearTimeout(timer);
-    };
+    setShowError(false);
+    setLogin(false);
   }, [showError]);
 
   return (
@@ -93,7 +87,13 @@ const LoginPage: NextPage = () => {
             </Grid>
 
             <Grid item xs={12}>
-              <Button type='submit' color='secondary' className='circular-btn' size='large' fullWidth disabled={login}>
+              <Button
+                type='submit'
+                color='secondary'
+                className='circular-btn'
+                size='large'
+                fullWidth
+                disabled={login}>
                 Ingresar
               </Button>
             </Grid>
@@ -107,7 +107,9 @@ const LoginPage: NextPage = () => {
               />
             </Grid>
             <Grid item xs={12} display='flex' justifyContent='center'>
-              <NextLink href={router.query.p ? `/auth/register?p=${router.query.p}` : "/auth/register"} passHref>
+              <NextLink
+                href={router.query.p ? `/auth/register?p=${router.query.p}` : "/auth/register"}
+                passHref>
                 <Link underline='always'>¿No tienes una cuenta?</Link>
               </NextLink>
             </Grid>
@@ -146,12 +148,17 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
       redirect: {
         destination: p.toString(),
         permanent: false,
+        statusCode: 302,
       },
     };
   }
 
+  const empty = {};
+
   return {
-    props: {},
+    props: {
+      session: empty,
+    },
   };
 };
 
