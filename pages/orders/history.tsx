@@ -16,7 +16,7 @@ import {
   LocalShippingOutlined,
 } from "@mui/icons-material";
 import { StatusOrderIcon } from "../../components/orders";
-import { tesloApi } from "../../api";
+import { tesloApi } from "../../apiRoutes";
 import { ModalTransition } from "../../components/ui";
 
 interface StatusIconsPros {
@@ -29,19 +29,39 @@ interface StatusIconsPros {
 
 const statusIcons: StatusIconsPros = {
   [OrderStatusEnum.pending]: (
-    <StatusOrderIcon icon={<LocalMallOutlined />} status='Recibimos tu orden con éxito!' textColor='#32cb64' />
+    <StatusOrderIcon
+      icon={<LocalMallOutlined />}
+      status='Recibimos tu orden con éxito!'
+      textColor='#32cb64'
+    />
   ),
   [OrderStatusEnum.processing]: (
-    <StatusOrderIcon icon={<BuildCircleOutlined />} status='Estamos procesando tu orden' textColor='#3279cb' />
+    <StatusOrderIcon
+      icon={<BuildCircleOutlined />}
+      status='Estamos procesando tu orden'
+      textColor='#3279cb'
+    />
   ),
   [OrderStatusEnum.shipped]: (
-    <StatusOrderIcon icon={<LocalShippingOutlined />} status='Tu orden está siendo enviada' textColor='#3262cb' />
+    <StatusOrderIcon
+      icon={<LocalShippingOutlined />}
+      status='Tu orden está siendo enviada'
+      textColor='#3262cb'
+    />
   ),
   [OrderStatusEnum.delivered]: (
-    <StatusOrderIcon icon={<BeenhereOutlined />} status='Tu orden ha sido entregada' textColor='#16ed45' />
+    <StatusOrderIcon
+      icon={<BeenhereOutlined />}
+      status='Tu orden ha sido entregada'
+      textColor='#16ed45'
+    />
   ),
   [OrderStatusEnum.cancelled]: (
-    <StatusOrderIcon icon={<DoDisturbOnOutlined color='error' />} status='Cancelaste la orden' textColor='#cb3232' />
+    <StatusOrderIcon
+      icon={<DoDisturbOnOutlined color='error' />}
+      status='Cancelaste la orden'
+      textColor='#cb3232'
+    />
   ),
 };
 
@@ -113,8 +133,12 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
       sortable: false,
       renderCell: (params: GridValueGetterParams) => {
         return (
-          <NextLink href={`/orders/${params.row.status === "cancelled" ? "history" : params.row.orderId}`} passHref>
-            <Link underline='hover'>{`${params.row.status === "cancelled" ? "No hay orden" : "Ver orden"}`}</Link>
+          <NextLink
+            href={`/orders/${params.row.status === "cancelled" ? "history" : params.row.orderId}`}
+            passHref>
+            <Link underline='hover'>{`${
+              params.row.status === "cancelled" ? "No hay orden" : "Ver orden"
+            }`}</Link>
           </NextLink>
         );
       },
@@ -125,7 +149,9 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
       description: "Muestra la información de la orden",
       width: 250,
       renderCell: (params: GridValueGetterParams) => {
-        return statusIcons[params.row.status as OrderStatusEnum] as StatusIconsPros[OrderStatusEnum];
+        return statusIcons[
+          params.row.status as OrderStatusEnum
+        ] as StatusIconsPros[OrderStatusEnum];
       },
     },
     {

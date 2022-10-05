@@ -14,7 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { tesloApi } from "../../api";
+import { tesloApi } from "../../apiRoutes";
 import { TagManager } from "../ui";
 import { defaultPickup } from "../../utils";
 
@@ -83,8 +83,8 @@ export const ModalPickups: FC = () => {
       <Box sx={style}>
         <Alert severity='info'>
           <AlertTitle>Agregar Sucursales</AlertTitle>
-          Primero seleccioná una sucursal con el buscador y luego de verificar que es correcta aparecerán las
-          coordenadas y el título acá
+          Primero seleccioná una sucursal con el buscador y luego de verificar que es correcta
+          aparecerán las coordenadas y el título acá
         </Alert>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Card>

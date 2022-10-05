@@ -2,7 +2,7 @@ import { Box, Button, Divider, Stack, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { FC, useContext } from "react";
 import { ProfileTitle, UpdateData, ProfileAddress } from ".";
-import { tesloApi } from "../../api";
+import { tesloApi } from "../../apiRoutes";
 import { AuthContext } from "../../context";
 
 interface Props {
@@ -32,7 +32,11 @@ export const PersonalData: FC<Props> = ({ name, email }) => {
         <UpdateData />
       </Box>
       <Box mt={"2rem !important"}>
-        <Button sx={{ width: "fit-content" }} color='error' onClick={onDeleteUser} disabled={!user?.active}>
+        <Button
+          sx={{ width: "fit-content" }}
+          color='error'
+          onClick={onDeleteUser}
+          disabled={!user?.active}>
           {!user?.active ? "Cuenta desactivada" : "No quiero usar más la cuenta"}
         </Button>
       </Box>

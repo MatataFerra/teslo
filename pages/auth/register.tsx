@@ -3,7 +3,7 @@ import NextLink from "next/link";
 import { NextPage, GetServerSideProps } from "next";
 import { Box, Grid, Typography, TextField, Button, Link, Chip } from "@mui/material";
 
-import { tesloApi } from "../../api";
+import { tesloApi } from "../../apiRoutes";
 import { AuthLayout } from "../../components/layouts";
 import { userApiResponse } from "../../interfaces";
 import { useShowError } from "../../hooks";
@@ -28,7 +28,11 @@ const RegisterPage: NextPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const onRegisterForm = async (formData: FormData) => {
     setShowError(false);
-    const { hasError, message } = await registerUser(formData.name, formData.email, formData.password);
+    const { hasError, message } = await registerUser(
+      formData.name,
+      formData.email,
+      formData.password
+    );
 
     if (hasError) {
       setShowError(true);
@@ -107,7 +111,12 @@ const RegisterPage: NextPage = () => {
             </Grid>
 
             <Grid item xs={12}>
-              <Button type='submit' color='secondary' className='circular-btn' size='large' fullWidth>
+              <Button
+                type='submit'
+                color='secondary'
+                className='circular-btn'
+                size='large'
+                fullWidth>
                 Crear
               </Button>
             </Grid>
@@ -121,7 +130,9 @@ const RegisterPage: NextPage = () => {
               />
             </Grid>
             <Grid item xs={12} display='flex' justifyContent='center'>
-              <NextLink href={router.query.p ? `/auth/login?p=${router.query.p}` : "/auth/login"} passHref>
+              <NextLink
+                href={router.query.p ? `/auth/login?p=${router.query.p}` : "/auth/login"}
+                passHref>
                 <Link underline='always'>¿Ya tienes cuenta?</Link>
               </NextLink>
             </Grid>

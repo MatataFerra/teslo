@@ -32,13 +32,16 @@ export const connect = async () => {
       return;
     }
 
-    console.log("Disconnecting existing database connection state: ", mongoose.connections[0].readyState);
+    console.log(
+      "Disconnecting existing database connection state: ",
+      mongoose.connections[0].readyState
+    );
     await mongoose.disconnect();
   }
 
   await mongoose.connect(process.env.MONGO_URL || "", options);
   mongoConnection.isConnected = 1;
-  console.log("Connecting to MongoDB:", process.env.MONGO_URL);
+  console.log("Connecting to MongoDB");
 };
 
 export const disconnect = async () => {
