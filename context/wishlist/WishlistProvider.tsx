@@ -1,7 +1,7 @@
 import { FC, useEffect, useReducer, useState } from "react";
 import { useSession } from "next-auth/react";
 import Cookies from "js-cookie";
-import { tesloApi } from "../../api";
+import { tesloApi } from "../../apiRoutes";
 import { Children, IProductSize } from "../../interfaces";
 import { WishlistContext, wishlistReducer } from "./";
 import { Router, useRouter } from "next/router";

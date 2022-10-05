@@ -8,7 +8,7 @@ import { IOrder, IUser, OrderStatusEnum, OrderStatus, IOrderStatus } from "../..
 import useSWR from "swr";
 import { date, mapOrdersAddStatus, mapOrdersAddStatusById } from "../../utils";
 import { ErrorComponent, FullScreenLoading } from "../../components/ui";
-import { tesloApi } from "../../api";
+import { tesloApi } from "../../apiRoutes";
 import { useEffect, useState } from "react";
 import { OrderItemStatus } from "../../components/admin";
 
@@ -180,7 +180,10 @@ const OrdersPage: NextPage = () => {
   });
 
   return (
-    <AdminLayout title={"Ordenes"} subtitle={"Mantenimiento de órdenes"} icon={<ConfirmationNumberOutlined />}>
+    <AdminLayout
+      title={"Ordenes"}
+      subtitle={"Mantenimiento de órdenes"}
+      icon={<ConfirmationNumberOutlined />}>
       <Grid container className='fadeIn'>
         <Grid item xs={12} sx={{ height: 650, width: "100%" }}>
           <DataGrid rows={rows} columns={columns} pageSize={10} rowsPerPageOptions={[10]} />

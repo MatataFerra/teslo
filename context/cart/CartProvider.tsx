@@ -2,7 +2,7 @@ import { FC, useReducer, useEffect } from "react";
 import { Children, ICartProduct, ShippingAddress, IOrder } from "../../interfaces";
 import { CartContext, cartReducer } from "./";
 import Cookie from "js-cookie";
-import { tesloApi } from "../../api";
+import { tesloApi } from "../../apiRoutes";
 import axios from "axios";
 
 export interface CartState {
@@ -68,7 +68,10 @@ export const CartProvider: FC<Children> = ({ children }) => {
 
   useEffect(() => {
     const numberOfItems = state.cart.reduce((prev, current) => current.quantity + prev, 0);
-    const subTotal = state.cart.reduce((prev, current) => current.quantity * current.price + prev, 0);
+    const subTotal = state.cart.reduce(
+      (prev, current) => current.quantity * current.price + prev,
+      0
+    );
     const taxRate = Number(process.env.NEXT_PUBLIC_TAX_RATE || 0.21);
 
     const orderSummary = {
@@ -147,7 +150,9 @@ export const CartProvider: FC<Children> = ({ children }) => {
   };
 
   const removeItemFromCart = (product: ICartProduct) => {
-    const updatedProducts = state.cart.filter((p) => !(p._id === product._id && p.size?.size === product.size?.size));
+    const updatedProducts = state.cart.filter(
+      (p) => !(p._id === product._id && p.size?.size === product.size?.size)
+    );
 
     dispatch({
       type: "[Cart] - Remove item from cart",

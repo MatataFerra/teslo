@@ -1,7 +1,7 @@
 import { SearchOutlined } from "@mui/icons-material";
 import { Input, InputAdornment, IconButton } from "@mui/material";
 import { ChangeEvent, FC, KeyboardEvent, useState } from "react";
-import { pickupApi } from "../../api";
+import { pickupApi } from "../../apiRoutes";
 import { IApiPickupPoints, IPickupPoint } from "../../interfaces";
 import { ListPickupSearch } from "./ListPickupSearch";
 
@@ -18,7 +18,9 @@ export const SearchPickupPoints: FC = () => {
     setPickupPoints([]);
     setinputSearch("");
     if ("e.target.value".length > 2) {
-      const search = (await pickupApi({ params: { street: inputSearch } })) as { data: IApiPickupPoints[] };
+      const search = (await pickupApi({ params: { street: inputSearch } })) as {
+        data: IApiPickupPoints[];
+      };
       search.data.map((point) => {
         const { lat, lon, display_name } = point;
         const pickupPoint: IPickupPoint = {

@@ -25,7 +25,7 @@ import {
   RadioGroup,
   TextField,
 } from "@mui/material";
-import { tesloApi } from "../../../api";
+import { tesloApi } from "../../../apiRoutes";
 import { Product } from "../../../models";
 import { TagManager } from "../../../components/ui";
 
@@ -177,7 +177,11 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
   };
 
   return (
-    <AdminLayout back title={"Producto"} subtitle={`Editando: ${product.title}`} icon={<DriveFileRenameOutline />}>
+    <AdminLayout
+      back
+      title={"Producto"}
+      subtitle={`Editando: ${product.title}`}
+      icon={<DriveFileRenameOutline />}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box display='flex' justifyContent='end' sx={{ mb: 1 }}>
           <Button
@@ -325,7 +329,8 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               sx={{ mb: 1 }}
               {...register("slug", {
                 required: "Este campo es requerido",
-                validate: (val) => (val.trim().includes(" ") ? "No puede contener espacios" : undefined),
+                validate: (val) =>
+                  val.trim().includes(" ") ? "No puede contener espacios" : undefined,
               })}
               error={!!errors.slug}
               helperText={errors.slug?.message}

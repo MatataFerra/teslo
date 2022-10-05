@@ -3,14 +3,23 @@ import { NextPage, GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 
 import { getSession } from "next-auth/react";
-import { Typography, Grid, Card, CardContent, Divider, Box, Chip, CircularProgress } from "@mui/material";
+import {
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  Divider,
+  Box,
+  Chip,
+  CircularProgress,
+} from "@mui/material";
 import { CartList, OrderSummary } from "../../components/cart";
 import { PaymentButtonsStatus } from "../../components/orders";
 import { ShopLayout } from "../../components/layouts";
 import { CreditCardOffOutlined, CreditScoreOutlined } from "@mui/icons-material";
 import { dbOrders } from "../../database";
 import { IOrder } from "../../interfaces";
-import tesloApi from "../../api/tesloApi";
+import tesloApi from "../../apiRoutes/tesloApi";
 
 interface Props {
   order: IOrder;
@@ -94,7 +103,8 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                 {shippingAddress.firstName}, {shippingAddress.lastName}
               </Typography>
               <Typography>
-                {shippingAddress.address} ,{shippingAddress.address2 ? shippingAddress.address2 : ""}
+                {shippingAddress.address} ,
+                {shippingAddress.address2 ? shippingAddress.address2 : ""}
               </Typography>
               <Typography> {shippingAddress.city} </Typography>
               <Typography> {shippingAddress.phone} </Typography>
@@ -114,7 +124,11 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                     <CircularProgress />
                   </Box>
                 ) : (
-                  <PaymentButtonsStatus isPaid={order.isPaid} onOrderCompleted={onOrderCompleted} total={order.total} />
+                  <PaymentButtonsStatus
+                    isPaid={order.isPaid}
+                    onOrderCompleted={onOrderCompleted}
+                    total={order.total}
+                  />
                 )}
               </Box>
             </CardContent>
