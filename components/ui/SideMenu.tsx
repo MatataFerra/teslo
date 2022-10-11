@@ -11,6 +11,7 @@ import {
   InputAdornment,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
@@ -72,64 +73,70 @@ export const SideMenu = () => {
 
           {isLoggedIn && (
             <>
-              <ListItem button onClick={() => navigateTo("/profile")}>
+              <ListItemButton onClick={() => navigateTo("/profile")}>
                 <ListItemIcon>
                   <AccountCircleOutlined />
                 </ListItemIcon>
                 <ListItemText primary={"Perfil"} />
-              </ListItem>
+              </ListItemButton>
 
-              <ListItem button onClick={() => navigateTo("/orders/history")}>
+              <ListItemButton onClick={() => navigateTo("/orders/history")}>
                 <ListItemIcon>
                   <ConfirmationNumberOutlined />
                 </ListItemIcon>
                 <ListItemText primary={"Mis Ordenes"} />
-              </ListItem>
+              </ListItemButton>
 
-              <ListItem button onClick={() => navigateTo("/wishlist")}>
+              <ListItemButton onClick={() => navigateTo("/wishlist")}>
                 <ListItemIcon>
                   <FavoriteBorderOutlined />
                 </ListItemIcon>
                 <ListItemText primary={"Favoritos"} />
-              </ListItem>
+              </ListItemButton>
             </>
           )}
 
-          <ListItem button sx={{ display: { xs: "", sm: "none" } }} onClick={() => navigateTo("category/men")}>
+          <ListItemButton
+            sx={{ display: { xs: "", sm: "none" } }}
+            onClick={() => navigateTo("category/men")}>
             <ListItemIcon>
               <MaleOutlined />
             </ListItemIcon>
             <ListItemText primary={"Hombres"} />
-          </ListItem>
+          </ListItemButton>
 
-          <ListItem button sx={{ display: { xs: "", sm: "none" } }} onClick={() => navigateTo("category/women")}>
+          <ListItemButton
+            sx={{ display: { xs: "", sm: "none" } }}
+            onClick={() => navigateTo("category/women")}>
             <ListItemIcon>
               <FemaleOutlined />
             </ListItemIcon>
             <ListItemText primary={"Mujeres"} />
-          </ListItem>
+          </ListItemButton>
 
-          <ListItem button sx={{ display: { xs: "", sm: "none" } }} onClick={() => navigateTo("category/kid")}>
+          <ListItemButton
+            sx={{ display: { xs: "", sm: "none" } }}
+            onClick={() => navigateTo("category/kid")}>
             <ListItemIcon>
               <EscalatorWarningOutlined />
             </ListItemIcon>
             <ListItemText primary={"Niños"} />
-          </ListItem>
+          </ListItemButton>
 
           {!isLoggedIn ? (
-            <ListItem button onClick={() => navigateTo(`/auth/login?=${router.pathname}`)}>
+            <ListItemButton onClick={() => navigateTo(`/auth/login?=${router.pathname}`)}>
               <ListItemIcon>
                 <VpnKeyOutlined />
               </ListItemIcon>
               <ListItemText primary={"Ingresar"} />
-            </ListItem>
+            </ListItemButton>
           ) : (
-            <ListItem button onClick={logoutUser}>
+            <ListItemButton onClick={logoutUser}>
               <ListItemIcon>
                 <LoginOutlined />
               </ListItemIcon>
               <ListItemText primary={"Salir"} />
-            </ListItem>
+            </ListItemButton>
           )}
 
           {/* Admin */}

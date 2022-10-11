@@ -3,10 +3,7 @@ import NextLink from "next/link";
 import { NextPage, GetServerSideProps } from "next";
 import { Box, Grid, Typography, TextField, Button, Link, Chip } from "@mui/material";
 
-import { tesloApi } from "../../apiRoutes";
 import { AuthLayout } from "../../components/layouts";
-import { userApiResponse } from "../../interfaces";
-import { useShowError } from "../../hooks";
 import { ErrorOutline } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 import { validations } from "../../utils";
